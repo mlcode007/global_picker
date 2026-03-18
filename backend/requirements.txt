@@ -1,0 +1,27 @@
+# Web 框架
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+
+# 数据库
+sqlalchemy==2.0.36
+pymysql==1.1.1
+cryptography==44.0.0
+
+# 配置管理
+pydantic-settings==2.6.1
+
+# 认证
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Redis
+redis==5.2.1
+
+# 报表导出
+openpyxl==3.1.5
+
+# HTTP 客户端（抓取用）
+httpx==0.28.1
+
+# 浏览器自动化（JS 渲染页面采集）
+playwright>=1.49.0
