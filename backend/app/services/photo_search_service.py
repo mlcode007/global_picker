@@ -68,6 +68,42 @@ def _expire_stale_task(db: Session, task: PhotoSearchTask) -> bool:
     return False
 
 
+RUNNING_STATUSES = ("queued", "dispatching", "running", "collecting", "parsing", "saving")
+
+
+def recover_interrupted_tasks(db: Session) -> int:
+    """服务启动时调用：将所有中间状态的任务标记为 queued 以便自动重试，释放卡住的设备。"""
+    tasks = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.status.in_(RUNNING_STATUSES)
+    ).all()
+
+    if not tasks:
+        return 0
+
+    recovered = 0
+    for task in tasks:
+        old_status = task.status
+        task.status = "queued"
+        task.step = None
+        task.error_code = None
+        task.error_message = None
+        task.started_at = None
+        task.finished_at = None
+        task.elapsed_ms = None
+        task.device_id = None
+        recovered += 1
+        logger.info("Recovered task #%d (was %s) -> queued", task.id, old_status)
+
+    busy_devices = db.query(Device).filter(Device.status == "busy").all()
+    for device in busy_devices:
+        device.status = "idle"
+        device.current_task_id = None
+        logger.info("Released stuck device %s -> idle", device.device_id)
+
+    db.commit()
+    return recovered
+
+
 def create_task(db: Session, product_id: int, image_index: int = 0) -> PhotoSearchTask:
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
@@ -270,6 +306,10 @@ def save_candidates_to_matches(
             PddMatch.pdd_price == item.price,
         ).first()
         if existing:
+            # 若已存在但缺少图片，补充更新
+            if not existing.pdd_image_url and item.image_url:
+                existing.pdd_image_url = item.image_url
+                db.commit()
             continue
 
         match = PddMatch(

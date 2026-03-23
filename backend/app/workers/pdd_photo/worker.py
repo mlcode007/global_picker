@@ -138,6 +138,11 @@ def execute_photo_search_task(task_id: int):
 
         candidates = parse_result.candidates[:MAX_CANDIDATES]
 
+        # ── 5a. 从截图裁剪商品主图 ─────────────────────────────
+        screenshot_path = ctx.result_screenshots[0] if ctx.result_screenshots else None
+        if screenshot_path:
+            _crop_candidate_images(candidates, screenshot_path, artifacts)
+
         raw_json = {
             "candidates": [
                 {
@@ -145,6 +150,7 @@ def execute_photo_search_task(task_id: int):
                     "price": str(c.price),
                     "sales_volume": c.sales_volume,
                     "shop_name": c.shop_name,
+                    "image_url": c.image_url,
                     "position": c.position,
                 }
                 for c in candidates
@@ -222,6 +228,55 @@ def execute_photo_search_task(task_id: int):
                 os.remove(local_image)
         except Exception:
             pass
+
+
+def _crop_candidate_images(
+    candidates: list,
+    screenshot_path: str,
+    artifacts: "ArtifactManager",
+) -> None:
+    """从结果页截图中按 bounds 裁剪每个候选商品的主图，保存为 artifact。"""
+    try:
+        from PIL import Image
+    except ImportError:
+        logger.warning("Pillow not installed, skipping image crop")
+        return
+
+    if not Path(screenshot_path).exists():
+        logger.warning("Screenshot not found: %s", screenshot_path)
+        return
+
+    try:
+        img = Image.open(screenshot_path)
+    except Exception as e:
+        logger.warning("Failed to open screenshot: %s", e)
+        return
+
+    for c in candidates:
+        if not c.image_bounds:
+            continue
+        x1, y1, x2, y2 = c.image_bounds
+        if x2 <= x1 or y2 <= y1:
+            continue
+        try:
+            cropped = img.crop((x1, y1, x2, y2))
+            if cropped.mode in ("RGBA", "P", "LA"):
+                cropped = cropped.convert("RGB")
+            crop_filename = f"product_img_{c.position}.jpg"
+            crop_path = artifacts.screenshots_dir / crop_filename
+            cropped.save(str(crop_path), "JPEG", quality=90)
+            # 转换为 HTTP 可访问的相对路径（相对于 artifacts 根目录）
+            from app.workers.pdd_photo.artifact_manager import BASE_ARTIFACTS_DIR
+            try:
+                rel = crop_path.relative_to(BASE_ARTIFACTS_DIR.parent)
+                c.image_url = f"/artifacts/{rel.as_posix()}"
+            except ValueError:
+                c.image_url = str(crop_path)
+            logger.info(
+                "Cropped product image for position %d: %s", c.position, c.image_url
+            )
+        except Exception as e:
+            logger.warning("Failed to crop image for position %d: %s", c.position, e)
 
 
 def _download_image(url: str, task_id: int) -> str | None:

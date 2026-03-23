@@ -28,7 +28,7 @@ def get_pdd_matches(db: Session, product_id: int) -> List[PddMatch]:
     return (
         db.query(PddMatch)
         .filter(PddMatch.product_id == product_id)
-        .order_by(PddMatch.is_primary.desc(), PddMatch.match_confidence.desc())
+        .order_by(PddMatch.is_primary.desc(), PddMatch.created_at.desc())
         .all()
     )
 

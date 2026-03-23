@@ -39,6 +39,8 @@ class CandidateItem:
     image_url: str = ""
     position: int = 0
     bounds_y: int = 0
+    # 商品主图在截图中的裁剪坐标 (x1, y1, x2, y2)
+    image_bounds: Optional[tuple] = None
 
     @property
     def is_valid(self) -> bool:
@@ -92,6 +94,8 @@ class ResultParser:
         raw_nodes = list(root.iter("node"))
 
         nodes: list[_NodeInfo] = []
+        # 收集所有大尺寸 ImageView 的 bounds，用于后续匹配商品主图
+        product_image_bounds: list[tuple] = []
         for i, n in enumerate(raw_nodes):
             text = n.get("text", "").strip()
             cd = n.get("content-desc", "").strip()
@@ -101,9 +105,53 @@ class ResultParser:
             if text or cd:
                 nodes.append(_NodeInfo(i, text, cd, rid, bounds, cy))
                 result.raw_texts.append(text or cd)
+            # 收集大尺寸 ImageView（宽高均 > 100px）作为商品主图候选
+            if (n.get("class", "") == "android.widget.ImageView"
+                    and bounds
+                    and (bounds[2] - bounds[0]) > 100
+                    and (bounds[3] - bounds[1]) > 100):
+                product_image_bounds.append(bounds)
 
         candidates = self._extract_product_cards(nodes)
+        self._assign_image_bounds(candidates, product_image_bounds)
         return candidates
+
+    def _assign_image_bounds(
+        self,
+        candidates: list[CandidateItem],
+        image_bounds_list: list[tuple],
+    ) -> None:
+        """将 ImageView bounds 分配给对应候选商品。
+
+        策略：商品图片通常位于标题/价格节点的上方，且 X 坐标范围重叠。
+        优先选择 X 范围重叠、且在价格节点上方（或略下方）的最近图片。
+        """
+        used = set()
+        for item in candidates:
+            best_idx = None
+            best_score = float("inf")
+            for i, b in enumerate(image_bounds_list):
+                if i in used:
+                    continue
+                img_cy = (b[1] + b[3]) // 2
+                img_cx = (b[0] + b[2]) // 2
+
+                # 图片应在价格节点上方（img_cy < bounds_y）或同行
+                # 给上方图片更低的惩罚分
+                y_diff = item.bounds_y - img_cy  # 正值=图片在上方
+                if y_diff < -200:
+                    # 图片在价格节点下方超过 200px，跳过
+                    continue
+
+                dist = abs(img_cy - item.bounds_y)
+                # 上方图片优先（减少惩罚）
+                score = dist - (100 if y_diff > 0 else 0)
+                if score < best_score:
+                    best_score = score
+                    best_idx = i
+            if best_idx is not None and best_score < 600:
+                item.image_bounds = image_bounds_list[best_idx]
+                used.add(best_idx)
 
     def _extract_product_cards(self, nodes: list[_NodeInfo]) -> list[CandidateItem]:
         """
