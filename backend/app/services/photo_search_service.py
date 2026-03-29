@@ -289,13 +289,27 @@ def get_action_logs(db: Session, task_id: int) -> List[DeviceActionLog]:
     )
 
 
+def _should_sync_pdd_image_url(old_url: Optional[str], new_url: Optional[str]) -> bool:
+    """是否用本次拍照购的 OSS 链接覆盖库里旧值。"""
+    if not new_url:
+        return False
+    if not old_url:
+        return True
+    # 旧的是本机 /artifacts 路径，换成 OSS
+    if old_url.startswith("/artifacts"):
+        return True
+    # 新链接与旧的不同时，以本次任务为准（例如重新跑任务换了图）
+    return old_url != new_url
+
+
 def save_candidates_to_matches(
     db: Session,
     product_id: int,
     candidates: list,
 ) -> int:
-    """把解析出的候选写入 pdd_matches，去重后返回新增条数。"""
+    """把解析出的候选写入 pdd_matches；同步 OSS 图、拼多多商品链接与 goods_id。"""
     saved = 0
+    updated_existing = 0
     for item in candidates:
         if not item.is_valid:
             continue
@@ -306,10 +320,20 @@ def save_candidates_to_matches(
             PddMatch.pdd_price == item.price,
         ).first()
         if existing:
-            # 若已存在但缺少图片，补充更新
-            if not existing.pdd_image_url and item.image_url:
+            row_changed = False
+            if _should_sync_pdd_image_url(existing.pdd_image_url, item.image_url):
                 existing.pdd_image_url = item.image_url
-                db.commit()
+                row_changed = True
+            if getattr(item, "product_url", None):
+                if existing.pdd_product_url != item.product_url:
+                    existing.pdd_product_url = item.product_url
+                    row_changed = True
+            if getattr(item, "pdd_goods_id", None):
+                if existing.pdd_product_id != item.pdd_goods_id:
+                    existing.pdd_product_id = item.pdd_goods_id
+                    row_changed = True
+            if row_changed:
+                updated_existing += 1
             continue
 
         match = PddMatch(
@@ -320,6 +344,8 @@ def save_candidates_to_matches(
             pdd_sales_volume=item.sales_volume,
             pdd_shop_name=item.shop_name or None,
             pdd_image_url=item.image_url or None,
+            pdd_product_id=getattr(item, "pdd_goods_id", None) or None,
+            pdd_product_url=getattr(item, "product_url", None) or None,
             match_source="image_search",
             match_confidence=None,
             is_confirmed=0,
@@ -328,7 +354,71 @@ def save_candidates_to_matches(
         db.add(match)
         saved += 1
 
-    if saved:
+    if saved or updated_existing:
         db.commit()
-    logger.info("Saved %d new matches for product #%d", saved, product_id)
+    logger.info(
+        "Saved %d new matches, updated %d existing rows for product #%d",
+        saved, updated_existing, product_id,
+    )
     return saved
+
+
+def sync_match_images_from_task_result(db: Session, task_id: int) -> dict:
+    """
+    根据拍照购任务 raw_result_json 的 candidates，回填 pdd_matches：
+    image_url → pdd_image_url；product_url、pdd_goods_id → 商品链接与 ID。
+    """
+    task = get_task(db, task_id)
+    if not task:
+        raise ValueError(f"任务 {task_id} 不存在")
+    if not task.raw_result_json:
+        raise ValueError(f"任务 #{task_id} 无 raw_result_json，无法同步")
+
+    payload = task.raw_result_json
+    cands = payload.get("candidates") or []
+    updated = 0
+    for c in cands:
+        title = (c.get("title") or "").strip()
+        price_raw = c.get("price")
+        if not title:
+            continue
+        try:
+            price_dec = Decimal(str(price_raw)) if price_raw is not None else None
+        except Exception:
+            continue
+        if price_dec is None:
+            continue
+
+        match = (
+            db.query(PddMatch)
+            .filter(
+                PddMatch.product_id == task.product_id,
+                PddMatch.pdd_title == title,
+                PddMatch.pdd_price == price_dec,
+            )
+            .first()
+        )
+        if not match:
+            continue
+
+        image_url = (c.get("image_url") or "").strip()
+        product_url = (c.get("product_url") or "").strip()
+        goods_id = (c.get("pdd_goods_id") or "").strip()
+
+        row_changed = False
+        if image_url and match.pdd_image_url != image_url:
+            match.pdd_image_url = image_url
+            row_changed = True
+        if product_url and match.pdd_product_url != product_url:
+            match.pdd_product_url = product_url
+            row_changed = True
+        if goods_id and (not match.pdd_product_id or match.pdd_product_id != goods_id):
+            match.pdd_product_id = goods_id
+            row_changed = True
+        if row_changed:
+            updated += 1
+
+    if updated:
+        db.commit()
+    logger.info("sync_match_images_from_task_result task=#%d updated=%d", task_id, updated)
+    return {"task_id": task_id, "updated": updated}

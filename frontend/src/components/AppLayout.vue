@@ -2,8 +2,8 @@
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" collapsible theme="dark" width="220">
       <div class="logo">
-        <span v-if="!collapsed">🌍 Global Picker</span>
-        <span v-else>🌍</span>
+        <span v-if="!collapsed">Global Picker</span>
+        <span v-else>GP</span>
       </div>
       <a-menu
         theme="dark"
@@ -31,6 +31,29 @@
         <span class="header-title">{{ route.meta.title || 'Global Picker' }}</span>
         <div class="header-right">
           <a-tag color="green">后端已连接</a-tag>
+          <a-dropdown v-if="authStore.isLoggedIn">
+            <a class="user-info" @click.prevent>
+              <a-avatar :size="28" style="background-color: #667eea; margin-right: 8px;">
+                {{ avatarText }}
+              </a-avatar>
+              <span class="user-name">{{ authStore.displayName }}</span>
+              <DownOutlined style="font-size: 10px; margin-left: 4px;" />
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item disabled>
+                  <span style="color: #999; font-size: 12px;">
+                    {{ authStore.user?.company_name }}
+                  </span>
+                </a-menu-item>
+                <a-menu-divider />
+                <a-menu-item @click="handleLogout">
+                  <LogoutOutlined />
+                  <span style="margin-left: 8px;">退出登录</span>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </div>
       </a-layout-header>
 
@@ -46,13 +69,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { DashboardOutlined, UnorderedListOutlined, ImportOutlined } from '@ant-design/icons-vue'
+import {
+  DashboardOutlined,
+  UnorderedListOutlined,
+  ImportOutlined,
+  DownOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons-vue'
+import { useAuthStore } from '@/stores/auth'
 
 const collapsed = ref(false)
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
+
+const avatarText = computed(() => {
+  const name = authStore.displayName
+  return name ? name.charAt(0).toUpperCase() : 'U'
+})
+
+function handleLogout() {
+  authStore.logout()
+}
 </script>
 
 <style scoped>
@@ -76,6 +116,24 @@ const router = useRouter()
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 }
 .header-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #333;
+}
+.user-name {
+  font-size: 14px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .content { margin: 24px; min-height: 360px; }
 .footer { text-align: center; color: #999; font-size: 12px; }
 </style>

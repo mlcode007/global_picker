@@ -12,6 +12,7 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=True, index=True)
     crawl_task_id = Column(BigInteger, nullable=True)
     tiktok_url = Column(String(1024), nullable=False, unique=True)
     tiktok_product_id = Column(String(64), nullable=True)

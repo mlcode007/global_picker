@@ -7,10 +7,12 @@ import os
 import re
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.config import get_settings
+from app.core.security import get_current_user
+from app.models.user import User
 from app.schemas.common import Response
 
 router = APIRouter(prefix="/settings", tags=["采集配置"])
@@ -28,7 +30,6 @@ def _update_env(key: str, value: str) -> None:
     if not _ENV_PATH.exists():
         return
     content = _ENV_PATH.read_text(encoding="utf-8")
-    # 已存在则替换，否则追加
     pattern = rf"^{key}=.*$"
     replacement = f"{key}={value}"
     if re.search(pattern, content, flags=re.MULTILINE):
@@ -39,7 +40,7 @@ def _update_env(key: str, value: str) -> None:
 
 
 @router.get("/crawl", response_model=Response[CrawlConfig], summary="获取当前采集配置")
-def get_crawl_config():
+def get_crawl_config(current_user: User = Depends(get_current_user)):
     s = get_settings()
     return Response(data=CrawlConfig(
         tiktok_cookies=s.TIKTOK_COOKIES,
@@ -48,29 +49,24 @@ def get_crawl_config():
 
 
 @router.post("/crawl/cookies", summary="更新 TikTok Cookie")
-def update_cookies(payload: CrawlConfig):
-    """
-    接受以下格式：
-    - JSON 对象:  {"sessionid":"xxx","msToken":"yyy"}
-    - Cookie 字符串: sessionid=xxx; msToken=yyy
-    """
+def update_cookies(
+    payload: CrawlConfig,
+    current_user: User = Depends(get_current_user),
+):
     raw = payload.tiktok_cookies.strip()
     if not raw:
         raise HTTPException(status_code=400, detail="Cookie 不能为空")
 
-    # 验证格式
     try:
         parsed = json.loads(raw)
         if not isinstance(parsed, (dict, list)):
             raise ValueError
     except (json.JSONDecodeError, ValueError):
-        # 尝试 key=value; 格式
         if "=" not in raw:
             raise HTTPException(status_code=400, detail="Cookie 格式错误，请使用 JSON 或 key=value 格式")
 
     _update_env("TIKTOK_COOKIES", raw)
 
-    # 更新运行时配置（lru_cache 需要手动更新）
     os.environ["TIKTOK_COOKIES"] = raw
     get_settings.cache_clear()
 
@@ -78,7 +74,10 @@ def update_cookies(payload: CrawlConfig):
 
 
 @router.post("/crawl/proxy", summary="更新代理配置")
-def update_proxy(payload: CrawlConfig):
+def update_proxy(
+    payload: CrawlConfig,
+    current_user: User = Depends(get_current_user),
+):
     proxy = payload.tiktok_proxy.strip()
     if proxy and not re.match(r"^(http|socks5)://", proxy):
         raise HTTPException(
@@ -95,7 +94,7 @@ def update_proxy(payload: CrawlConfig):
 
 
 @router.delete("/crawl/cookies", summary="清除 Cookie")
-def clear_cookies():
+def clear_cookies(current_user: User = Depends(get_current_user)):
     _update_env("TIKTOK_COOKIES", "")
     os.environ["TIKTOK_COOKIES"] = ""
     get_settings.cache_clear()

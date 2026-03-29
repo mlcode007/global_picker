@@ -23,6 +23,7 @@ export const photoSearchApi = {
   retryTask: (taskId) => http.post(`/pdd/photo-search/tasks/${taskId}/retry`),
   cancelTask: (taskId) => http.post(`/pdd/photo-search/tasks/${taskId}/cancel`),
   getTaskLogs: (taskId) => http.get(`/pdd/photo-search/tasks/${taskId}/logs`),
+  syncTaskImages: (taskId) => http.post(`/pdd/photo-search/tasks/${taskId}/sync-images`),
   getDevices: () => http.get('/pdd/photo-search/devices'),
 }
 

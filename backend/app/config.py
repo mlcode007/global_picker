@@ -41,6 +41,26 @@ class Settings(BaseSettings):
     # 有头模式：True 显示浏览器窗口（可手动过验证），False 无界面后台运行
     TIKTOK_HEADLESS: bool = False
 
+    # 阿里云 OSS
+    OSS_ACCESS_KEY_ID: str = ""
+    OSS_ACCESS_KEY_SECRET: str = ""
+    OSS_BUCKET_NAME: str = "global-picker-pdd-image"
+    OSS_ENDPOINT: str = ""
+    # OSS 公网访问域名（留空则自动拼接 bucket.endpoint）
+    OSS_CDN_DOMAIN: str = ""
+
+    # 阿里云短信服务
+    ALIYUN_SMS_ACCESS_KEY_ID: str = ""
+    ALIYUN_SMS_ACCESS_KEY_SECRET: str = ""
+    ALIYUN_SMS_SIGN_NAME: str = ""
+    ALIYUN_SMS_TEMPLATE_CODE: str = ""
+    SMS_CODE_EXPIRE_MINUTES: int = 5
+    SMS_CODE_LENGTH: int = 6
+    SMS_SEND_INTERVAL_SECONDS: int = 60
+
+    # 拼多多拍照购：在结果页依次点进详情，从 dumpsys 解析 goods_id（约多 4s/条）
+    PDD_EXTRACT_PRODUCT_LINKS: bool = True
+
     @property
     def database_url(self) -> str:
         # quote_plus 对密码中的特殊字符（如 @）进行 URL 编码

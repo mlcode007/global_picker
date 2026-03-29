@@ -35,10 +35,24 @@
       <a-col :span="10">
         <a-card title="TikTok 商品信息" :bordered="false">
           <div class="img-gallery">
+            <template v-if="productImages.length > 1">
+              <a-carousel arrows dots-class="gallery-dots" class="product-carousel">
+                <template #prevArrow><div class="carousel-arrow carousel-arrow-left"><LeftOutlined /></div></template>
+                <template #nextArrow><div class="carousel-arrow carousel-arrow-right"><RightOutlined /></div></template>
+                <div v-for="(url, idx) in productImages" :key="idx" class="carousel-slide">
+                  <a-image
+                    :src="url"
+                    :preview="{ src: url }"
+                    style="width:100%;height:320px;object-fit:contain;border-radius:8px"
+                  />
+                </div>
+              </a-carousel>
+              <div class="img-counter">{{ productImages.length }} 张图片</div>
+            </template>
             <a-image
-              v-if="product.main_image_url"
-              :src="product.main_image_url"
-              style="width:100%;max-height:300px;object-fit:contain;border-radius:8px"
+              v-else-if="productImages.length === 1"
+              :src="productImages[0]"
+              style="width:100%;max-height:320px;object-fit:contain;border-radius:8px"
             />
             <div v-else class="img-empty"><PictureOutlined style="font-size:48px;color:#ccc" /></div>
           </div>
@@ -137,6 +151,16 @@
                 >
                   重试
                 </a-button>
+                <a-button
+                  v-if="photoTask.status === 'success'"
+                  size="small"
+                  type="link"
+                  :loading="syncImagesLoading"
+                  @click="syncPhotoTaskImages"
+                  style="margin-left:8px"
+                >
+                  同步图片与链接
+                </a-button>
               </template>
             </a-alert>
           </div>
@@ -151,6 +175,7 @@
               <a-image
                 v-if="m.pdd_image_url"
                 :src="m.pdd_image_url"
+                referrerpolicy="no-referrer"
                 :width="60" :height="60"
                 style="object-fit:cover;border-radius:4px;flex-shrink:0"
                 :fallback="fallbackImg"
@@ -162,6 +187,15 @@
                   <span class="pdd-price">¥{{ m.pdd_price }}</span>
                   <span v-if="m.pdd_sales_volume" style="color:#999">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</span>
                   <span v-if="m.pdd_shop_name" style="color:#999">{{ m.pdd_shop_name }}</span>
+                  <a
+                    v-if="m.pdd_product_url"
+                    :href="m.pdd_product_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop
+                  >
+                    <LinkOutlined /> 拼多多商品页
+                  </a>
                 </div>
                 <div class="match-tags">
                   <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
@@ -304,6 +338,7 @@ import { message } from 'ant-design-vue'
 import {
   TagOutlined, DownloadOutlined, LinkOutlined,
   PlusOutlined, PictureOutlined, CameraOutlined,
+  LeftOutlined, RightOutlined,
 } from '@ant-design/icons-vue'
 import { productApi, pddApi, profitApi, exportApi, photoSearchApi } from '@/api/products'
 import { STATUS_MAP, REGION_MAP, profitRateColor } from '@/utils'
@@ -323,11 +358,20 @@ const matchLoading = ref(false)
 
 const photoTask = ref(null)
 const photoSearchSubmitting = ref(false)
+const syncImagesLoading = ref(false)
 const photoTaskRunning = computed(() => {
   if (!photoTask.value) return false
   return ['queued', 'dispatching', 'running', 'collecting', 'parsing', 'saving'].includes(photoTask.value.status)
 })
 const photoSearchBusy = computed(() => photoSearchSubmitting.value || photoTaskRunning.value)
+
+const productImages = computed(() => {
+  if (!product.value) return []
+  const urls = product.value.image_urls
+  if (Array.isArray(urls) && urls.length) return urls
+  if (product.value.main_image_url) return [product.value.main_image_url]
+  return []
+})
 
 const shopUrl = computed(() => {
   if (!product.value) return ''
@@ -518,6 +562,22 @@ async function retryPhotoSearch() {
   }
 }
 
+/** 将任务 raw_result 里的 OSS 图片 URL 写回 pdd_matches，并刷新列表 */
+async function syncPhotoTaskImages() {
+  if (!photoTask.value?.id) return
+  syncImagesLoading.value = true
+  try {
+    const result = await photoSearchApi.syncTaskImages(photoTask.value.id)
+    message.success(result?.updated != null ? `已更新 ${result.updated} 条（图片/链接）` : '同步完成')
+    const m = await pddApi.getMatches(route.params.id)
+    matches.value = m
+  } catch (e) {
+    message.error(e?.response?.data?.detail || e?.message || '同步失败')
+  } finally {
+    syncImagesLoading.value = false
+  }
+}
+
 function startPollingPhotoTask(taskId) {
   stopPollingPhotoTask()
   photoTaskPollTimer = setInterval(async () => {
@@ -564,6 +624,62 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.img-gallery { position: relative; }
+.product-carousel {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+}
+.product-carousel :deep(.slick-slide) {
+  text-align: center;
+}
+.product-carousel :deep(.slick-dots) {
+  bottom: 8px;
+}
+.product-carousel :deep(.slick-dots li button) {
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+}
+.product-carousel :deep(.slick-dots li.slick-active button) {
+  background: #1677ff;
+  width: 16px;
+  border-radius: 4px;
+}
+.carousel-slide {
+  padding: 0 4px;
+}
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s;
+}
+.carousel-arrow:hover {
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.carousel-arrow-left { left: 8px; }
+.carousel-arrow-right { right: 8px; }
+.img-counter {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin-top: 6px;
+}
 .img-empty {
   height: 200px; display: flex; align-items: center; justify-content: center;
   background: #fafafa; border-radius: 8px;
