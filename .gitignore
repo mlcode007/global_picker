@@ -17,6 +17,9 @@ build/
 .env.*
 !.env.example
 
+# 敏感信息文件
+db_info.txt
+
 # 数据库文件
 *.db
 *.sqlite3
