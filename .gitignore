@@ -1,0 +1,18 @@
+# Sensitive files
+db_info.txt
+*.pem
+*.key
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Artifacts
+artifacts/
