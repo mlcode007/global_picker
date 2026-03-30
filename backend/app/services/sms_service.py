@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, urlencode
 
 import httpx
+from sqlalchemy import func, literal_column
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -81,13 +82,16 @@ def send_sms_via_aliyun(phone: str, code: str) -> bool:
 
 def can_send_sms(db: Session, phone: str, purpose: str) -> tuple[bool, str]:
     """检查是否可以发送短信（频率限制）"""
-    cutoff = datetime.now(timezone.utc) - timedelta(seconds=settings.SMS_SEND_INTERVAL_SECONDS)
+    # 用数据库 NOW() 计算时间窗，与 created_at（DEFAULT CURRENT_TIMESTAMP）同一时钟，
+    # 避免 Python UTC 与 MySQL 会话时区不一致时，DATETIME 比较长期误判为「仍在 60 秒内」。
+    sec = int(settings.SMS_SEND_INTERVAL_SECONDS)
+    threshold = func.date_sub(func.now(), literal_column(f"INTERVAL {sec} SECOND"))
     recent = (
         db.query(SmsVerification)
         .filter(
             SmsVerification.phone == phone,
             SmsVerification.purpose == purpose,
-            SmsVerification.created_at >= cutoff,
+            SmsVerification.created_at >= threshold,
         )
         .first()
     )

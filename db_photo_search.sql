@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS `device_pool` (
 
 -- 初始化你的设备
 INSERT INTO `device_pool` (`device_id`, `device_name`, `device_type`, `android_version`, `screen_width`, `screen_height`)
-VALUES ('MNYHYHBQOZDQS89H', 'Redmi 21091116AC', 'real_phone', '12', 1080, 2400)
-ON DUPLICATE KEY UPDATE `device_name` = VALUES(`device_name`);
+VALUES ('120.55.50.221:10001', '阿里云手机', 'cloud_phone', '12', 720, 1280)
+ON DUPLICATE KEY UPDATE `device_name` = VALUES(`device_name`), `device_type` = VALUES(`device_type`);
 
 
 -- ------------------------------------------------------------

@@ -16,3 +16,6 @@ __pycache__/
 
 # Artifacts
 artifacts/
+changelog/
+
+.cursor/

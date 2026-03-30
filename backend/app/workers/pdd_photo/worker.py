@@ -33,7 +33,7 @@ from .result_parser import ResultParser
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DEVICE_SERIAL = "101.37.165.50:100"
+DEFAULT_DEVICE_SERIAL = "120.55.50.221:10001"
 DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
 
