@@ -21,9 +21,11 @@ from pathlib import Path
 
 import httpx
 
+from app.config import get_settings
 from app.database import SessionLocal
 from app.services import photo_search_service
 from .adb_client import AdbClient
+from .link_extractor import fill_product_links_from_detail_taps
 from .artifact_manager import ArtifactManager
 from .device_manager import DeviceManager
 from .pdd_photo_flow import FlowContext, FlowError, PddPhotoFlow
@@ -31,7 +33,7 @@ from .result_parser import ResultParser
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DEVICE_SERIAL = "101.37.165.50:100"
+DEFAULT_DEVICE_SERIAL = "120.55.50.221:10001"
 DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
 
@@ -138,10 +140,22 @@ def execute_photo_search_task(task_id: int):
 
         candidates = parse_result.candidates[:MAX_CANDIDATES]
 
-        # ── 5a. 从截图裁剪商品主图 ─────────────────────────────
+        # ── 5a. 点进详情解析 goods_id → H5 商品链接（仍在结果页操作）──
+        if get_settings().PDD_EXTRACT_PRODUCT_LINKS and candidates:
+            adb_links = AdbClient(serial=device_serial)
+            adb_links.kill_uiautomator()
+            n_ok = fill_product_links_from_detail_taps(
+                adb_links, candidates, max_items=MAX_CANDIDATES,
+            )
+            photo_search_service.save_action_log(
+                db, task_id, device_serial, "EXTRACT_LINKS",
+                f"商品链接解析成功 {n_ok}/{len(candidates)}",
+            )
+
+        # ── 5b. 从截图裁剪商品主图并上传 OSS ──────────────────
         screenshot_path = ctx.result_screenshots[0] if ctx.result_screenshots else None
         if screenshot_path:
-            _crop_candidate_images(candidates, screenshot_path, artifacts)
+            _crop_candidate_images(candidates, screenshot_path, task_id)
 
         raw_json = {
             "candidates": [
@@ -151,6 +165,8 @@ def execute_photo_search_task(task_id: int):
                     "sales_volume": c.sales_volume,
                     "shop_name": c.shop_name,
                     "image_url": c.image_url,
+                    "product_url": c.product_url,
+                    "pdd_goods_id": c.pdd_goods_id,
                     "position": c.position,
                 }
                 for c in candidates
@@ -233,11 +249,12 @@ def execute_photo_search_task(task_id: int):
 def _crop_candidate_images(
     candidates: list,
     screenshot_path: str,
-    artifacts: "ArtifactManager",
+    task_id: int,
 ) -> None:
-    """从结果页截图中按 bounds 裁剪每个候选商品的主图，保存为 artifact。"""
+    """从结果页截图中按 bounds 裁剪每个候选商品的主图，上传到阿里云 OSS。"""
     try:
         from PIL import Image
+        import io as _io
     except ImportError:
         logger.warning("Pillow not installed, skipping image crop")
         return
@@ -252,6 +269,8 @@ def _crop_candidate_images(
         logger.warning("Failed to open screenshot: %s", e)
         return
 
+    from app.services.oss_service import upload_image_bytes
+
     for c in candidates:
         if not c.image_bounds:
             continue
@@ -262,21 +281,20 @@ def _crop_candidate_images(
             cropped = img.crop((x1, y1, x2, y2))
             if cropped.mode in ("RGBA", "P", "LA"):
                 cropped = cropped.convert("RGB")
-            crop_filename = f"product_img_{c.position}.jpg"
-            crop_path = artifacts.screenshots_dir / crop_filename
-            cropped.save(str(crop_path), "JPEG", quality=90)
-            # 转换为 HTTP 可访问的相对路径（相对于 artifacts 根目录）
-            from app.workers.pdd_photo.artifact_manager import BASE_ARTIFACTS_DIR
-            try:
-                rel = crop_path.relative_to(BASE_ARTIFACTS_DIR.parent)
-                c.image_url = f"/artifacts/{rel.as_posix()}"
-            except ValueError:
-                c.image_url = str(crop_path)
-            logger.info(
-                "Cropped product image for position %d: %s", c.position, c.image_url
-            )
+
+            buf = _io.BytesIO()
+            cropped.save(buf, "JPEG", quality=90)
+            img_bytes = buf.getvalue()
+
+            object_key = f"pdd_photo/task_{task_id}/product_img_{c.position}.jpg"
+            oss_url = upload_image_bytes(img_bytes, object_key)
+            if oss_url:
+                c.image_url = oss_url
+                logger.info("Uploaded product image pos=%d -> %s", c.position, oss_url)
+            else:
+                logger.warning("OSS upload returned None for pos=%d", c.position)
         except Exception as e:
-            logger.warning("Failed to crop image for position %d: %s", c.position, e)
+            logger.warning("Failed to crop/upload image for position %d: %s", c.position, e)
 
 
 def _download_image(url: str, task_id: int) -> str | None:

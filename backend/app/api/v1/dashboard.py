@@ -4,6 +4,8 @@ from sqlalchemy import func, case, and_, distinct
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.core.security import get_current_user
+from app.models.user import User
 from app.schemas.common import Response
 from app.models import (
     Product, CrawlTask, PddMatch, ProfitRecord,
@@ -14,13 +16,19 @@ router = APIRouter(prefix="/dashboard", tags=["看板"])
 
 
 @router.get("/stats")
-def get_dashboard_stats(db: Session = Depends(get_db)):
+def get_dashboard_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     now = datetime.now()
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     week_start = today_start - timedelta(days=today_start.weekday())
 
-    # ── 商品统计 ──
-    product_base = db.query(Product).filter(Product.is_deleted == 0)
+    # ── 商品统计（按用户隔离）──
+    product_base = db.query(Product).filter(
+        Product.is_deleted == 0,
+        Product.user_id == current_user.id,
+    )
     total_products = product_base.count()
     today_products = product_base.filter(Product.created_at >= today_start).count()
     week_products = product_base.filter(Product.created_at >= week_start).count()
@@ -42,23 +50,26 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     product_by_region = {r: c for r, c in region_rows}
 
     # ── 采集任务统计 ──
+    user_product_ids = product_base.with_entities(Product.crawl_task_id)
     crawl_status_rows = (
         db.query(CrawlTask.status, func.count())
+        .filter(CrawlTask.id.in_(user_product_ids))
         .group_by(CrawlTask.status)
         .all()
     )
     crawl_by_status = {s: c for s, c in crawl_status_rows}
 
-    # ── 拼多多比价统计 ──
-    total_matches = db.query(PddMatch).count()
-    confirmed_matches = db.query(PddMatch).filter(PddMatch.is_confirmed == 1).count()
+    # ── 拼多多比价统计（按用户商品）──
+    user_pid_sub = product_base.with_entities(Product.id).subquery()
+    match_base = db.query(PddMatch).filter(PddMatch.product_id.in_(db.query(user_pid_sub)))
+    total_matches = match_base.count()
+    confirmed_matches = match_base.filter(PddMatch.is_confirmed == 1).count()
     products_with_match = (
-        db.query(func.count(distinct(PddMatch.product_id)))
-        .scalar()
+        match_base.with_entities(func.count(distinct(PddMatch.product_id))).scalar()
     )
 
     match_source_rows = (
-        db.query(PddMatch.match_source, func.count())
+        match_base.with_entities(PddMatch.match_source, func.count())
         .group_by(PddMatch.match_source)
         .all()
     )
@@ -70,6 +81,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
             ProfitRecord.product_id,
             func.max(ProfitRecord.id).label("max_id"),
         )
+        .filter(ProfitRecord.product_id.in_(db.query(user_pid_sub)))
         .group_by(ProfitRecord.product_id)
         .subquery()
     )
@@ -95,6 +107,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     # ── 拍照购任务统计 ──
     photo_status_rows = (
         db.query(PhotoSearchTask.status, func.count())
+        .filter(PhotoSearchTask.product_id.in_(db.query(user_pid_sub)))
         .group_by(PhotoSearchTask.status)
         .all()
     )
@@ -102,7 +115,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     photo_total = sum(photo_by_status.values())
     photo_success = photo_by_status.get("success", 0)
 
-    # ── 设备统计 ──
+    # ── 设备统计（公共资源，不按用户隔离）──
     device_status_rows = (
         db.query(Device.status, func.count())
         .group_by(Device.status)

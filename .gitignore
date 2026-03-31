@@ -19,6 +19,8 @@ build/
 
 # 敏感信息文件
 db_info.txt
+*.pem
+*.key
 
 # 数据库文件
 *.db
@@ -42,3 +44,5 @@ logs/
 
 # 诊断
 diagnosis/
+
+.cursor/

@@ -41,6 +41,13 @@ class CandidateItem:
     bounds_y: int = 0
     # 商品主图在截图中的裁剪坐标 (x1, y1, x2, y2)
     image_bounds: Optional[tuple] = None
+    # 标题栏中心 X，用于同排左右两列卡片与 card_bounds 对齐
+    ref_center_x: Optional[int] = None
+    # 可点击商品卡片外框 (x1,y1,x2,y2)，用于点击进入详情取链
+    card_bounds: Optional[tuple] = None
+    # 详情页解析出的 goods_id 与 H5 链接
+    pdd_goods_id: str = ""
+    product_url: str = ""
 
     @property
     def is_valid(self) -> bool:
@@ -79,6 +86,9 @@ class ResultParser:
         for i, c in enumerate(result.candidates):
             c.position = i + 1
 
+        if xml_paths and result.candidates:
+            self._assign_card_bounds(xml_paths[0], result.candidates)
+
         logger.info("Parsed %d unique candidates from %d XML files",
                      len(result.candidates), len(xml_paths))
         return result
@@ -115,6 +125,64 @@ class ResultParser:
         candidates = self._extract_product_cards(nodes)
         self._assign_image_bounds(candidates, product_image_bounds)
         return candidates
+
+    def _find_product_card_bounds(self, root: ET.Element) -> list[tuple]:
+        """搜图结果页：含 tv_title 的可点击大 FrameLayout 即商品卡片。"""
+        cards: list[tuple] = []
+        for node in root.iter("node"):
+            if node.get("clickable") != "true":
+                continue
+            cls = node.get("class", "")
+            if "FrameLayout" not in cls:
+                continue
+            bounds = self._parse_bounds(node.get("bounds", ""))
+            if not bounds:
+                continue
+            w, h = bounds[2] - bounds[0], bounds[3] - bounds[1]
+            if w < 250 or h < 250:
+                continue
+            has_title = any(
+                "tv_title" in ch.get("resource-id", "")
+                for ch in node.iter("node")
+            )
+            if has_title:
+                cards.append(bounds)
+        cards.sort(key=lambda b: (b[1], b[0]))
+        return cards
+
+    def _assign_card_bounds(self, xml_path: str, candidates: list[CandidateItem]) -> None:
+        try:
+            tree = ET.parse(xml_path)
+        except ET.ParseError:
+            return
+        cards = self._find_product_card_bounds(tree.getroot())
+        if not cards:
+            return
+        used: set[int] = set()
+        order = sorted(
+            range(len(candidates)),
+            key=lambda i: (candidates[i].bounds_y, candidates[i].ref_center_x or 0),
+        )
+        for i in order:
+            item = candidates[i]
+            best_j = None
+            best_dist = float("inf")
+            for j, b in enumerate(cards):
+                if j in used:
+                    continue
+                if not (b[1] - 30 <= item.bounds_y <= b[3] + 30):
+                    continue
+                card_cx = (b[0] + b[2]) // 2
+                if item.ref_center_x is not None:
+                    dist = abs(card_cx - item.ref_center_x)
+                else:
+                    dist = abs((b[1] + b[3]) // 2 - item.bounds_y)
+                if dist < best_dist:
+                    best_dist = dist
+                    best_j = j
+            if best_j is not None and best_dist < 400:
+                item.card_bounds = cards[best_j]
+                used.add(best_j)
 
     def _assign_image_bounds(
         self,
@@ -188,6 +256,8 @@ class ResultParser:
             for n in nearby:
                 if not item.title and self._looks_like_title(n):
                     item.title = n.text or n.content_desc
+                    if n.bounds:
+                        item.ref_center_x = (n.bounds[0] + n.bounds[2]) // 2
                     used.add(nodes.index(n) if n in nodes else -1)
 
             for n in nearby:

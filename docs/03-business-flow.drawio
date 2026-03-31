@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="核心业务流程" id="biz-flow">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="核心业务流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1a1a2e;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="550" y="20" width="400" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="TikTok 商品采集 + 拼多多拍照购比价 完整链路" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontColor=#666666;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="450" y="60" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 流程一：TikTok 商品采集 ========== -->
+        <mxCell id="flow1_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1700" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="flow1_title" value="流程一：TikTok 商品采集" style="text;html=1;strokeColor=none;fillColor=#1976d2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f1_s1" value="运营人员&#xa;导入 TikTok&#xa;商品链接" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="170" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s2" value="前端提交&#xa;批量导入 API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90caf9;strokeColor=#1565c0;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="230" y="175" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s3" value="创建 Product&#xa;+ CrawlTask&#xa;状态: queued" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#64b5f6;strokeColor=#0d47a1;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="400" y="165" width="130" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s4" value="TikTok Crawler&#xa;Playwright&#xa;启动 Chromium" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42a5f5;strokeColor=#0d47a1;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="170" width="140" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s5" value="访问 TikTok&#xa;商品页面&#xa;(代理+Cookie)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#546e7a;fontColor=#37474f;fontSize=11;fontFamily=PingFang SC;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="170" width="130" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s6" value="解析商品数据&#xa;标题/价格/图片&#xa;店铺/销量/评价" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="950" y="170" width="150" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s7" value="更新 products 表&#xa;CrawlTask → done" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#64b5f6;strokeColor=#0d47a1;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="165" width="140" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_s8" value="前端展示&#xa;商品列表&#xa;数据看板" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="175" width="120" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 1 arrows -->
+        <mxCell id="f1e1" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;" edge="1" parent="1" source="f1_s1" target="f1_s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e2" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;" edge="1" parent="1" source="f1_s2" target="f1_s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e3" value="调度" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;fontFamily=PingFang SC;fontSize=10;fontColor=#1976d2;" edge="1" parent="1" source="f1_s3" target="f1_s4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e4" value="HTTP" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#546e7a;fontFamily=PingFang SC;fontSize=10;fontColor=#546e7a;" edge="1" parent="1" source="f1_s4" target="f1_s5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e5" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;" edge="1" parent="1" source="f1_s5" target="f1_s6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e6" value="入库" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;fontFamily=PingFang SC;fontSize=10;fontColor=#1976d2;" edge="1" parent="1" source="f1_s6" target="f1_s7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1e7" value="轮询" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;dashed=1;fontFamily=PingFang SC;fontSize=10;fontColor=#1976d2;" edge="1" parent="1" source="f1_s7" target="f1_s8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 1 step numbers -->
+        <mxCell id="f1n1" value="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="60" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n2" value="2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="230" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n3" value="3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="400" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n4" value="4" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="580" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n5" value="5" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="770" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n6" value="6" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="950" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n7" value="7" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="f1n8" value="8" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="245" width="24" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- 分隔说明 -->
+        <mxCell id="sep_note" value="采集完成后，运营可在商品详情页发起拍照购，自动比价拼多多" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#666666;fontFamily=PingFang SC;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="500" y="375" width="500" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="sep_arrow" value="" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#999999;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="395" as="sourcePoint" />
+            <mxPoint x="750" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========== 流程二：拼多多拍照购 ========== -->
+        <mxCell id="flow2_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="1700" height="530" as="geometry" />
+        </mxCell>
+        <mxCell id="flow2_title" value="流程二：拼多多拍照购比价" style="text;html=1;strokeColor=none;fillColor=#ef6c00;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="430" width="260" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Row 1: 创建任务 → 调度设备 → 下载图片 → 推送到设备 -->
+        <mxCell id="f2_s1" value="运营点击&#xa;「拍照购」按钮" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="490" width="130" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s2" value="photo_search API&#xa;创建任务&#xa;状态: queued" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="240" y="485" width="140" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s3" value="Worker 线程启动&#xa;调度空闲设备&#xa;状态: dispatching" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff9800;strokeColor=#e65100;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="485" width="150" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s4" value="下载 TikTok&#xa;商品主图" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="630" y="490" width="130" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s5" value="ADB push 图片&#xa;到 Android 设备" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="810" y="490" width="140" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Row 2: 打开拼多多 → 拍照购 → 等待结果 → 截图 -->
+        <mxCell id="f2_s6" value="ADB 启动&#xa;拼多多 App&#xa;进入拍照购" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff9800;strokeColor=#e65100;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="610" width="130" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s7" value="选择相册图片&#xa;触发拍照搜索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="240" y="615" width="140" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s8" value="等待搜索结果&#xa;轮询 UI 状态" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7c6608;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="430" y="605" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s9" value="截图结果页&#xa;dump UI XML" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="630" y="615" width="130" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s10" value="解析候选商品&#xa;价格/标题/位置" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="810" y="615" width="150" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Row 3: 裁剪图片 → OSS上传 → 提取链接 → 入库 → 展示 -->
+        <mxCell id="f2_s11" value="裁剪候选&#xa;商品主图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="60" y="740" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s12" value="上传 OSS&#xa;获取 HTTPS URL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff9800;strokeColor=#e65100;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="740" width="140" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s13" value="点击详情页&#xa;提取 goods_id&#xa;拼接商品链接" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="420" y="733" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s14" value="写入 pdd_matches&#xa;图片URL + 价格&#xa;+ 商品链接" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffb74d;strokeColor=#e65100;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="610" y="730" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s15" value="释放设备&#xa;任务 → done" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="745" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s16" value="前端展示&#xa;比价结果&#xa;TikTok vs 拼多多" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="990" y="740" width="140" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_s17" value="导出 Excel&#xa;比价报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="745" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Row 1 arrows -->
+        <mxCell id="f2e1" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s1" target="f2_s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e2" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s2" target="f2_s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e3" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s3" target="f2_s4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e4" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s4" target="f2_s5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Row 1 → Row 2 -->
+        <mxCell id="f2e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f2_s5" target="f2_s6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="518" />
+              <mxPoint x="1000" y="580" />
+              <mxPoint x="190" y="580" />
+              <mxPoint x="190" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Row 2 arrows -->
+        <mxCell id="f2e6" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s6" target="f2_s7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e7" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s7" target="f2_s8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e8" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s8" target="f2_s9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e9" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s9" target="f2_s10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Row 2 → Row 3 -->
+        <mxCell id="f2e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f2_s10" target="f2_s11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="643" />
+              <mxPoint x="1000" y="710" />
+              <mxPoint x="180" y="710" />
+              <mxPoint x="180" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Row 3 arrows -->
+        <mxCell id="f2e11" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s11" target="f2_s12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e12" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s12" target="f2_s13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e13" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s13" target="f2_s14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e14" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="f2_s14" target="f2_s15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e15" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#1976d2;" edge="1" parent="1" source="f2_s15" target="f2_s16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2e16" style="endArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#c2185b;" edge="1" parent="1" source="f2_s16" target="f2_s17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 关键亮点说明 -->
+        <mxCell id="highlight_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#bdbdbd;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="970" width="1700" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="hl_title" value="系统亮点" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1a1a2e;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="60" y="978" width="120" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="hl1" value="自动化采集：Playwright 无头浏览器自动抓取 TikTok 商品数据，支持代理和 Cookie 管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1010" width="400" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="hl2" value="智能比价：ADB 控制云手机执行拼多多拍照购，自动截图解析获取比价数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontColor=#e65100;fontSize=11;fontFamily=PingFang SC;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1010" width="400" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="hl3" value="任务恢复：服务重启自动恢复中断任务，保证数据完整性" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#43a047;fontColor=#1b5e20;fontSize=11;fontFamily=PingFang SC;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="900" y="1010" width="340" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="hl4" value="云端存储：图片自动上传阿里云 OSS，CDN 加速访问" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=11;fontFamily=PingFang SC;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="1010" width="340" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="hl5" value="一键导出：支持 Excel 格式导出比价报告，方便汇报决策" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;fontColor=#880e4f;fontSize=11;fontFamily=PingFang SC;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1052" width="340" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

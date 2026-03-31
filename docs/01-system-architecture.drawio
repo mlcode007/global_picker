@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="系统整体架构" id="arch-overview">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Global Picker 系统整体架构" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1a1a2e;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="450" y="20" width="500" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="跨平台选品比价系统 | TikTok Shop vs 拼多多" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontColor=#666666;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="450" y="60" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 用户层 ========== -->
+        <mxCell id="layer_user" value="用户层" style="swimlane;startSize=28;fillColor=#e8eaf6;strokeColor=#5c6bc0;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#283593;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="user_icon" value="运营人员" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#e8eaf6;strokeColor=#5c6bc0;fontColor=#283593;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="layer_user">
+          <mxGeometry x="30" y="50" width="36" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="浏览器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#5c6bc0;fontColor=#1a237e;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_user">
+          <mxGeometry x="100" y="55" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="user_actions" value="商品导入 | 比价查看 | 数据导出" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#5c6bc0;fontFamily=PingFang SC;" vertex="1" parent="layer_user">
+          <mxGeometry x="60" y="130" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="eu1" style="endArrow=classic;html=1;rounded=1;strokeWidth=1;strokeColor=#5c6bc0;" edge="1" parent="layer_user" source="user_icon" target="browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 前端层 ========== -->
+        <mxCell id="layer_fe" value="前端应用" style="swimlane;startSize=28;fillColor=#e3f2fd;strokeColor=#1976d2;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#0d47a1;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="340" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_app" value="Vue 3 + Vite + Ant Design Vue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_fe">
+          <mxGeometry x="20" y="40" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_pages" value="数据看板 | 商品列表 | 商品详情 | 批量导入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontColor=#1565c0;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_fe">
+          <mxGeometry x="20" y="95" width="240" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_state" value="Pinia 状态管理 | Vue Router | Axios" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontColor=#1565c0;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_fe">
+          <mxGeometry x="20" y="145" width="240" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 后端 API 层 ========== -->
+        <mxCell id="layer_api" value="后端 API 服务" style="swimlane;startSize=28;fillColor=#e8f5e9;strokeColor=#43a047;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#1b5e20;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="110" width="520" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="fastapi" value="FastAPI 应用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="40" width="480" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="middleware" value="CORS | JWT 认证 | 静态文件服务 /artifacts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="90" width="480" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="api_routes" value="REST API 路由 /api/v1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="132" width="480" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="route_auth" value="认证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="174" width="68" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_products" value="商品" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="98" y="174" width="68" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_pdd" value="拼多多" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="176" y="174" width="68" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_photo" value="拍照购" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="254" y="174" width="68" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_profit" value="利润" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="332" y="174" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_export" value="导出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="392" y="174" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="route_dash" value="看板" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="452" y="174" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_layer" value="业务服务层" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="218" width="340" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="core_sec" value="安全核心&#xa;JWT + bcrypt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="380" y="214" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_detail" value="商品管理 | 拍照购 | 利润计算 | 汇率 | 导出 | 设备管理 | OSS | SMS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontColor=#2e7d32;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_api">
+          <mxGeometry x="20" y="262" width="480" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Worker 层 ========== -->
+        <mxCell id="layer_worker" value="异步任务 Worker" style="swimlane;startSize=28;fillColor=#fff3e0;strokeColor=#ef6c00;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#e65100;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="110" width="340" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_tiktok" value="TikTok 商品采集" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#ef6c00;fontColor=#e65100;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_worker">
+          <mxGeometry x="20" y="40" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_tk_detail" value="Playwright + Chromium | 代理/Cookie | 商品数据解析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_worker">
+          <mxGeometry x="20" y="86" width="300" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_pdd_title" value="拼多多拍照购" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#ef6c00;fontColor=#e65100;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_worker">
+          <mxGeometry x="20" y="138" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_pdd_detail" value="ADB 设备控制 | 截图裁剪 | UI XML 解析 | 结果入库" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_worker">
+          <mxGeometry x="20" y="184" width="300" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_features" value="线程调度 | 任务恢复 | 设备管理 | 商品链接提取" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_worker">
+          <mxGeometry x="20" y="236" width="300" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 数据存储层 ========== -->
+        <mxCell id="layer_data" value="数据存储" style="swimlane;startSize=28;fillColor=#fce4ec;strokeColor=#c2185b;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#880e4f;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="470" width="520" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql_db" value="MySQL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_data">
+          <mxGeometry x="20" y="40" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql_tables" value="products | pdd_matches | profit_records&#xa;users | photo_search_tasks | devices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;fontColor=#880e4f;fontSize=10;fontFamily=PingFang SC;" vertex="1" parent="layer_data">
+          <mxGeometry x="140" y="45" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="redis_db" value="Redis" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="layer_data">
+          <mxGeometry x="410" y="40" width="90" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="redis_note" value="缓存/会话" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#c2185b;fontFamily=PingFang SC;" vertex="1" parent="layer_data">
+          <mxGeometry x="400" y="110" width="110" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 外部系统层 ========== -->
+        <mxCell id="layer_ext" value="外部系统 / 第三方" style="swimlane;startSize=28;fillColor=#f3e5f5;strokeColor=#9c27b0;rounded=1;fontStyle=1;fontSize=13;fontFamily=PingFang SC;fontColor=#6a1b9a;swimlaneLine=0;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="470" width="340" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_tiktok" value="TikTok Shop 商品页" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=11;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="layer_ext">
+          <mxGeometry x="20" y="40" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_android" value="Android 设备 / 云手机 + 拼多多 App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=11;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="layer_ext">
+          <mxGeometry x="20" y="100" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_oss" value="阿里云 OSS (图片存储 CDN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=11;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="layer_ext">
+          <mxGeometry x="20" y="160" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_sms" value="阿里云短信服务 (SMS 验证)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=11;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="layer_ext">
+          <mxGeometry x="20" y="220" width="300" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 连接线 ========== -->
+        <!-- 用户 → 前端 -->
+        <mxCell id="c1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#5c6bc0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="layer_user" target="layer_fe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 前端 → API -->
+        <mxCell id="c2" value="HTTPS / REST" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976d2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=PingFang SC;fontSize=11;fontColor=#1976d2;" edge="1" parent="1" source="layer_fe" target="layer_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → 数据存储 -->
+        <mxCell id="c3" value="SQLAlchemy ORM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#c2185b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=PingFang SC;fontSize=11;fontColor=#c2185b;" edge="1" parent="1" source="layer_api" target="layer_data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → Worker (调度) -->
+        <mxCell id="c4" value="任务调度" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=PingFang SC;fontSize=11;fontColor=#ef6c00;" edge="1" parent="1" source="layer_api" target="layer_worker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker → 外部系统 -->
+        <mxCell id="c5" value="爬取/ADB" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9c27b0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=PingFang SC;fontSize=11;fontColor=#9c27b0;" edge="1" parent="1" source="layer_worker" target="layer_ext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker → 数据存储 (回写) -->
+        <mxCell id="c6" value="结果入库" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#c2185b;dashed=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=PingFang SC;fontSize=11;fontColor=#c2185b;" edge="1" parent="1" source="layer_worker" target="layer_data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 图例 -->
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#bdbdbd;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="570" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="图例" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#333333;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="578" width="60" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="实线 = 主同步链路" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#555555;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="608" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="虚线 = 异步回写 / 可选链路" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#555555;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="632" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="紫色虚框 = 外部第三方系统" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#555555;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="656" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="圆柱 = 数据库" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#555555;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="680" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" value="开发端口：前端 :5173 | 后端 :8000" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#555555;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="710" width="240" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

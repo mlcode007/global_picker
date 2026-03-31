@@ -1,0 +1,491 @@
+INFO:     Started server process [55739]
+INFO:     Waiting for application startup.
+2026-03-30 06:30:27,493 INFO app.main: Global Picker API 启动 (env=development)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53858 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54027 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54057 - "GET /api/v1/products/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "GET /api/v1/pdd/matches/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54059 - "GET /api/v1/profit/22/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54064 - "GET /api/v1/pdd/photo-search/tasks/product/22 HTTP/1.1" 200 OK
+2026-03-30 06:31:04,761 INFO app.services.photo_search_service: Created photo search task #63 for product #22
+INFO:     127.0.0.1:54140 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54152 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54170 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54178 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54189 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+2026-03-30 06:31:14,875 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:31:14,876 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:31:14,969 WARNING app.workers.pdd_photo.device_manager: Device 101.37.165.50:100 offline during acquire
+2026-03-30 06:31:14,978 INFO app.workers.pdd_photo.device_manager: Attempting to recover offline device 101.37.165.50:100 ...
+INFO:     127.0.0.1:54206 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54230 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54237 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54254 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54261 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54269 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+2026-03-30 06:31:24,995 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:31:24,996 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:31:25,022 INFO app.workers.pdd_photo.device_manager: Recovery attempt 1/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:54302 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54315 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54327 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54344 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54355 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54369 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+2026-03-30 06:31:37,032 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:31:37,032 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:31:37,058 INFO app.workers.pdd_photo.device_manager: Recovery attempt 2/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:54387 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+2026-03-30 06:31:39,062 WARNING app.workers.pdd_photo.device_manager: Device 101.37.165.50:100 still unreachable after 2 retries
+2026-03-30 06:31:39,094 WARNING app.workers.pdd_photo.device_manager: No available device after recovery attempt (preferred=101.37.165.50:100)
+INFO:     127.0.0.1:54401 - "GET /api/v1/pdd/photo-search/tasks/63 HTTP/1.1" 200 OK
+2026-03-30 06:33:06,583 INFO app.services.photo_search_service: Created photo search task #64 for product #22
+INFO:     127.0.0.1:55471 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+2026-03-30 06:33:06,698 INFO app.workers.pdd_photo.device_manager: Attempting to recover offline device 101.37.165.50:100 ...
+INFO:     127.0.0.1:55504 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55528 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55548 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55562 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55591 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+2026-03-30 06:33:16,705 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:33:16,705 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:33:16,738 INFO app.workers.pdd_photo.device_manager: Recovery attempt 1/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:55636 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55649 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55697 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55710 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55740 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55777 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+2026-03-30 06:33:28,750 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:33:28,751 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:33:28,773 INFO app.workers.pdd_photo.device_manager: Recovery attempt 2/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:55813 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+2026-03-30 06:33:30,775 WARNING app.workers.pdd_photo.device_manager: Device 101.37.165.50:100 still unreachable after 2 retries
+2026-03-30 06:33:30,801 WARNING app.workers.pdd_photo.device_manager: No available device after recovery attempt (preferred=101.37.165.50:100)
+INFO:     127.0.0.1:55825 - "GET /api/v1/pdd/photo-search/tasks/64 HTTP/1.1" 200 OK
+2026-03-30 06:35:13,823 INFO app.services.photo_search_service: Created photo search task #65 for product #22
+INFO:     127.0.0.1:56908 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+2026-03-30 06:35:13,968 INFO app.workers.pdd_photo.device_manager: Attempting to recover offline device 101.37.165.50:100 ...
+INFO:     127.0.0.1:56932 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56943 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56950 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56980 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+2026-03-30 06:35:23,978 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:35:23,979 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:35:24,010 INFO app.workers.pdd_photo.device_manager: Recovery attempt 1/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:56996 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57040 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57048 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57066 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57077 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+2026-03-30 06:35:36,020 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb connect 101.37.165.50:100
+2026-03-30 06:35:36,021 WARNING app.workers.pdd_photo.adb_client: ADB connect to 101.37.165.50:100:  timeout
+2026-03-30 06:35:36,050 INFO app.workers.pdd_photo.device_manager: Recovery attempt 2/2 for 101.37.165.50:100 failed, retrying...
+INFO:     127.0.0.1:57093 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+2026-03-30 06:35:38,057 WARNING app.workers.pdd_photo.device_manager: Device 101.37.165.50:100 still unreachable after 2 retries
+2026-03-30 06:35:38,084 WARNING app.workers.pdd_photo.device_manager: No available device after recovery attempt (preferred=101.37.165.50:100)
+INFO:     127.0.0.1:57109 - "GET /api/v1/pdd/photo-search/tasks/65 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-30 06:36:56,974 INFO app.main: Global Picker API 关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [55739]
+INFO:     Started server process [57750]
+INFO:     Waiting for application startup.
+2026-03-30 06:37:00,004 INFO app.main: Global Picker API 启动 (env=development)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57861 - "GET /api/v1/products/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57862 - "GET /api/v1/pdd/matches/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57863 - "GET /api/v1/profit/22/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57870 - "GET /api/v1/pdd/photo-search/tasks/product/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57979 - "GET /health HTTP/1.1" 200 OK
+2026-03-30 06:37:56,187 INFO app.services.photo_search_service: Created photo search task #66 for product #22
+INFO:     127.0.0.1:58276 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+2026-03-30 06:37:56,555 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+2026-03-30 06:37:56,623 INFO app.workers.pdd_photo.device_manager: Acquired device 120.55.50.221:10001 for task 66
+2026-03-30 06:37:56,717 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:58328 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:37:58,994 INFO app.workers.pdd_photo.device_manager: Device 120.55.50.221:10001 warmed up
+2026-03-30 06:38:00,108 INFO httpx: HTTP Request: GET https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/85a088e2b57343b587c6f95ea905dd70~tplv-aphluv4xwc-crop-webp:800:800.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my2&from=2378011839 "HTTP/1.1 200 OK"
+2026-03-30 06:38:00,266 INFO app.workers.pdd_photo.worker: Downloaded image to /var/folders/jk/t6r45v7559df9rz223rvyk_40000gn/T/gp_pdd_66_mhuwyiut.webp (26148 bytes)
+INFO:     127.0.0.1:58346 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:38:00,357 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+2026-03-30 06:38:01,934 INFO app.workers.pdd_photo.pdd_photo_flow: Screen size: 720x1280
+2026-03-30 06:38:02,208 INFO app.workers.pdd_photo.pdd_photo_flow: Granted storage/camera permissions to PDD
+INFO:     127.0.0.1:58400 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58433 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58445 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58467 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:38:10,145 INFO app.workers.pdd_photo.pdd_photo_flow: Sent image to PDD via Intent SEND: Starting: Intent { act=android.intent.action.SEND typ=image/jpeg flg=0x1 cmp=com.xunmeng.pinduoduo/.splash.link.AppLinkActivity (has extras) } (content_id=21)
+INFO:     127.0.0.1:58490 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58502 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:38:13,389 INFO app.workers.pdd_photo.pdd_photo_flow: PDD is in foreground: .activity.NewPageMaskActivity
+INFO:     127.0.0.1:58519 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58544 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58562 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58582 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58611 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58625 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58648 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58677 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58712 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58726 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58755 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58770 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58787 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58810 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58817 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58834 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58853 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58869 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58889 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58924 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58949 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58968 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58989 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59003 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:39:00,774 WARNING app.workers.pdd_photo.adb_client: ADB command timeout: adb -s 120.55.50.221:10001 shell uiautomator dump /sdcard/gp_ui_dump.xml
+2026-03-30 06:39:01,183 ERROR app.workers.pdd_photo.adb_client: uiautomator dump failed: timeout
+INFO:     127.0.0.1:59017 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59041 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59051 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:39:07,133 INFO app.workers.pdd_photo.pdd_photo_flow: Price nodes detected (10), treating as result page
+INFO:     127.0.0.1:59071 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59098 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59108 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59126 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:39:15,795 INFO app.workers.pdd_photo.result_parser: Parsed 2 unique candidates from 1 XML files
+2026-03-30 06:39:15,853 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:59165 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+2026-03-30 06:39:16,935 ERROR app.services.oss_service: OSS upload failed [pdd_photo/task_66/product_img_1.jpg]: OSS 配置不完整，请检查 OSS_ACCESS_KEY_ID / OSS_ACCESS_KEY_SECRET / OSS_ENDPOINT
+2026-03-30 06:39:16,935 WARNING app.workers.pdd_photo.worker: OSS upload returned None for pos=1
+2026-03-30 06:39:16,935 ERROR app.services.oss_service: OSS upload failed [pdd_photo/task_66/product_img_2.jpg]: OSS 配置不完整，请检查 OSS_ACCESS_KEY_ID / OSS_ACCESS_KEY_SECRET / OSS_ENDPOINT
+2026-03-30 06:39:16,935 WARNING app.workers.pdd_photo.worker: OSS upload returned None for pos=2
+2026-03-30 06:39:17,055 INFO app.services.photo_search_service: Saved 2 new matches, updated 0 existing rows for product #22
+2026-03-30 06:39:17,145 INFO app.workers.pdd_photo.worker: Task #66 completed: 2 candidates found, 2 saved
+2026-03-30 06:39:17,263 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:59188 - "GET /api/v1/pdd/photo-search/tasks/66 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59191 - "GET /api/v1/pdd/matches/22 HTTP/1.1" 200 OK
+2026-03-30 06:39:32,510 INFO app.services.photo_search_service: Created photo search task #67 for product #22
+INFO:     127.0.0.1:59301 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+2026-03-30 06:39:32,683 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+2026-03-30 06:39:32,745 INFO app.workers.pdd_photo.device_manager: Acquired device 120.55.50.221:10001 for task 67
+2026-03-30 06:39:32,846 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:59355 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:39:35,336 INFO app.workers.pdd_photo.device_manager: Device 120.55.50.221:10001 warmed up
+2026-03-30 06:39:36,483 INFO httpx: HTTP Request: GET https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/85a088e2b57343b587c6f95ea905dd70~tplv-aphluv4xwc-crop-webp:800:800.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my2&from=2378011839 "HTTP/1.1 200 OK"
+2026-03-30 06:39:36,498 INFO app.workers.pdd_photo.worker: Downloaded image to /var/folders/jk/t6r45v7559df9rz223rvyk_40000gn/T/gp_pdd_67_3ek2626j.webp (26148 bytes)
+2026-03-30 06:39:36,595 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:59383 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:39:38,128 INFO app.workers.pdd_photo.pdd_photo_flow: Screen size: 720x1280
+2026-03-30 06:39:38,390 INFO app.workers.pdd_photo.pdd_photo_flow: Granted storage/camera permissions to PDD
+INFO:     127.0.0.1:59438 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59475 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59489 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59510 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59532 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:39:46,619 INFO app.workers.pdd_photo.pdd_photo_flow: Sent image to PDD via Intent SEND: Starting: Intent { act=android.intent.action.SEND typ=image/jpeg flg=0x1 cmp=com.xunmeng.pinduoduo/.splash.link.AppLinkActivity (has extras) } (content_id=28)
+INFO:     127.0.0.1:59545 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:39:49,823 INFO app.workers.pdd_photo.pdd_photo_flow: PDD is in foreground: .activity.NewPageMaskActivity
+INFO:     127.0.0.1:59560 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59585 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59604 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59625 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59648 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59667 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59680 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59700 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59725 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59752 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59784 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59801 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59824 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59851 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59867 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59881 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59901 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59918 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59943 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59969 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59989 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60002 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60038 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60062 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60077 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60101 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60114 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60131 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60153 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60162 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60194 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60210 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60232 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60253 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60277 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60295 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60309 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60333 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60350 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60367 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60390 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:41:10,623 INFO app.workers.pdd_photo.pdd_photo_flow: Result page detected after 18 iterations
+INFO:     127.0.0.1:60413 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60425 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60470 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:41:16,794 INFO app.workers.pdd_photo.result_parser: Parsed 2 unique candidates from 1 XML files
+2026-03-30 06:41:16,850 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:60488 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:41:20,402 INFO app.workers.pdd_photo.link_extractor: PDD goods_id pos=1 -> 900238740703
+INFO:     127.0.0.1:60505 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60524 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60532 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:41:25,262 INFO app.workers.pdd_photo.link_extractor: PDD goods_id pos=2 -> 841568491409
+INFO:     127.0.0.1:60562 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+2026-03-30 06:41:27,040 ERROR app.services.oss_service: OSS upload failed [pdd_photo/task_67/product_img_1.jpg]: OSS 配置不完整，请检查 OSS_ACCESS_KEY_ID / OSS_ACCESS_KEY_SECRET / OSS_ENDPOINT
+2026-03-30 06:41:27,041 WARNING app.workers.pdd_photo.worker: OSS upload returned None for pos=1
+2026-03-30 06:41:27,041 ERROR app.services.oss_service: OSS upload failed [pdd_photo/task_67/product_img_2.jpg]: OSS 配置不完整，请检查 OSS_ACCESS_KEY_ID / OSS_ACCESS_KEY_SECRET / OSS_ENDPOINT
+2026-03-30 06:41:27,041 WARNING app.workers.pdd_photo.worker: OSS upload returned None for pos=2
+2026-03-30 06:41:27,152 INFO app.services.photo_search_service: Saved 2 new matches, updated 0 existing rows for product #22
+2026-03-30 06:41:27,238 INFO app.workers.pdd_photo.worker: Task #67 completed: 2 candidates found, 2 saved
+2026-03-30 06:41:27,355 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+INFO:     127.0.0.1:60591 - "GET /api/v1/pdd/photo-search/tasks/67 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60594 - "GET /api/v1/pdd/matches/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60630 - "DELETE /api/v1/pdd/matches/109 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60644 - "DELETE /api/v1/pdd/matches/110 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60722 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55124 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53827 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53873 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53927 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53967 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54026 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54026 - "POST /api/v1/sessions/sync HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54204 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54475 - "GET /api/v1/sessions/full HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54475 - "POST /api/v1/sessions/sync HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54475 - "POST /api/v1/sessions/sync HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54475 - "POST /api/v1/sessions/sync HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-31 01:35:12,391 INFO app.main: Global Picker API 关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [57750]
+INFO:     Started server process [26874]
+INFO:     Waiting for application startup.
+2026-03-31 01:35:16,576 INFO app.main: Global Picker API 启动 (env=development)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57597 - "GET /api/v1/dashboard/stats HTTP/1.1" 401 Unauthorized
+2026-03-31 01:35:26,682 WARNING app.services.sms_service: 阿里云短信未配置，跳过实际发送，验证码: 15801048526 -> 359467
+INFO:     127.0.0.1:57693 - "POST /api/v1/auth/sms/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57721 - "POST /api/v1/auth/sms/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57727 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-31 02:41:57,190 INFO app.main: Global Picker API 关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26874]
+INFO:     Started server process [38640]
+INFO:     Waiting for application startup.
+2026-03-31 02:42:00,489 INFO app.main: Global Picker API 启动 (env=development)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50302 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50304 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50330 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50383 - "GET /api/v1/products/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50386 - "GET /api/v1/profit/22/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50385 - "GET /api/v1/pdd/matches/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50392 - "GET /api/v1/pdd/photo-search/tasks/product/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50417 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50430 - "GET /api/v1/settings/crawl HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50743 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50871 - "POST /api/v1/auth/sms/send HTTP/1.1" 400 Bad Request
+2026-03-31 02:43:06,604 INFO httpx: HTTP Request: GET https://dysmsapi.aliyuncs.com/?AccessKeyId=LTAI5tAUPGCuAt5WJC9MELxp&Action=SendSms&Format=JSON&PhoneNumbers=13641206107&RegionId=cn-hangzhou&SignName=%E6%96%B0%E4%B9%A1%E5%B8%82%E7%89%A7%E6%96%B0%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF&SignatureMethod=HMAC-SHA1&SignatureNonce=e7c381b8-0125-48ff-bca7-5bc7e961fb2f&SignatureVersion=1.0&TemplateCode=SMS_150181834&TemplateParam=%7B%22code%22%3A+%22444144%22%7D&Timestamp=2026-03-30T18%3A43%3A06Z&Version=2017-05-25&Signature=Rcuq9PMAYVbVJ4xKdzSlX7GLTMA%3D "HTTP/1.1 200 OK"
+2026-03-31 02:43:06,610 INFO app.services.sms_service: 短信发送成功: 13641206107
+INFO:     127.0.0.1:50973 - "POST /api/v1/auth/sms/send HTTP/1.1" 200 OK
+2026-03-31 02:44:09,299 INFO httpx: HTTP Request: GET https://dysmsapi.aliyuncs.com/?AccessKeyId=LTAI5tAUPGCuAt5WJC9MELxp&Action=SendSms&Format=JSON&PhoneNumbers=19148952974&RegionId=cn-hangzhou&SignName=%E6%96%B0%E4%B9%A1%E5%B8%82%E7%89%A7%E6%96%B0%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF&SignatureMethod=HMAC-SHA1&SignatureNonce=c00a8d62-7ffc-407b-8b2b-b651b6937234&SignatureVersion=1.0&TemplateCode=SMS_150181834&TemplateParam=%7B%22code%22%3A+%22879926%22%7D&Timestamp=2026-03-30T18%3A44%3A08Z&Version=2017-05-25&Signature=ruzp2gT0wmnzVyAY5eP%2FSO%2FPhjM%3D "HTTP/1.1 200 OK"
+2026-03-31 02:44:09,304 INFO app.services.sms_service: 短信发送成功: 19148952974
+INFO:     127.0.0.1:51633 - "POST /api/v1/auth/sms/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53379 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53399 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53416 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54451 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54601 - "POST /api/v1/auth/sms/send HTTP/1.1" 429 Too Many Requests
+INFO:     127.0.0.1:54717 - "POST /api/v1/auth/sms/send HTTP/1.1" 429 Too Many Requests
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-31 02:53:25,635 INFO app.main: Global Picker API 关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [38640]
+INFO:     Started server process [40469]
+INFO:     Waiting for application startup.
+2026-03-31 02:53:29,805 INFO app.main: Global Picker API 启动 (env=development)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-31 02:53:44,182 INFO httpx: HTTP Request: GET https://dysmsapi.aliyuncs.com/?AccessKeyId=LTAI5tAUPGCuAt5WJC9MELxp&Action=SendSms&Format=JSON&PhoneNumbers=19148952974&RegionId=cn-hangzhou&SignName=%E6%96%B0%E4%B9%A1%E5%B8%82%E7%89%A7%E6%96%B0%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF&SignatureMethod=HMAC-SHA1&SignatureNonce=b4bab360-a91f-4b86-bdb2-676ba0a8dafe&SignatureVersion=1.0&TemplateCode=SMS_150181834&TemplateParam=%7B%22code%22%3A+%22460621%22%7D&Timestamp=2026-03-30T18%3A53%3A43Z&Version=2017-05-25&Signature=ud6rhqHkYfJ3d02RLO5Wq7vub3E%3D "HTTP/1.1 200 OK"
+2026-03-31 02:53:44,189 INFO app.services.sms_service: 短信发送成功: 19148952974
+INFO:     127.0.0.1:58216 - "POST /api/v1/auth/sms/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58489 - "POST /api/v1/auth/register HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58502 - "GET /api/v1/dashboard/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58577 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58615 - "GET /api/v1/settings/crawl HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58626 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51586 - "GET /api/v1/settings/crawl HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51608 - "POST /api/v1/products/batch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51614 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51654 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+2026-03-31 03:08:20,970 INFO app.workers.tiktok_crawler: 已注入 12 条 TikTok Cookie
+INFO:     127.0.0.1:51681 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51732 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51767 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51809 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51838 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+2026-03-31 03:08:33,847 WARNING app.workers.tiktok_crawler: crawl task https://shop.tiktok.com/view/product/1732462752590103706?region=SG&locale=zh-CN&source=agency 触发 CAPTCHA，等待用户在浏览器窗口中手动通过（120s 超时）
+INFO:     127.0.0.1:51872 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51915 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51958 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52029 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+2026-03-31 03:08:42,241 INFO app.workers.tiktok_crawler: CAPTCHA 已手动通过，继续采集
+2026-03-31 03:08:42,403 INFO app.workers.tiktok_crawler: Layer0 命中：Remix loaderData (fields=14)
+2026-03-31 03:08:43,662 INFO app.workers.tiktok_crawler: crawl task 32 done (product_id=1732462752590103706)
+INFO:     127.0.0.1:52047 - "GET /api/v1/tasks?ids=32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52069 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52109 - "GET /api/v1/products/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52111 - "GET /api/v1/pdd/matches/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52113 - "GET /api/v1/profit/23/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52117 - "GET /api/v1/pdd/photo-search/tasks/product/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52231 - "GET /api/v1/products?page=1&page_size=20&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52480 - "GET /api/v1/products/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52481 - "GET /api/v1/pdd/matches/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52482 - "GET /api/v1/profit/23/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52486 - "GET /api/v1/pdd/photo-search/tasks/product/23 HTTP/1.1" 200 OK
+2026-03-31 03:09:26,314 INFO app.services.photo_search_service: Created photo search task #68 for product #23
+INFO:     127.0.0.1:52495 - "POST /api/v1/pdd/photo-search/tasks HTTP/1.1" 200 OK
+Python(43198) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:26,697 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+Python(43199) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:26,758 INFO app.workers.pdd_photo.device_manager: Acquired device 120.55.50.221:10001 for task 68
+Python(43200) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:26,845 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+Python(43201) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43202) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43203) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43204) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43205) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43206) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43207) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43208) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43209) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43210) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52547 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43211) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:28,998 INFO app.workers.pdd_photo.device_manager: Device 120.55.50.221:10001 warmed up
+2026-03-31 03:09:29,520 INFO httpx: HTTP Request: GET https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/bd65f2c463e1493ebdc2a4f1b3de621f~tplv-aphluv4xwc-crop-webp:1024:1024.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my3&from=2378011839 "HTTP/1.1 200 OK"
+2026-03-31 03:09:29,533 INFO app.workers.pdd_photo.worker: Downloaded image to /var/folders/jk/t6r45v7559df9rz223rvyk_40000gn/T/gp_pdd_68_izu7srct.webp (32398 bytes)
+Python(43212) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:29,621 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+Python(43213) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43214) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43215) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43216) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43217) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52603 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43223) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43224) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43225) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43226) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:31,207 INFO app.workers.pdd_photo.pdd_photo_flow: Screen size: 720x1280
+Python(43227) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43228) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43229) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43230) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:31,492 INFO app.workers.pdd_photo.pdd_photo_flow: Granted storage/camera permissions to PDD
+Python(43231) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43232) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52651 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43233) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43234) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43235) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43236) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52680 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43243) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43250) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43251) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43252) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52726 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43254) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43255) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52761 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43256) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:39,499 INFO app.workers.pdd_photo.pdd_photo_flow: Sent image to PDD via Intent SEND: Starting: Intent { act=android.intent.action.SEND typ=image/jpeg flg=0x1 cmp=com.xunmeng.pinduoduo/.splash.link.AppLinkActivity (has extras) } (content_id=35)
+INFO:     127.0.0.1:52788 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52831 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43272) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:42,592 INFO app.workers.pdd_photo.pdd_photo_flow: PDD is in foreground: .activity.NewPageActivity
+Python(43273) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43274) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43279) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43280) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52873 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43284) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43285) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52900 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43295) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43296) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:47,736 INFO app.workers.pdd_photo.pdd_photo_flow: Result page detected after 1 iterations
+INFO:     127.0.0.1:52938 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43299) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43300) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43302) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43303) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43304) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:52977 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43312) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43313) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43314) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53002 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43317) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43318) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43319) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43324) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43325) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:54,079 INFO app.workers.pdd_photo.result_parser: Parsed 2 unique candidates from 1 XML files
+Python(43328) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:54,158 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+Python(43329) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53055 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43334) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53074 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43342) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43344) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:09:57,692 INFO app.workers.pdd_photo.link_extractor: PDD goods_id pos=1 -> 764651842484
+Python(43345) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53102 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43347) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53133 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43357) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53155 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+Python(43358) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+2026-03-31 03:10:02,651 INFO app.workers.pdd_photo.link_extractor: PDD goods_id pos=2 -> 889360094812
+Python(43359) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53181 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53223 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53241 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+2026-03-31 03:10:10,032 INFO app.services.oss_service: OSS upload OK: pdd_photo/task_68/product_img_1.jpg -> https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_68/product_img_1.jpg
+2026-03-31 03:10:10,032 INFO app.workers.pdd_photo.worker: Uploaded product image pos=1 -> https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_68/product_img_1.jpg
+2026-03-31 03:10:10,064 INFO app.services.oss_service: OSS upload OK: pdd_photo/task_68/product_img_2.jpg -> https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_68/product_img_2.jpg
+2026-03-31 03:10:10,064 INFO app.workers.pdd_photo.worker: Uploaded product image pos=2 -> https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_68/product_img_2.jpg
+2026-03-31 03:10:10,178 INFO app.services.photo_search_service: Saved 2 new matches, updated 0 existing rows for product #23
+2026-03-31 03:10:10,260 INFO app.workers.pdd_photo.worker: Task #68 completed: 2 candidates found, 2 saved
+Python(43373) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+INFO:     127.0.0.1:53263 - "GET /api/v1/pdd/photo-search/tasks/68 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53280 - "GET /api/v1/pdd/matches/23 HTTP/1.1" 200 OK
+2026-03-31 03:10:12,400 INFO app.workers.pdd_photo.adb_client: ADB connected to 120.55.50.221:10001
+Python(43379) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(43380) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.

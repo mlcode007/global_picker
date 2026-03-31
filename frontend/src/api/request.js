@@ -1,9 +1,19 @@
 import axios from 'axios'
 import { message } from 'ant-design-vue'
 
+const TOKEN_KEY = 'gp_token'
+
 const http = axios.create({
   baseURL: '/api/v1',
   timeout: 15000,
+})
+
+http.interceptors.request.use(config => {
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
 
 http.interceptors.response.use(
@@ -19,7 +29,17 @@ http.interceptors.response.use(
     const status = err.response?.status
     const serverMsg = err.response?.data?.message || err.response?.data?.detail
 
-    // 409 重复冲突：不弹全局错误，抛出带 status 的 Error 让调用方处理
+    if (status === 401) {
+      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem('gp_user')
+      const currentPath = window.location.pathname
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        message.warning('登录已过期，请重新登录')
+        window.location.href = '/login'
+      }
+      return Promise.reject(err)
+    }
+
     if (status === 409) {
       const e = new Error(serverMsg || '资源已存在')
       e.status = 409

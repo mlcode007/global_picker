@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="技术栈总览" id="tech-stack">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Global Picker 技术栈总览" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1a1a2e;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="400" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 前端技术栈 ========== -->
+        <mxCell id="fe_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_title" value="前端 Frontend" style="text;html=1;strokeColor=none;fillColor=#1976d2;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="100" width="240" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_vue" value="Vue 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="155" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_vite" value="Vite" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontColor=#0d47a1;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="155" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_antd" value="Ant Design Vue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90caf9;strokeColor=#1565c0;fontColor=#0d47a1;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="215" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_pinia" value="Pinia" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#42a5f5;fontColor=#1565c0;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_router" value="Vue Router" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#42a5f5;fontColor=#1565c0;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="185" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_axios" value="Axios" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#42a5f5;fontColor=#1565c0;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="290" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_pages_label" value="页面：看板 | 商品列表 | 详情 | 导入 | 登录/注册" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#1565c0;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_port" value="开发端口 :5173" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1976d2;strokeColor=#0d47a1;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="355" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_js" value="JavaScript" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#42a5f5;fontColor=#1565c0;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="140" y="400" width="180" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 后端技术栈 ========== -->
+        <mxCell id="be_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#43a047;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="460" y="90" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="be_title" value="后端 Backend" style="text;html=1;strokeColor=none;fillColor=#43a047;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="100" width="240" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="be_fastapi" value="FastAPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="155" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="be_uvicorn" value="Uvicorn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#43a047;fontColor=#1b5e20;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="155" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="be_sqla" value="SQLAlchemy ORM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontColor=#2e7d32;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="215" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="be_jose" value="python-jose&#xa;JWT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="480" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="be_passlib" value="passlib&#xa;bcrypt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="585" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="be_pydantic" value="Pydantic&#xa;Settings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="690" y="272" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="be_extra" value="httpx | openpyxl | Pillow | oss2 | redis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#2e7d32;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="480" y="320" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="be_port" value="开发端口 :8000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#43a047;strokeColor=#2e7d32;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="355" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="be_python" value="Python 3.11+" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontColor=#2e7d32;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="540" y="400" width="180" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 自动化 / Worker ========== -->
+        <mxCell id="auto_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="860" y="90" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_title" value="自动化 Worker" style="text;html=1;strokeColor=none;fillColor=#ef6c00;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="100" width="240" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_pw" value="Playwright + Chromium" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#ef6c00;fontColor=#e65100;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="155" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_pw_note" value="TikTok 商品页渲染采集" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#bf360c;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="880" y="195" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_adb" value="ADB (Android Debug Bridge)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#ef6c00;fontColor=#e65100;fontSize=13;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="225" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_adb_note" value="拼多多 App 拍照购自动化操控" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#bf360c;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="880" y="265" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_pillow" value="Pillow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="880" y="300" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_xml" value="UI XML&#xa;解析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="985" y="300" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_thread" value="线程调度&#xa;任务恢复" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="300" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_note2" value="截图裁剪 | 结果解析 | 商品链接提取" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#bf360c;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="880" y="345" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_device" value="云手机 / Android 设备" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ef6c00;strokeColor=#bf360c;fontColor=#ffffff;fontSize=11;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="380" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="auto_python" value="Python 3.11+" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontColor=#bf360c;fontSize=11;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="940" y="420" width="180" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 数据存储 ========== -->
+        <mxCell id="db_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="510" width="540" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="db_title" value="数据存储" style="text;html=1;strokeColor=none;fillColor=#c2185b;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="520" width="200" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="db_mysql" value="MySQL 8" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="570" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="db_redis" value="Redis" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="570" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="db_oss" value="阿里云 OSS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd0;strokeColor=#c2185b;fontColor=#880e4f;fontSize=14;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="585" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="db_mysql_note" value="主数据库" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#880e4f;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="100" y="650" width="100" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="db_redis_note" value="缓存/会话" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#880e4f;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="260" y="650" width="100" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="db_oss_note" value="图片 CDN" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#880e4f;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="440" y="640" width="100" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 云服务 ========== -->
+        <mxCell id="cloud_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9c27b0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="660" y="510" width="540" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_title" value="云服务 / 第三方" style="text;html=1;strokeColor=none;fillColor=#9c27b0;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#ffffff;fontFamily=PingFang SC;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="520" width="200" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_oss2" value="阿里云 OSS&#xa;图片存储" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="580" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_sms" value="阿里云 SMS&#xa;短信验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=12;fontFamily=PingFang SC;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="580" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_tiktok" value="TikTok Shop&#xa;商品数据源" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=12;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="580" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_pdd" value="拼多多 App&#xa;拍照购" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#9c27b0;fontColor=#6a1b9a;fontSize=12;fontFamily=PingFang SC;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="580" width="80" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

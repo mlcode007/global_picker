@@ -8,12 +8,14 @@ from app.models.pdd_match import PddMatch
 from app.models.profit_record import ProfitRecord
 
 
-def export_products_excel(db: Session, product_ids: List[int] = None) -> bytes:
+def export_products_excel(db: Session, product_ids: List[int] = None, user_id: int = None) -> bytes:
     """导出商品比价报表为 Excel"""
     import openpyxl
     from openpyxl.styles import Font, PatternFill, Alignment
 
     query = db.query(Product).filter(Product.is_deleted == 0)
+    if user_id is not None:
+        query = query.filter(Product.user_id == user_id)
     if product_ids:
         query = query.filter(Product.id.in_(product_ids))
     products = query.order_by(Product.created_at.desc()).all()

@@ -1,0 +1,393 @@
+<mxfile host="app.diagrams.net" modified="2026-03-31T00:00:00.000Z" agent="Global Picker" version="22.1.0" type="device">
+  <diagram id="global-picker-arch" name="系统架构">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Global Picker 系统架构（跨平台选品比价：TikTok Shop vs 拼多多）" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="340" y="32" width="1000" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;dashed=1;align=left;verticalAlign=top;spacingTop=4;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="300" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="f1t" value="表现层" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="52" y="108" width="120" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="user" value="用户 / 浏览器" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="40" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="fe" value="前端&#xa;Vue 3 · Vite · Ant Design Vue&#xa;Pinia · Vue Router&#xa;开发 :5173" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="150" y="165" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="100" width="560" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f2t" value="应用与业务" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="392" y="108" width="140" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="FastAPI&#xa;CORS · JWT · /health · 静态 /artifacts&#xa;API 前缀 /api/v1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="130" width="500" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="routes" value="REST 路由&#xa;auth · products · pdd · profit · export · tasks · settings · photo_search · dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="205" width="500" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="svc" value="业务服务层 services&#xa;商品 · 拍照购 · 利润 · 汇率 · 导出 · 设备 · SMS …" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="278" width="320" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="core" value="core&#xa;密码哈希 · JWT 签发校验" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="740" y="278" width="140" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="100" width="320" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f3t" value="异步任务 Worker" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="992" y="108" width="160" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_tk" value="TikTok 采集&#xa;Playwright / Chromium&#xa;代理 · Cookie · 商品数据解析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="138" width="280" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="wk_pdd" value="拼多多拍照购&#xa;线程调度 · 任务恢复&#xa;ADB · 截图裁剪 · 结果解析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="228" width="280" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="100" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f4t" value="外部系统" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="1352" y="108" width="100" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_tk" value="TikTok 商品页（站点）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;dashed=1;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="150" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_adb" value="Android 设备 · 云手机 · 拼多多 App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;dashed=1;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="230" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="430" width="860" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="f5t" value="数据与存储" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="392" y="438" width="120" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql" value="MySQL&#xa;商品 · 任务 · 比价 · 用户 · 设备…&#xa;SQLAlchemy ORM" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=11;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="420" y="470" width="200" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" value="Redis&#xa;缓存 / 会话（配置就绪）" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=11;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="680" y="475" width="160" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="oss" value="阿里云 OSS&#xa;拍照购主图 HTTPS · oss2 上传" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=PingFang SC;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="472" width="200" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontColor=#000000;fontSize=11;fontFamily=PingFang SC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="user" target="fe">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe" target="api">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2l" value="HTTPS / REST" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;fontSize=11;fontFamily=PingFang SC;" connectable="0" vertex="1" parent="e2">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api" target="routes">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="routes" target="svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.42;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="svc" target="mysql">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeWidth=1;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="svc" target="redis">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6l" value="可选" style="edgeLabel;html=1;fontColor=#000000;fontSize=11;fontFamily=PingFang SC;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint y="-8" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e7" style="endArrow=classic;html=1;rounded=0;strokeWidth=1;strokeColor=#000000;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="routes" target="core">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.35;entryDx=0;entryDy=0;" edge="1" parent="1" source="wk_tk" target="svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.65;entryDx=0;entryDy=0;" edge="1" parent="1" source="wk_pdd" target="svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="wk_tk" target="ext_tk">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="wk_pdd" target="ext_adb">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="endArrow=classic;html=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="wk_pdd" target="oss">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="410" />
+              <mxPoint x="1000" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12l" value="主图上传" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;fontSize=11;fontFamily=PingFang SC;" connectable="0" vertex="1" parent="e12">
+          <mxGeometry x="0.15" y="1" relative="1" as="geometry">
+            <mxPoint x="-40" y="-6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg" value="图例：粗实线 = 主同步链路 / Worker 回写业务与存储 · 细虚线 = 可选或未全面使用" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;align=left;spacingLeft=10;fontSize=12;fontColor=#000000;fontFamily=PingFang SC;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="720" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="说明：进程启动时 lifespan 恢复中断的拍照购任务；历史数据可同时存在 /artifacts 本地路径与 OSS HTTPS URL。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;align=left;spacingLeft=10;fontSize=12;fontColor=#000000;fontFamily=PingFang SC;" vertex="1" parent="1">
+          <mxGeometry x="800" y="600" width="820" height="44" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="data-flow" name="数据流">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="d_title" value="数据流 — 关键路径与载荷" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="520" y="16" width="360" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="d_legend" value="箭头旁为数据/状态要点 · 与第一页「系统架构」对照阅读" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="400" y="44" width="600" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#43a047;verticalAlign=top;align=left;spacingTop=4;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="76" width="1600" height="168" as="geometry" />
+        </mxCell>
+        <mxCell id="l1h" value="① 认证与业务读（同步）" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontStyle=1;fontSize=12;fontColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="52" y="82" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="d1a" value="浏览器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;" vertex="1" parent="1">
+          <mxGeometry x="60" y="120" width="72" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d1b" value="Vue 前端" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#fbc02d;" vertex="1" parent="1">
+          <mxGeometry x="160" y="120" width="88" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d1c" value="POST /auth/login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="112" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d1d" value="users 表&#xa;bcrypt 校验" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#a5d6a7;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="430" y="118" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d1e" value="JWT&#xa;access_token" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e8f5e9;strokeColor=#43a047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="118" width="100" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d1f" value="Pinia 存储 Token&#xa;后续请求 Header" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#fbc02d;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="112" width="130" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d1g" value="GET /api/v1/…&#xa;Authorization: Bearer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="108" width="150" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="d1h" value="Service 查询/聚合" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="118" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d1i" value="MySQL&#xa;SELECT" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#c8e6c9;strokeColor=#43a047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="108" width="90" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="d1j" value="JSON 响应&#xa;→ 页面渲染" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e8f5e9;strokeColor=#43a047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="112" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="de1" style="endArrow=classic;html=1;rounded=0;fontSize=10;" edge="1" parent="1" source="d1a" target="d1b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de2" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1b" target="d1c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de2l" value="账号密码" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;" vertex="1" connectable="0" parent="de2">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint y="-12" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="de3" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1c" target="d1d">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de4" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1d" target="d1e">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de5" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1e" target="d1f">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de6" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1f" target="d1g">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de7" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1g" target="d1h">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de8" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1h" target="d1i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de9" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d1i" target="d1j">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;verticalAlign=top;align=left;spacingTop=4;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="268" width="1600" height="168" as="geometry" />
+        </mxCell>
+        <mxCell id="l2h" value="② TikTok 商品采集（异步 Worker）" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontStyle=1;fontSize=12;fontColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="52" y="274" width="340" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="d2a" value="运营导入&#xa;TikTok 商品 URL" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#bbdefb;strokeColor=#1976d2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="312" width="130" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="d2b" value="products / tasks API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90caf9;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="318" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d2c" value="CrawlTask&#xa;状态 queued/running" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#64b5f6;strokeColor=#0d47a1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="308" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d2d" value="tiktok_crawler&#xa;Playwright" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42a5f5;strokeColor=#0d47a1;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="312" width="120" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="d2e" value="TikTok 页面&#xa;HTTP + 渲染" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#546e7a;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="680" y="312" width="110" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="d2f" value="解析 JSON / DOM&#xa;标题·价格·图…" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#bbdefb;strokeColor=#1976d2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="820" y="312" width="140" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="d2g" value="products 表&#xa;UPDATE 字段" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#64b5f6;strokeColor=#0d47a1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="308" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d2h" value="CrawlTask&#xa;done / error" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#64b5f6;strokeColor=#0d47a1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="308" width="110" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d2i" value="前端轮询/刷新&#xa;展示最新商品" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="312" width="130" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe1" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2a" target="d2b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe2" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2b" target="d2c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe3" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2c" target="d2d">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe3l" value="任务调度" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="dfe3">
+          <mxGeometry x="0.1" relative="1" as="geometry"><mxPoint y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dfe4" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2d" target="d2e">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe5" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2e" target="d2f">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe6" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2f" target="d2g">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe7" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d2g" target="d2h">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe8" style="endArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1" source="d2h" target="d2i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dfe8l" value="读路径 ①" style="edgeLabel;html=1;fontSize=10;fontStyle=2;fontColor=#1565c0;" vertex="1" connectable="0" parent="dfe8">
+          <mxGeometry x="0.2" relative="1" as="geometry"><mxPoint y="-8" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="lane3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;verticalAlign=top;align=left;spacingTop=4;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="1600" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="l3h" value="③ 拼多多拍照购（异步 Worker + OSS）" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontStyle=1;fontSize=12;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="52" y="466" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="d3a" value="创建拍照购任务" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="508" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d3b" value="photo_search API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="508" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d3c" value="PhotoSearchTask&#xa;queued → running" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffb74d;strokeColor=#e65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="496" width="130" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="d3d" value="execute_photo_search_task&#xa;线程" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff9800;strokeColor=#e65100;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="504" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d3e" value="ADB 指令流" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="680" y="508" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d3f" value="拼多多 App&#xa;拍照搜结果页" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#546e7a;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="800" y="500" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d3g" value="截图 / UI 解析&#xa;candidates[]" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="950" y="500" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d3h" value="裁剪 image bytes" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="508" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d3i" value="oss_service&#xa;PUT Bucket" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#e65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="504" width="100" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d3j" value="HTTPS URL" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe0b2;strokeColor=#ef6c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="508" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d3k" value="pdd_matches&#xa;pdd_image_url 等" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffb74d;strokeColor=#e65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="496" width="120" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="d3note" value="可选：goods_id → 商品链接写入 pdd_product_url" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#bf360c;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="800" y="572" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe1" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3a" target="d3b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe2" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3b" target="d3c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe3" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3c" target="d3d">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe4" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3d" target="d3e">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe5" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3e" target="d3f">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe6" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3f" target="d3g">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe7" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3g" target="d3h">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe8" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3h" target="d3i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe9" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3i" target="d3j">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tfe10" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d3j" target="d3k">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lane4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;verticalAlign=top;align=left;spacingTop=4;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="684" width="1600" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="l4h" value="④ 导出与本地静态（辅助）" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontStyle=1;fontSize=12;fontColor=#880e4f;" vertex="1" parent="1">
+          <mxGeometry x="52" y="690" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="d4a" value="GET export API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#c2185b;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="728" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d4b" value="聚合查询 MySQL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f48fb1;strokeColor=#880e4f;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="720" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d4c" value="Excel 文件流&#xa;下载" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#fce4ec;strokeColor=#c2185b;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="724" width="110" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d4d" value="GET /artifacts/…" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#c2185b;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="728" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d4e" value="本机 artifacts 目录&#xa;（历史截图路径）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="720" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="d4f" value="与 OSS URL 可能并存" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#880e4f;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="910" y="736" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="qfe1" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d4a" target="d4b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qfe2" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="d4b" target="d4c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qfe3" style="endArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1" source="d4d" target="d4e">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d_bottom" value="启动恢复：lifespan 将中断的 PhotoSearchTask 置为 queued 并再次 execute_photo_search_task（见 backend/app/main.py）。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#fbc02d;align=left;spacingLeft=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="824" width="1600" height="44" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

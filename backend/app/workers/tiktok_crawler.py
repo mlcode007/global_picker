@@ -135,7 +135,7 @@ _REMIX_JS = r"""
     const scripts = document.querySelectorAll('script');
     for (const s of scripts) {
       const t = s.textContent || '';
-      if (t.includes('loaderData') && t.includes('productInfo')) {
+      if (t.includes('loaderData') && (t.includes('productInfo') || t.includes('product_info'))) {
         const m = t.match(/window\.__remixContext\s*=\s*({.+?});?\s*$/ms)
                || t.match(/({\s*"loaderData".+})/s);
         if (m) return JSON.parse(m[1]).loaderData || JSON.parse(m[1]);
@@ -281,10 +281,102 @@ def _parse_window_data(raw: dict) -> dict:
 
 
 def _parse_remix_loader_data(raw: dict) -> dict:
-    """从 Remix loaderData 中提取 TikTok Shop productInfo 并转为统一格式。"""
+    """从 Remix loaderData 中提取 TikTok Shop 商品信息并转为统一格式。
+
+    支持两种数据结构：
+      - 旧版: loaderData -> {key} -> initialData -> productInfo
+      - 新版: loaderData -> {key} -> page_config -> components_map[] -> component_data -> product_info
+    """
     if not raw or not isinstance(raw, dict):
         return {}
 
+    # 先尝试新版 component_data 结构
+    result = _parse_remix_component_data(raw)
+    if result:
+        return result
+
+    # 回退到旧版 initialData 结构
+    return _parse_remix_initial_data(raw)
+
+
+def _parse_remix_component_data(raw: dict) -> dict:
+    """新版结构：page_config.components_map[].component_data.product_info"""
+    for key, val in raw.items():
+        if not isinstance(val, dict):
+            continue
+
+        components = _dig(val, "page_config", "components_map")
+        if not components or not isinstance(components, list):
+            continue
+
+        product_component = None
+        for comp in components:
+            if isinstance(comp, dict) and comp.get("component_type") == "product_info":
+                product_component = comp
+                break
+
+        if not product_component:
+            continue
+
+        cd = product_component.get("component_data") or {}
+        pi = cd.get("product_info") or {}
+        pm = pi.get("product_model") or {}
+
+        if not pm.get("product_id"):
+            continue
+
+        real_region = _dig(val, "region_info", "real_region")
+
+        images_raw = pm.get("images") or []
+        image_urls = []
+        for img in images_raw[:10]:
+            urls = img.get("url_list") or []
+            if urls:
+                image_urls.append(urls[0])
+
+        promo = pi.get("promotion_model") or {}
+        promo_price = _dig(promo, "promotion_product_price", "min_price") or {}
+
+        price_val = promo_price.get("sale_price_format")
+        currency = promo_price.get("currency_name")
+
+        logistics_list = promo.get("promotion_logistic_list") or []
+        logistics = logistics_list[0] if logistics_list else {}
+        ship_fee_obj = logistics.get("shippingFee") or {}
+
+        review = pi.get("review_model") or {}
+        seller = pi.get("seller_model") or {}
+
+        category_info = cd.get("category_info") or {}
+        categories = category_info.get("recommended_categories") or []
+        category_name = categories[0].get("category_name") if categories else None
+
+        result = {
+            "title": pm.get("name"),
+            "images": image_urls,
+            "soldCount": pm.get("sold_count"),
+            "price": price_val,
+            "currency": currency,
+            "rating": review.get("product_overall_score"),
+            "reviewCount": review.get("product_review_count"),
+            "shop": {
+                "name": seller.get("shop_name"),
+                "id": str(pm.get("seller_id", "")),
+            },
+            "shippingFee": _dig(ship_fee_obj, "origin_price"),
+            "shippingCurrency": ship_fee_obj.get("currency"),
+            "freeShipping": logistics.get("freeShipping"),
+            "category": category_name,
+            "region": real_region,
+            "_source": "remix_component_data",
+        }
+        return {k: v for k, v in result.items() if v is not None}
+
+    return {}
+
+
+def _parse_remix_initial_data(raw: dict) -> dict:
+    """旧版结构：initialData.productInfo（兼容保留）"""
     product_info = None
     real_region = None
     for key, val in raw.items():
@@ -540,12 +632,12 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
         updated = True
 
     images = data.get("images") or data.get("imageList") or data.get("imgs") or []
-    if images and not product.main_image_url:
+    if images:
         def _img_url(img):
             if isinstance(img, dict):
                 return img.get("url") or img.get("thumb") or (img.get("urlList") or [None])[0]
             return str(img)
-        urls = [u for u in (_img_url(i) for i in images[:10]) if u]
+        urls = [u for u in (_img_url(i) for i in images[:20]) if u]
         if urls:
             product.main_image_url = urls[0]
             product.image_urls = urls
