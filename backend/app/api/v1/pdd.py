@@ -1,5 +1,5 @@
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Dict, List
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -29,6 +29,22 @@ def add_match(
     _check_product_ownership(db, data.product_id, current_user.id)
     match = pdd_service.add_pdd_match(db, data)
     return Response(data=PddMatchOut.model_validate(match))
+
+
+@router.get("/matches/batch", response_model=Response[Dict[str, List[PddMatchOut]]], summary="批量获取多个商品的拼多多匹配")
+def get_matches_batch(
+    product_ids: str = Query(..., description="逗号分隔的商品ID列表"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    ids = [int(x.strip()) for x in product_ids.split(",") if x.strip().isdigit()]
+    if not ids:
+        return Response(data={})
+    result = pdd_service.get_pdd_matches_batch(db, ids)
+    return Response(data={
+        str(pid): [PddMatchOut.model_validate(m) for m in matches]
+        for pid, matches in result.items()
+    })
 
 
 @router.get("/matches/{product_id}", response_model=Response[List[PddMatchOut]], summary="获取商品的拼多多匹配列表")

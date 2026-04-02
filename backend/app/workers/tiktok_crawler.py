@@ -1,9 +1,9 @@
 """
 TikTok Shop 商品采集 Worker — Playwright + 代理 + Cookie 版
 
-绕过反爬的两个关键配置（在 .env 中设置）：
-  TIKTOK_PROXY   — 住宅代理，格式 http://user:pass@host:port
-  TIKTOK_COOKIES — 浏览器登录后的 Cookie JSON
+绕过反爬的两个关键配置：
+  1. 全局配置 (env): TIKTOK_PROXY, TIKTOK_COOKIES (已废弃，保留兼容性)
+  2. 用户独立配置 (DB): 从 user_crawl_configs 表读取每个用户的 Cookie 和代理
 
 三层采集策略（按优先级依次尝试）：
   Layer 1 — 网络拦截：监听 TikTok 内部 API 响应，拿到结构化 JSON
@@ -21,6 +21,7 @@ from app.config import get_settings
 from app.database import SessionLocal
 from app.models.crawl_task import CrawlTask
 from app.models.product import Product
+from app.models.user_crawl_config import UserCrawlConfig
 
 logger = logging.getLogger(__name__)
 
@@ -197,18 +198,17 @@ def _dig(data, *keys):
 # Cookie 加载
 # ──────────────────────────────────────────────
 
-def _load_cookies() -> list[dict]:
+def _parse_cookies(raw: str) -> list[dict]:
     """
-    从 TIKTOK_COOKIES 配置读取 cookie。
+    解析 Cookie 字符串为 Playwright 格式。
     支持两种格式：
       1. JSON 对象: {"sessionid": "xxx", "msToken": "yyy"}
       2. Netscape 格式字符串: name=value; name2=value2
     返回 Playwright context.add_cookies() 所需格式。
     """
-    raw = get_settings().TIKTOK_COOKIES.strip()
-    if not raw:
+    if not raw.strip():
         return []
-
+    
     cookies = []
     try:
         data = json.loads(raw)
@@ -231,6 +231,13 @@ def _load_cookies() -> list[dict]:
                     "domain": ".tiktok.com", "path": "/",
                 })
     return cookies
+
+
+def _load_cookies() -> list[dict]:
+    """
+    从 TIKTOK_COOKIES 配置读取 cookie（全局配置，已废弃，保留兼容性）。
+    """
+    return _parse_cookies(get_settings().TIKTOK_COOKIES)
 
 
 # ──────────────────────────────────────────────
@@ -712,13 +719,37 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
 # Playwright 核心采集
 # ──────────────────────────────────────────────
 
-async def _fetch_with_playwright(url: str) -> dict:
+async def _fetch_with_playwright(url: str, user_id: Optional[int] = None) -> dict:
     from playwright.async_api import async_playwright, TimeoutError as PwTimeout
     from playwright_stealth import Stealth
 
     settings = get_settings()
-    proxy_cfg = {"server": settings.TIKTOK_PROXY} if settings.TIKTOK_PROXY.strip() else None
-    cookies = _load_cookies()
+    
+    # 优先从用户配置读取，其次读全局配置
+    proxy_cfg = None
+    cookies = []
+    
+    if user_id:
+        db = SessionLocal()
+        try:
+            user_config = db.query(UserCrawlConfig).filter(UserCrawlConfig.user_id == user_id).first()
+            if user_config:
+                if user_config.tiktok_proxy:
+                    proxy_cfg = {"server": user_config.tiktok_proxy}
+                if user_config.tiktok_cookies:
+                    cookies = _parse_cookies(user_config.tiktok_cookies)
+                logger.info("用户 %d 使用独立配置: proxy=%s, cookies=%d条", 
+                           user_id, user_config.tiktok_proxy or "无", len(cookies))
+            else:
+                logger.warning("用户 %d 无独立配置，使用全局配置", user_id)
+        finally:
+            db.close()
+    
+    # 如果用户配置为空，回退到全局配置
+    if not proxy_cfg and settings.TIKTOK_PROXY.strip():
+        proxy_cfg = {"server": settings.TIKTOK_PROXY}
+    if not cookies:
+        cookies = _load_cookies()
 
     product_data: dict = {}
     intercepted: list[dict] = []
@@ -925,13 +956,14 @@ async def run_crawl_task(task_id: int) -> None:
         product.region = region
 
         try:
-            data = await _fetch_with_playwright(task.url)
+            data = await _fetch_with_playwright(task.url, user_id=product.user_id)
 
             if data:
                 _apply_product_data(product, data, db=db)
                 task.status = "done"
                 task.error_msg = None
-                logger.info("crawl task %d done (product_id=%s)", task_id, product_id)
+                logger.info("crawl task %d done (product_id=%s, user_id=%s)", 
+                           task_id, product_id, product.user_id)
             else:
                 task.status = "failed"
                 task.error_msg = "三层策略均未采集到数据"

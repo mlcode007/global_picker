@@ -7,6 +7,7 @@ from app.models.sms_verification import SmsVerification
 from app.models.exchange_rate import ExchangeRate
 from app.models.device import Device
 from app.models.photo_search_task import PhotoSearchTask, DeviceActionLog
+from app.models.user_crawl_config import UserCrawlConfig
 
 __all__ = [
     "CrawlTask",
@@ -19,4 +20,5 @@ __all__ = [
     "Device",
     "PhotoSearchTask",
     "DeviceActionLog",
+    "UserCrawlConfig",
 ]

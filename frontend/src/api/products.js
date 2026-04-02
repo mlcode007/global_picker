@@ -11,6 +11,7 @@ export const productApi = {
 
 export const pddApi = {
   getMatches: (productId) => http.get(`/pdd/matches/${productId}`),
+  getMatchesBatch: (productIds) => http.get('/pdd/matches/batch', { params: { product_ids: productIds.join(',') } }),
   addMatch: (data) => http.post('/pdd/matches', data),
   updateMatch: (id, data) => http.patch(`/pdd/matches/${id}`, data),
   deleteMatch: (id) => http.delete(`/pdd/matches/${id}`),

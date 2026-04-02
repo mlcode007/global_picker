@@ -56,13 +56,20 @@ def list_products(
     status: Optional[str] = Query(None, description="pending/selected/abandoned"),
     region: Optional[str] = Query(None),
     keyword: Optional[str] = Query(None),
+    price_cny_min: Optional[float] = Query(None, description="TikTok人民币价格下限"),
+    price_cny_max: Optional[float] = Query(None, description="TikTok人民币价格上限"),
+    profit_min: Optional[float] = Query(None, description="预估利润下限"),
+    profit_max: Optional[float] = Query(None, description="预估利润上限"),
     order_by: str = Query("created_at"),
     order_dir: str = Query("desc", pattern="^(asc|desc)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     total, items = product_service.get_products(
-        db, current_user.id, page, page_size, status, region, keyword, order_by, order_dir
+        db, current_user.id, page, page_size, status, region, keyword,
+        order_by, order_dir,
+        price_cny_min=price_cny_min, price_cny_max=price_cny_max,
+        profit_min=profit_min, profit_max=profit_max,
     )
     return Response(
         data=PagedResponse(

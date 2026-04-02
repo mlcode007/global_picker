@@ -206,3 +206,20 @@ INSERT INTO `system_configs` (`config_key`, `config_value`, `description`) VALUE
   ('crawl_max_retry',           '3',      '抓取任务最大重试次数'),
   ('page_size_default',         '20',     '列表默认每页条数')
 ON DUPLICATE KEY UPDATE `config_value` = VALUES(`config_value`);
+
+
+-- ============================================================
+-- 9. 用户独立采集配置表
+--    每个用户独立的 TikTok 采集配置（Cookie 和代理）
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `user_crawl_configs` (
+  `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '配置ID',
+  `user_id`        INT UNSIGNED NOT NULL                COMMENT '关联 users.id',
+  `tiktok_cookies` TEXT              DEFAULT NULL        COMMENT 'TikTok Cookie JSON 字符串',
+  `tiktok_proxy`   VARCHAR(256)      DEFAULT NULL        COMMENT 'TikTok 代理地址 (http://user:pass@host:port)',
+  `created_at`     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `idx_user_id` (`user_id`),
+  CONSTRAINT `fk_user_config_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户独立采集配置';

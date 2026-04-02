@@ -58,6 +58,8 @@ class ProductOut(BaseModel):
     category: Optional[str]
     status: str
     remark: Optional[str]
+    estimated_profit: Optional[Decimal] = None
+    profit_rate: Optional[Decimal] = None
     created_at: datetime
     updated_at: datetime
 

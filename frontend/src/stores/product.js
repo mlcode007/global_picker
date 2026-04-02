@@ -15,6 +15,10 @@ export const useProductStore = defineStore('product', () => {
     status: undefined,
     region: undefined,
     keyword: undefined,
+    price_cny_min: undefined,
+    price_cny_max: undefined,
+    profit_min: undefined,
+    profit_max: undefined,
     order_by: 'created_at',
     order_dir: 'desc',
   })

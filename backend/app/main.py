@@ -1,8 +1,10 @@
 import logging
 import threading
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
@@ -64,6 +66,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(request: Request, exc: RequestValidationError):
+    logger.error("Request validation error on %s %s: %s", request.method, request.url, exc.errors())
+    return JSONResponse(status_code=422, content={"code": 422, "message": "请求参数校验失败", "data": None})
+
+
+@app.exception_handler(ResponseValidationError)
+async def response_validation_handler(request: Request, exc: ResponseValidationError):
+    logger.error("Response validation error on %s %s: %s", request.method, request.url, exc.errors())
+    return JSONResponse(status_code=500, content={"code": 500, "message": "服务器内部错误", "data": None})
+
 
 app.include_router(v1_router)
 

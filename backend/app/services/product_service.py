@@ -171,6 +171,10 @@ def get_products(
     keyword: Optional[str] = None,
     order_by: str = "created_at",
     order_dir: str = "desc",
+    price_cny_min: Optional[float] = None,
+    price_cny_max: Optional[float] = None,
+    profit_min: Optional[float] = None,
+    profit_max: Optional[float] = None,
 ) -> Tuple[int, List[Product]]:
     """商品列表（按用户隔离，分页、过滤、排序）"""
     query = db.query(Product).filter(Product.is_deleted == 0, Product.user_id == user_id)
@@ -186,6 +190,14 @@ def get_products(
                 Product.shop_name.ilike(f"%{keyword}%"),
             )
         )
+    if price_cny_min is not None:
+        query = query.filter(Product.price_cny >= price_cny_min)
+    if price_cny_max is not None:
+        query = query.filter(Product.price_cny <= price_cny_max)
+    if profit_min is not None:
+        query = query.filter(Product.estimated_profit >= profit_min)
+    if profit_max is not None:
+        query = query.filter(Product.estimated_profit <= profit_max)
 
     total = query.count()
 

@@ -27,7 +27,9 @@ http.interceptors.response.use(
   },
   err => {
     const status = err.response?.status
-    const serverMsg = err.response?.data?.message || err.response?.data?.detail
+    const rawDetail = err.response?.data?.detail
+    const serverMsg = err.response?.data?.message
+      || (typeof rawDetail === 'string' ? rawDetail : undefined)
 
     if (status === 401) {
       localStorage.removeItem(TOKEN_KEY)
