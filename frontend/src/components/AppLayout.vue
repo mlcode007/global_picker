@@ -8,8 +8,8 @@
       <a-menu
         theme="dark"
         mode="inline"
-        :selected-keys="[route.name]"
-        @click="({ key }) => router.push({ name: key })"
+        :selected-keys="[selectedKey]"
+        @click="handleMenuClick"
       >
         <a-menu-item key="Dashboard">
           <template #icon><DashboardOutlined /></template>
@@ -22,6 +22,10 @@
         <a-menu-item key="BatchImport">
           <template #icon><ImportOutlined /></template>
           批量导入
+        </a-menu-item>
+        <a-menu-item key="CloudPhone">
+          <template #icon><PhoneOutlined /></template>
+          云手机管理
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -69,12 +73,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   DashboardOutlined,
   UnorderedListOutlined,
   ImportOutlined,
+  PhoneOutlined,
   DownOutlined,
   LogoutOutlined,
 } from '@ant-design/icons-vue'
@@ -90,9 +95,28 @@ const avatarText = computed(() => {
   return name ? name.charAt(0).toUpperCase() : 'U'
 })
 
+const selectedKey = computed(() => {
+  const name = route.name
+  if (name) return name
+  return 'Dashboard'
+})
+
+function handleMenuClick({ key }) {
+  console.log('Menu clicked:', key)
+  if (key === 'CloudPhone') {
+    router.push('/cloud-phone')
+  } else {
+    router.push({ name: key })
+  }
+}
+
 function handleLogout() {
   authStore.logout()
 }
+
+watch(route, () => {
+  selectedKey.value = route.name || 'Dashboard'
+})
 </script>
 
 <style scoped>
@@ -101,39 +125,56 @@ function handleLogout() {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 1px;
-  background: rgba(255,255,255,0.05);
+  color: #fff;
+  white-space: nowrap;
 }
+
 .header {
-  background: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  background: #001529;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-.header-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
 .header-right {
   display: flex;
   align-items: center;
   gap: 16px;
 }
+
 .user-info {
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: #333;
 }
+
 .user-name {
   font-size: 14px;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: #fff;
 }
-.content { margin: 24px; min-height: 360px; }
-.footer { text-align: center; color: #999; font-size: 12px; }
+
+.content {
+  margin: 24px;
+  min-height: calc(100vh - 128px);
+  background: #f0f2f5;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.footer {
+  text-align: center;
+  padding: 24px;
+  color: #999;
+  font-size: 14px;
+}
 </style>

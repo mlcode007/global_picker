@@ -5,6 +5,7 @@ db_info.txt
 
 # IDE
 .idea/
+.trae/
 .vscode/
 .DS_Store
 
@@ -15,6 +16,7 @@ __pycache__/
 .env
 
 # Artifacts
+.logs/
 artifacts/
 logs/
 dev/

@@ -23,6 +23,7 @@ const routes = [
       { path: 'products', name: 'ProductList', component: () => import('@/views/ProductList.vue'), meta: { title: '商品列表' } },
       { path: 'products/:id', name: 'ProductDetail', component: () => import('@/views/ProductDetail.vue'), meta: { title: '商品详情' } },
       { path: 'import', name: 'BatchImport', component: () => import('@/views/BatchImport.vue'), meta: { title: '批量导入' } },
+      { path: 'cloud-phone', name: 'CloudPhone', component: () => import('@/views/CloudPhone.vue'), meta: { title: '云手机管理' } },
     ],
   },
 ]

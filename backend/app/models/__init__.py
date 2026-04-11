@@ -8,6 +8,7 @@ from app.models.exchange_rate import ExchangeRate
 from app.models.device import Device
 from app.models.photo_search_task import PhotoSearchTask, DeviceActionLog
 from app.models.user_crawl_config import UserCrawlConfig
+from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 
 __all__ = [
     "CrawlTask",
@@ -21,4 +22,6 @@ __all__ = [
     "PhotoSearchTask",
     "DeviceActionLog",
     "UserCrawlConfig",
+    "CloudPhonePool",
+    "UserCloudPhone",
 ]
