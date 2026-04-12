@@ -18,6 +18,7 @@ from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 from app.models.user import User
 from app.util.chinac.chinac_open_api import ChinacOpenApi
 from app.util.chinac_utils import cloud_phone_create
+from app.services.points_service import PointsManager
 
 logger = logging.getLogger(__name__)
 
@@ -76,19 +77,70 @@ class CloudPhoneManager:
     
     def get_available_count(self) -> int:
         """获取可用云手机数量"""
-        return self.db.query(CloudPhonePool).filter(
+        from sqlalchemy import func
+        return self.db.query(func.count(CloudPhonePool.id)).filter(
             CloudPhonePool.status == "available"
-        ).count()
+        ).scalar() or 0
     
     def list_available_phones(self, limit: int = 10) -> List[CloudPhonePool]:
         """获取可用云手机列表"""
-        return self.db.query(CloudPhonePool).filter(
+        from sqlalchemy.orm import load_only
+        from sqlalchemy import inspect
+        inspector = inspect(CloudPhonePool)
+        has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+        
+        # 构建要加载的字段列表
+        load_fields = [
+            'id',
+            'phone_id',
+            'phone_name',
+            'status',
+            'created_by',
+            'region',
+            'instance_type',
+            'spec',
+            'created_at',
+            'updated_at'
+        ]
+        
+        if has_adb_host_port:
+            load_fields.append('adb_host_port')
+        
+        # 使用 load_only 来指定只加载这些字段
+        return self.db.query(CloudPhonePool).options(
+            load_only(*load_fields)
+        ).filter(
             CloudPhonePool.status == "available"
         ).limit(limit).all()
     
     def list_all_phones(self) -> List[CloudPhonePool]:
         """获取所有云手机"""
-        return self.db.query(CloudPhonePool).all()
+        from sqlalchemy.orm import load_only
+        from sqlalchemy import inspect
+        inspector = inspect(CloudPhonePool)
+        has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+        
+        # 构建要加载的字段列表
+        load_fields = [
+            'id',
+            'phone_id',
+            'phone_name',
+            'status',
+            'created_by',
+            'region',
+            'instance_type',
+            'spec',
+            'created_at',
+            'updated_at'
+        ]
+        
+        if has_adb_host_port:
+            load_fields.append('adb_host_port')
+        
+        # 使用 load_only 来指定只加载这些字段
+        return self.db.query(CloudPhonePool).options(
+            load_only(*load_fields)
+        ).all()
     
     # ── 用户绑定管理 ──────────────────────────────────────────
     
@@ -105,7 +157,32 @@ class CloudPhoneManager:
             return None
         
         # 获取云手机信息
-        phone = self.db.query(CloudPhonePool).filter(
+        from sqlalchemy.orm import load_only
+        from sqlalchemy import inspect
+        inspector = inspect(CloudPhonePool)
+        has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+        
+        # 构建要加载的字段列表
+        load_fields = [
+            'id',
+            'phone_id',
+            'phone_name',
+            'status',
+            'created_by',
+            'region',
+            'instance_type',
+            'spec',
+            'created_at',
+            'updated_at'
+        ]
+        
+        if has_adb_host_port:
+            load_fields.append('adb_host_port')
+        
+        # 使用 load_only 来指定只加载这些字段
+        phone = self.db.query(CloudPhonePool).options(
+            load_only(*load_fields)
+        ).filter(
             CloudPhonePool.phone_id == phone_id
         ).first()
         
@@ -152,6 +229,7 @@ class CloudPhoneManager:
         binding.updated_at = datetime.now()
         
         # 更新云手机状态
+        # 直接查询整个对象，因为我们只需要更新状态
         phone = self.db.query(CloudPhonePool).filter(
             CloudPhonePool.phone_id == phone_id
         ).first()
@@ -198,8 +276,9 @@ class CloudPhoneManager:
         为用户分配云手机（核心方法）
         策略：
         1. 检查用户是否已有云手机，如果有则返回错误
-        2. 从资源池分配空闲云手机
-        3. 触发自动扩容（如果需要）
+        2. 检查用户积分是否足够
+        3. 从资源池分配空闲云手机
+        4. 触发自动扩容（如果需要）
         """
         # 检查用户是否已有云手机
         existing = self.get_user_phone(user_id)
@@ -207,25 +286,70 @@ class CloudPhoneManager:
             logger.warning("User %d already has cloud phone: %s, cannot acquire another one", user_id, existing.phone_id)
             return None
         
+        # 检查用户积分是否足够
+        points_manager = PointsManager(self.db)
+        if not points_manager.deduct_points(user_id, 100, "获取云手机"):
+            logger.warning("User %d has insufficient points to acquire cloud phone", user_id)
+            return None
+        
         # 从资源池分配
         available = self._try_acquire_from_pool()
         if available:
-            return self.bind_to_user(user_id, available.phone_id)
+            binding = self.bind_to_user(user_id, available.phone_id)
+            if binding:
+                return binding
+            else:
+                # 绑定失败，退还积分
+                points_manager.add_points(user_id, 100, "绑定云手机失败，退还积分")
+                return None
         
         # 触发自动扩容
         if self._should_auto_scale():
-            new_phones = self._auto_scale(1)  # 只创建1台
+            new_phones = self._auto_scale(1, user_id)  # 只创建1台
             if new_phones:
                 # 等待云手机状态就绪
                 time.sleep(2)  # 短暂延迟，确保云手机状态更新
-                return self.bind_to_user(user_id, new_phones[0].phone_id)
+                binding = self.bind_to_user(user_id, new_phones[0].phone_id)
+                if binding:
+                    return binding
+                else:
+                    # 绑定失败，退还积分
+                    points_manager.add_points(user_id, 100, "绑定云手机失败，退还积分")
+                    return None
         
+        # 没有可用云手机，退还积分
+        points_manager.add_points(user_id, 100, "获取云手机失败，退还积分")
         logger.warning("No available cloud phone for user %d", user_id)
         return None
     
     def _try_acquire_from_pool(self) -> Optional[CloudPhonePool]:
         """尝试从资源池获取可用云手机"""
-        phone = self.db.query(CloudPhonePool).filter(
+        from sqlalchemy.orm import load_only
+        from sqlalchemy import inspect
+        inspector = inspect(CloudPhonePool)
+        has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+        
+        # 构建要加载的字段列表
+        load_fields = [
+            'id',
+            'phone_id',
+            'phone_name',
+            'status',
+            'created_by',
+            'region',
+            'instance_type',
+            'spec',
+            'created_at',
+            'updated_at'
+        ]
+        
+        if has_adb_host_port:
+            load_fields.append('adb_host_port')
+        
+        # 使用 load_only 来指定只加载这些字段
+        phone = self.db.query(CloudPhonePool).options(
+            load_only(*load_fields)
+        ).filter(
             CloudPhonePool.status == "available"
         ).with_for_update(skip_locked=True).first()
         
@@ -238,7 +362,8 @@ class CloudPhoneManager:
     
     def _should_auto_scale(self) -> bool:
         """判断是否需要自动扩容"""
-        total = self.db.query(CloudPhonePool).count()
+        from sqlalchemy import func
+        total = self.db.query(func.count(CloudPhonePool.id)).scalar() or 0
         available = self.get_available_count()
         
         if total == 0:
@@ -348,13 +473,74 @@ class CloudPhoneManager:
     def check_phone_health(self, phone_id: str) -> bool:
         """检查云手机健康状态"""
         try:
-            data = self.api.do_describe_cloud_phones(phone_ids=[phone_id])
+            # 先尝试开启ADB权限
+            from app.util.chinac_utils import cloud_phone_create_adb, cloud_phone_check_status, cloud_phone_describe_phone
+            # 然后使用chinac_utils中的check_phone_status方法检查ADB连接
+            adb_status = cloud_phone_check_status(phone_id)
+            logger.info(f"ADB status check result: {adb_status}")
             
-            if data and 'CloudPhoneSet' in data:
-                phone_status = data['CloudPhoneSet'][0].get('Status', '')
-                return phone_status in ['RUNNING', 'STARTING']
+            # 直接查询整个对象，因为我们已经添加了 adb_host_port 字段到数据库表中
+            phone = self.db.query(CloudPhonePool).filter(
+                CloudPhonePool.phone_id == phone_id
+            ).first()
             
-            return False
+            if phone:
+                try:
+                    adb_host_port = None
+                    # 只有当设备存在时，才获取设备详细信息
+                    if adb_status['code'] != -1:
+                        # 获取设备详细信息
+                        device_info = cloud_phone_describe_phone(phone_id)
+                        if 'data' in device_info and 'BasicInfo' in device_info['data']:
+                            basic_info = device_info['data']['BasicInfo']
+                            # 尝试从不同位置获取ADB端口信息
+                            adb_host_port = basic_info.get('AdbHostPort')
+                            
+                            # 如果没有直接的AdbHostPort字段，尝试从其他地方获取
+                            if not adb_host_port and 'NetInfo' in device_info['data']:
+                                net_info = device_info['data']['NetInfo']
+                                outer_ip = net_info.get('OuterIp')
+                                # 假设ADB端口是固定的，或者从其他地方获取
+                                if outer_ip:
+                                    adb_host_port = f"{outer_ip}:5555"  # 假设ADB默认端口是5555
+                        
+                    # 只有当 adb_host_port 字段存在时才更新
+                    from sqlalchemy import inspect
+                    inspector = inspect(CloudPhonePool)
+                    has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+                    
+                    if has_adb_host_port and adb_host_port:
+                        phone.adb_host_port = adb_host_port
+                    
+                    # 根据ADB连接状态更新设备状态
+                    if adb_status['code'] == 0:
+                        # ADB连接成功，设备状态为可用
+                        phone.status = "available"
+                        logger.info(f"Updated cloud phone {phone_id} status to available and synced ADB port: {adb_host_port}")
+                    elif adb_status['code'] == -1:
+                        # 设备不存在或获取信息失败，设备状态为已删除
+                        phone.status = "deleted"
+                        logger.info(f"Updated cloud phone {phone_id} status to deleted due to device not found: {adb_status['message']}")
+                    elif adb_status['code'] == -3:
+                        # ADB连接超时，设备状态为超时
+                        phone.status = "timeo"
+                        logger.info(f"Updated cloud phone {phone_id} status to timeo due to ADB connection timeout: {adb_status['message']}")
+                    else:
+                        # 其他ADB连接失败，设备状态为离线
+                        phone.status = "offline"
+                        logger.info(f"Updated cloud phone {phone_id} status to offline due to ADB connection failure: {adb_status['message']}")
+                    
+                    phone.updated_at = datetime.now()
+                    self.db.commit()
+                except Exception as db_error:
+                    logger.error(f"Failed to update cloud phone {phone_id} in database: {db_error}")
+                    # 回滚事务，避免影响其他操作
+                    self.db.rollback()
+            
+            # 根据ADB连接状态返回健康状态
+            is_healthy = adb_status['code'] == 0
+            logger.info(f"Cloud phone {phone_id} health check result: {'healthy' if is_healthy else 'unhealthy'} (ADB status: {adb_status['message']})")
+            return is_healthy
             
         except Exception as e:
             logger.error("Failed to check cloud phone %s health: %s", phone_id, str(e))
@@ -362,7 +548,32 @@ class CloudPhoneManager:
     
     def recover_offline_phones(self) -> int:
         """恢复离线云手机"""
-        offline_phones = self.db.query(CloudPhonePool).filter(
+        from sqlalchemy.orm import load_only
+        from sqlalchemy import inspect
+        inspector = inspect(CloudPhonePool)
+        has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+        
+        # 构建要加载的字段列表
+        load_fields = [
+            'id',
+            'phone_id',
+            'phone_name',
+            'status',
+            'created_by',
+            'region',
+            'instance_type',
+            'spec',
+            'created_at',
+            'updated_at'
+        ]
+        
+        if has_adb_host_port:
+            load_fields.append('adb_host_port')
+        
+        # 使用 load_only 来指定只加载这些字段
+        offline_phones = self.db.query(CloudPhonePool).options(
+            load_only(*load_fields)
+        ).filter(
             CloudPhonePool.status == "offline"
         ).all()
         
@@ -381,17 +592,18 @@ class CloudPhoneManager:
     
     def get_pool_stats(self) -> Dict[str, Any]:
         """获取资源池统计信息"""
-        total = self.db.query(CloudPhonePool).count()
+        from sqlalchemy import func
+        total = self.db.query(func.count(CloudPhonePool.id)).scalar() or 0
         available = self.get_available_count()
-        bound = self.db.query(CloudPhonePool).filter(
+        bound = self.db.query(func.count(CloudPhonePool.id)).filter(
             CloudPhonePool.status == "bound"
-        ).count()
-        offline = self.db.query(CloudPhonePool).filter(
-            CloudPhonePool.status == "offline"
-        ).count()
-        maintenance = self.db.query(CloudPhonePool).filter(
+        ).scalar() or 0
+        offline = self.db.query(func.count(CloudPhonePool.id)).filter(
+            CloudPhonePool.status.in_(["offline", "timeo", "deleted", "maintenance"])
+        ).scalar() or 0
+        maintenance = self.db.query(func.count(CloudPhonePool.id)).filter(
             CloudPhonePool.status == "maintenance"
-        ).count()
+        ).scalar() or 0
         
         return {
             "total": total,
@@ -406,7 +618,23 @@ class CloudPhoneManager:
     
     def manual_scale(self, count: int = 1, user_id: int = None) -> List[CloudPhonePool]:
         """手动扩容云手机"""
-        return self._auto_scale(count, user_id)
+        # 检查用户积分是否足够
+        if user_id:
+            points_manager = PointsManager(self.db)
+            required_points = 100 * count
+            if not points_manager.deduct_points(user_id, required_points, f"手动扩容{count}台云手机"):
+                logger.warning("User %d has insufficient points to scale cloud phones: required %d", user_id, required_points)
+                return []
+        
+        new_phones = self._auto_scale(count, user_id)
+        
+        if not new_phones and user_id:
+            # 扩容失败，退还积分
+            points_manager = PointsManager(self.db)
+            required_points = 100 * count
+            points_manager.add_points(user_id, required_points, f"手动扩容{count}台云手机失败，退还积分")
+        
+        return new_phones
     
     def ensure_pool_size(self, min_size: int = None) -> int:
         """确保资源池最小大小"""

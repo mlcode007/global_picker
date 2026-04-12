@@ -1,7 +1,8 @@
 """
 设备池管理器 —— 设备获取、加锁、释放、心跳、异常标记。
 
-即使当前只有一台设备，也按池化抽象设计，后续扩多设备零改动。
+拍照购调度：只使用「云手机池」中状态为 available 且已配置 adb_host_port 的实例；
+与 device_pool 行级锁（FOR UPDATE SKIP LOCKED）配合，多任务可并行占用不同设备。
 """
 from __future__ import annotations
 
@@ -10,8 +11,11 @@ import time
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.models.cloud_phone import CloudPhonePool
 from app.models.device import Device
 from .adb_client import AdbClient
 
@@ -23,6 +27,10 @@ RECOVERABLE_STATUSES = ("offline", "error")
 ADB_RECONNECT_RETRIES = 2
 ADB_RECONNECT_INTERVAL = 2
 
+# 多任务抢少量设备时：在超时内轮询，避免瞬时无 idle 就立刻 NO_DEVICE
+ACQUIRE_WAIT_SECONDS = 600
+ACQUIRE_POLL_INTERVAL = 2.0
+
 
 class DeviceManager:
 
@@ -31,27 +39,99 @@ class DeviceManager:
 
     # ── 设备获取与锁定 ────────────────────────────────────────
 
-    def acquire_device(self, task_id: int, preferred_serial: str | None = None) -> Optional[Device]:
-        """从池中获取一台空闲设备并锁定；若无空闲设备则尝试恢复离线/异常设备。"""
-        device = self._try_acquire_idle(task_id, preferred_serial)
-        if device:
-            return device
+    def acquire_device(self, task_id: int) -> Optional[Device]:
+        """从云手机池（available + 有效 ADB）获取一台 idle 设备并锁定；池内有机器但暂忙时会等待轮询。"""
+        deadline = time.monotonic() + ACQUIRE_WAIT_SECONDS
 
-        recovered = self._recover_devices(preferred_serial)
-        if recovered:
-            device = self._try_acquire_idle(task_id, preferred_serial)
+        while time.monotonic() < deadline:
+            self._sync_cloud_phones_to_device_pool()
+            cloud_serials = self._list_cloud_pool_adb_serials()
+            if not cloud_serials:
+                logger.warning(
+                    "No available cloud phone with adb_host_port for task %s",
+                    task_id,
+                )
+                return None
+
+            device = self._try_acquire_from_cloud_pool(task_id)
             if device:
                 return device
 
-        logger.warning("No available device after recovery attempt (preferred=%s)", preferred_serial)
+            recovered = self._recover_devices(cloud_serials)
+            if recovered:
+                device = self._try_acquire_from_cloud_pool(task_id)
+                if device:
+                    return device
+
+            time.sleep(ACQUIRE_POLL_INTERVAL)
+
+        logger.warning("Timeout waiting for cloud pool device (task_id=%s)", task_id)
         return None
 
-    def _try_acquire_idle(self, task_id: int, preferred_serial: str | None) -> Optional[Device]:
-        """尝试获取一台 idle 设备，连接检测通过后锁定。"""
-        query = self.db.query(Device).filter(Device.status == "idle")
-        if preferred_serial:
-            query = query.filter(Device.device_id == preferred_serial)
-        device = query.with_for_update(skip_locked=True).first()
+    def _list_cloud_pool_adb_serials(self) -> set[str]:
+        rows = (
+            self.db.query(CloudPhonePool.adb_host_port)
+            .filter(
+                CloudPhonePool.status == "available",
+                CloudPhonePool.adb_host_port.isnot(None),
+            )
+            .all()
+        )
+        out: set[str] = set()
+        for (adb,) in rows:
+            if adb and (s := adb.strip()):
+                out.add(s)
+        return out
+
+    def _sync_cloud_phones_to_device_pool(self) -> None:
+        """为可用云手机自动补全 device_pool 行（adb_host_port 即 ADB serial）。"""
+        try:
+            phones = (
+                self.db.query(CloudPhonePool)
+                .filter(
+                    CloudPhonePool.status == "available",
+                    CloudPhonePool.adb_host_port.isnot(None),
+                )
+                .all()
+            )
+            for cp in phones:
+                serial = (cp.adb_host_port or "").strip()
+                if not serial:
+                    continue
+                if self.db.query(Device).filter(Device.device_id == serial).first():
+                    continue
+                name = (cp.phone_name or cp.phone_id or serial)[:128]
+                self.db.add(
+                    Device(
+                        device_id=serial,
+                        device_name=name,
+                        device_type="cloud_phone",
+                        status="idle",
+                    )
+                )
+            self.db.flush()
+        except IntegrityError:
+            self.db.rollback()
+            logger.debug("device_pool sync skipped (concurrent insert)")
+
+    def _try_acquire_from_cloud_pool(self, task_id: int) -> Optional[Device]:
+        """在云手机池可用的实例中锁定一台 idle 设备（SKIP LOCKED 便于并行多任务）。"""
+        q = (
+            self.db.query(Device)
+            .join(
+                CloudPhonePool,
+                func.trim(CloudPhonePool.adb_host_port) == Device.device_id,
+            )
+            .filter(
+                Device.status == "idle",
+                CloudPhonePool.status == "available",
+                CloudPhonePool.adb_host_port.isnot(None),
+                func.trim(CloudPhonePool.adb_host_port) != "",
+            )
+            .order_by(CloudPhonePool.id)
+            .with_for_update(skip_locked=True)
+        )
+        device = q.first()
 
         if not device:
             return None
@@ -70,14 +150,16 @@ class DeviceManager:
         device.last_heartbeat = datetime.now()
         device.error_count = 0
         self.db.commit()
-        logger.info("Acquired device %s for task %d", device.device_id, task_id)
+        logger.info("Acquired device %s for task %d (cloud pool)", device.device_id, task_id)
         return device
 
-    def _recover_devices(self, preferred_serial: str | None = None) -> int:
-        """尝试重连 offline/error 设备，恢复成功则置为 idle。返回恢复数量。"""
+    def _recover_devices(self, only_device_ids: Optional[set[str]] = None) -> int:
+        """尝试重连 offline/error 设备，恢复成功则置为 idle。only_device_ids 非空时只处理列表内 serial。"""
         query = self.db.query(Device).filter(Device.status.in_(RECOVERABLE_STATUSES))
-        if preferred_serial:
-            query = query.filter(Device.device_id == preferred_serial)
+        if only_device_ids is not None:
+            if not only_device_ids:
+                return 0
+            query = query.filter(Device.device_id.in_(only_device_ids))
         candidates = query.all()
 
         if not candidates:

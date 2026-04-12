@@ -33,7 +33,6 @@ from .result_parser import ResultParser
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DEVICE_SERIAL = "120.55.50.221:10001"
 DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
 
@@ -57,9 +56,10 @@ def execute_photo_search_task(task_id: int):
 
         photo_search_service.update_task_status(db, task_id, "dispatching")
 
-        # ── 1. 调度设备 ────────────────────────────────────────
+        # ── 1. 调度设备（云手机池 available + ADB，多任务 SKIP LOCKED 并行）──
         mgr = DeviceManager(db)
-        device = mgr.acquire_device(task_id, preferred_serial=DEFAULT_DEVICE_SERIAL)
+        device = mgr.acquire_device(task_id)
+
         if not device:
             photo_search_service.update_task_status(
                 db, task_id, "failed",
@@ -110,7 +110,18 @@ def execute_photo_search_task(task_id: int):
                     xml_dump_path=artifacts.save_xml(sl.xml_path, sl.step) if sl.xml_path else None,
                     message=sl.message,
                 )
-            raise RuntimeError(f"拍照购流程失败 [{e.step.value}]: {e.message}")
+            task_obj = photo_search_service.get_task(db, task_id)
+            if task_obj:
+                task_obj.attempt_count += 1
+                db.commit()
+            photo_search_service.update_task_status(
+                db, task_id, "failed",
+                error_code=e.code,
+                error_message=(
+                    f"拍照购流程失败 [{e.step.value}]: {e.message}"
+                )[:2000],
+            )
+            return
 
         for sl in ctx.step_logs:
             photo_search_service.save_action_log(

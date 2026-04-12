@@ -58,6 +58,38 @@ DETAIL_INDICATORS = ["加入购物车", "立即购买", "拼单", "已拼", "商
 DIALOG_INDICATORS = ["知道了", "我知道了", "取消", "关闭", "以后再说", "暂不", "下次再说", "允许", "稍后提醒", "重试"]
 PERMISSION_INDICATORS = ["允许", "始终允许", "仅在使用中允许", "仅此一次"]
 
+# 需人工处理、不应继续空等的阻断页（否则会拖到 WAIT_RESULT 超时）
+_RISK_VERIFY_KEYWORDS = [
+    "安全验证",
+    "滑动验证",
+    "拼图验证",
+    "人机验证",
+    "身份验证",
+    "环境存在风险",
+    "账号异常",
+    "风控",
+    "操作过于频繁",
+    "请完成安全验证",
+    "拖动滑块",
+    "向右滑动",
+    "滑块验证",
+]
+_PRIVACY_LOGIN_KEYWORDS = [
+    "隐私政策",
+    "拼多多隐私政策",
+    "感谢您的信任",
+    "用户协议",
+]
+_LOGIN_KEYWORDS = [
+    "请登录",
+    "立即登录",
+    "手机号登录",
+    "微信登录",
+    "登录后",
+    "注册账号",
+    "短信登录",
+]
+
 
 class PageDetector:
 
@@ -115,6 +147,48 @@ class PageDetector:
         joined = " ".join(texts)
         match_count = sum(1 for kw in DIALOG_INDICATORS if kw in joined)
         return match_count >= 2
+
+    def classify_pdd_blocking_state(self, texts: list[str]) -> Optional[tuple[str, str]]:
+        """若当前界面为需人工处理的阻断状态，返回 (error_code, user_message)，否则 None。
+
+        - PDD_RISK_CONTROL：验证码/安全验证/风控类（自动化无法继续）
+        - PDD_NOT_LOGGED_IN：隐私政策、登录页等（需先登录/同意协议）
+        """
+        joined = " ".join(texts)
+        if not joined.strip():
+            return None
+
+        # 1) 风控 / 安全验证（优先于「验证码」单独出现，避免与短信登录混淆）
+        if any(kw in joined for kw in _RISK_VERIFY_KEYWORDS):
+            return (
+                "PDD_RISK_CONTROL",
+                "任务遇到风控或安全验证，请在设备上手动处理后重试",
+            )
+        if "验证码" in joined and any(
+            x in joined for x in ("拼图", "滑块", "滑动", "安全", "人机")
+        ):
+            return (
+                "PDD_RISK_CONTROL",
+                "任务遇到风控或安全验证，请在设备上手动处理后重试",
+            )
+
+        # 2) 隐私政策 / 协议（常见为未登录冷启动）
+        if any(kw in joined for kw in _PRIVACY_LOGIN_KEYWORDS) and (
+            "同意" in joined or "不同意" in joined
+        ):
+            return (
+                "PDD_NOT_LOGGED_IN",
+                "拼多多需登录或同意隐私政策，请在设备上完成登录与授权后再执行任务",
+            )
+
+        # 3) 明确登录入口
+        if any(kw in joined for kw in _LOGIN_KEYWORDS):
+            return (
+                "PDD_NOT_LOGGED_IN",
+                "拼多多用户未登录，请先登录后再执行任务",
+            )
+
+        return None
 
     def _classify_page(self, texts: list[str], activity: str) -> PageType:
         joined = " ".join(texts)

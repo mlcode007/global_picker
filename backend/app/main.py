@@ -91,3 +91,13 @@ app.mount("/artifacts", StaticFiles(directory=str(_artifacts_dir)), name="artifa
 @app.get("/health", tags=["系统"])
 def health_check():
     return {"status": "ok", "env": settings.APP_ENV}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8001,
+        reload=True
+    )

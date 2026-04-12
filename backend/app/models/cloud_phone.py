@@ -11,15 +11,16 @@ class CloudPhonePool(Base):
     phone_id = Column(String(64), nullable=False, unique=True, comment='云手机ID')
     phone_name = Column(String(128), nullable=True, comment='云手机名称')
     status = Column(
-        Enum("available", "binding", "bound", "offline", "maintenance"),
+        Enum("available", "binding", "bound", "offline", "maintenance", "deleted", "timeo"),
         nullable=False,
         default="available",
-        comment='状态: available-可用, binding-绑定中, bound-已绑定, offline-离线, maintenance-维护中'
+        comment='状态: available-可用, binding-绑定中, bound-已绑定, offline-离线, maintenance-维护中, deleted-已删除, timeo-ADB超时'
     )
     created_by = Column(Integer, nullable=True, comment="创建用户ID")
     region = Column(String(32), nullable=False, default="cn-jsha-cloudphone-3", comment='地域')
     instance_type = Column(String(64), nullable=True, comment='实例类型')
     spec = Column(JSON, nullable=True, comment='规格信息（CPU、内存、存储等）')
+    adb_host_port = Column(String(64), nullable=True, comment='ADB连接端口')
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 

@@ -342,6 +342,11 @@ import {
 } from '@ant-design/icons-vue'
 import { productApi, pddApi, profitApi, exportApi, photoSearchApi } from '@/api/products'
 import { STATUS_MAP, REGION_MAP, profitRateColor } from '@/utils'
+import {
+  pollPhotoTaskUntilDone,
+  PHOTO_POLL_ACTIVE,
+  formatPhotoTaskLine,
+} from '@/utils/photoSearchTask'
 
 const route = useRoute()
 const router = useRouter()
@@ -361,7 +366,7 @@ const photoSearchSubmitting = ref(false)
 const syncImagesLoading = ref(false)
 const photoTaskRunning = computed(() => {
   if (!photoTask.value) return false
-  return ['queued', 'dispatching', 'running', 'collecting', 'parsing', 'saving'].includes(photoTask.value.status)
+  return PHOTO_POLL_ACTIVE.has(photoTask.value.status)
 })
 const photoSearchBusy = computed(() => photoSearchSubmitting.value || photoTaskRunning.value)
 
@@ -384,13 +389,12 @@ const shopUrl = computed(() => {
   return ''
 })
 const photoTaskStatusText = computed(() => {
-  const map = {
-    queued: '排队中…', dispatching: '分配设备…', running: '执行中…',
-    collecting: '采集结果…', parsing: '解析中…', saving: '入库中…',
-    success: '完成', failed: '失败', cancelled: '已取消',
-    retry_waiting: '等待重试…',
+  const t = photoTask.value
+  if (!t) return ''
+  if (t.status === 'failed' && t.error_message) {
+    return t.error_message
   }
-  return map[photoTask.value?.status] || photoTask.value?.status || ''
+  return formatPhotoTaskLine(t)
 })
 const photoTaskAlertType = computed(() => {
   const s = photoTask.value?.status
@@ -399,8 +403,6 @@ const photoTaskAlertType = computed(() => {
   if (s === 'cancelled') return 'warning'
   return 'info'
 })
-let photoTaskPollTimer = null
-
 const profitForm = reactive({
   tiktok_price_cny: 0,
   pdd_price_cny: 0,
@@ -526,6 +528,23 @@ async function submitMatch() {
   }
 }
 
+async function onPhotoTaskTerminal(finalTask) {
+  if (finalTask.status === 'success') {
+    message.success(
+      `拍照购完成，找到 ${finalTask.candidates_found} 个候选，入库 ${finalTask.candidates_saved} 个`,
+    )
+    try {
+      await photoSearchApi.syncTaskImages(finalTask.id)
+    } catch {
+      /* 同步失败不阻断，与列表页批量逻辑一致 */
+    }
+    const m = await pddApi.getMatches(route.params.id)
+    matches.value = m
+  } else if (finalTask.status === 'failed') {
+    message.error(finalTask.error_message || '拍照购失败')
+  }
+}
+
 async function startPhotoSearch() {
   if (!product.value?.main_image_url) {
     message.warning('该商品暂无主图，无法自动拍照购')
@@ -534,17 +553,34 @@ async function startPhotoSearch() {
   if (photoSearchBusy.value) return
   photoSearchSubmitting.value = true
   try {
-    const res = await photoSearchApi.createTask({ product_id: product.value.id })
-    photoTask.value = res
-    message.info('拍照购任务已创建，正在执行...')
-    startPollingPhotoTask(res.id)
-  } catch (e) {
-    const status = e?.response?.status
-    if (status === 409) {
-      message.warning('拍照购任务正在执行中，请等待完成')
-    } else {
-      message.error(e?.response?.data?.detail || '创建拍照购任务失败')
+    let res
+    try {
+      res = await photoSearchApi.createTask({ product_id: product.value.id })
+    } catch (e) {
+      const httpStatus = e?.response?.status
+      if (e?.status === 409 || httpStatus === 409) {
+        message.info('检测到已有任务，接续进度…')
+        const tasks = await photoSearchApi.getTasksByProduct(product.value.id)
+        res = tasks?.find((t) => PHOTO_POLL_ACTIVE.has(t.status)) || tasks?.[0]
+        if (!res) {
+          message.error(e?.message || '已有任务但无法获取状态')
+          return
+        }
+      } else if (e?.response?.data?.error_code === 'NO_DEVICE') {
+        message.warning('无可用设备，请检查设备状态后重试')
+        return
+      } else {
+        message.error(e?.response?.data?.detail || e?.message || '创建拍照购任务失败')
+        return
+      }
     }
+    photoTask.value = res
+    message.info('拍照购任务已创建，正在执行…')
+    const finalTask = await pollPhotoTaskUntilDone(res.id, (t) => {
+      photoTask.value = t
+    })
+    photoTask.value = finalTask
+    await onPhotoTaskTerminal(finalTask)
   } finally {
     photoSearchSubmitting.value = false
   }
@@ -556,7 +592,11 @@ async function retryPhotoSearch() {
     const res = await photoSearchApi.retryTask(photoTask.value.id)
     photoTask.value = res
     message.info('重试任务已提交')
-    startPollingPhotoTask(res.id)
+    const finalTask = await pollPhotoTaskUntilDone(res.id, (t) => {
+      photoTask.value = t
+    })
+    photoTask.value = finalTask
+    await onPhotoTaskTerminal(finalTask)
   } catch (e) {
     message.error(e?.response?.data?.detail || '重试失败')
   }
@@ -578,40 +618,21 @@ async function syncPhotoTaskImages() {
   }
 }
 
-function startPollingPhotoTask(taskId) {
-  stopPollingPhotoTask()
-  photoTaskPollTimer = setInterval(async () => {
-    try {
-      const res = await photoSearchApi.getTask(taskId)
-      photoTask.value = res
-      if (!['queued', 'dispatching', 'running', 'collecting', 'parsing', 'saving'].includes(res.status)) {
-        stopPollingPhotoTask()
-        if (res.status === 'success') {
-          message.success(`拍照购完成，找到 ${res.candidates_found} 个候选，入库 ${res.candidates_saved} 个`)
-          const m = await pddApi.getMatches(route.params.id)
-          matches.value = m
-        }
-      }
-    } catch {
-      stopPollingPhotoTask()
-    }
-  }, 2000)
-}
-
-function stopPollingPhotoTask() {
-  if (photoTaskPollTimer) {
-    clearInterval(photoTaskPollTimer)
-    photoTaskPollTimer = null
-  }
-}
-
 async function loadLatestPhotoTask() {
   try {
     const tasks = await photoSearchApi.getTasksByProduct(route.params.id)
     if (tasks?.length) {
-      photoTask.value = tasks[0]
-      if (photoTaskRunning.value) {
-        startPollingPhotoTask(tasks[0].id)
+      const t = tasks[0]
+      photoTask.value = t
+      if (PHOTO_POLL_ACTIVE.has(t.status)) {
+        pollPhotoTaskUntilDone(t.id, (tick) => {
+          photoTask.value = tick
+        })
+          .then((finalTask) => {
+            photoTask.value = finalTask
+            return onPhotoTaskTerminal(finalTask)
+          })
+          .catch(() => {})
       }
     }
   } catch {}

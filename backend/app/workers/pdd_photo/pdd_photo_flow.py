@@ -240,6 +240,20 @@ class PddPhotoFlow:
                 raise FlowError(FlowStep.WAIT_RESULT, "IMAGE_TOO_SMALL",
                                 "PDD 提示图片尺寸过小，请使用更大分辨率的图片")
 
+            blocker = self.detector.classify_pdd_blocking_state(texts)
+            if blocker:
+                bcode, bmsg = blocker
+                shot = self.adb.screenshot(tag="wait_result_blocker")
+                self.ctx.step_logs.append(StepLog(
+                    step=FlowStep.WAIT_RESULT.value,
+                    action="blocking_ui",
+                    success=False,
+                    screenshot_path=shot,
+                    xml_path=xml,
+                    message=f"{bcode}: {bmsg}",
+                ))
+                raise FlowError(FlowStep.WAIT_RESULT, bcode, bmsg)
+
             page = self._quick_classify_xml(xml, pkg, act)
 
             if page.page_type == PageType.PDD_DIALOG:
@@ -282,6 +296,11 @@ class PddPhotoFlow:
         shot = self.adb.screenshot(tag=tag)
 
         if xml_path:
+            texts = self.detector._extract_texts(xml_path)
+            blocker = self.detector.classify_pdd_blocking_state(texts)
+            if blocker:
+                bcode, bmsg = blocker
+                raise FlowError(FlowStep.COLLECT_RESULT, bcode, bmsg)
             self.ctx.result_xml_paths.append(xml_path)
         if shot:
             self.ctx.result_screenshots.append(shot)

@@ -13,6 +13,9 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+        // 与 cloudPhone 长超时一致，避免本地开发时代理先断开
+        timeout: 180000,
+        proxyTimeout: 180000,
       },
       '/artifacts': {
         target: 'http://localhost:8000',

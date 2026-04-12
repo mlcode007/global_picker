@@ -27,6 +27,10 @@
           <template #icon><PhoneOutlined /></template>
           云手机管理
         </a-menu-item>
+        <a-menu-item key="Profile">
+          <template #icon><UserOutlined /></template>
+          个人主页
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
 
@@ -80,6 +84,7 @@ import {
   UnorderedListOutlined,
   ImportOutlined,
   PhoneOutlined,
+  UserOutlined,
   DownOutlined,
   LogoutOutlined,
 } from '@ant-design/icons-vue'
@@ -105,6 +110,8 @@ function handleMenuClick({ key }) {
   console.log('Menu clicked:', key)
   if (key === 'CloudPhone') {
     router.push('/cloud-phone')
+  } else if (key === 'Profile') {
+    router.push('/profile')
   } else {
     router.push({ name: key })
   }

@@ -48,6 +48,14 @@ http.interceptors.response.use(
       return Promise.reject(e)
     }
 
+    const isTimeout =
+      err.code === 'ECONNABORTED' ||
+      (typeof err.message === 'string' && err.message.toLowerCase().includes('timeout'))
+    if (isTimeout) {
+      message.error('请求超时，请稍后重试（云手机创建或检查耗时较长）')
+      return Promise.reject(err)
+    }
+
     message.error(serverMsg || err.message || '网络错误')
     return Promise.reject(err)
   }

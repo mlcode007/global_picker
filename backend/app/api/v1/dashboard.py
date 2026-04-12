@@ -50,70 +50,95 @@ def get_dashboard_stats(
     product_by_region = {r: c for r, c in region_rows}
 
     # ── 采集任务统计 ──
-    user_product_ids = product_base.with_entities(Product.crawl_task_id)
-    crawl_status_rows = (
-        db.query(CrawlTask.status, func.count())
-        .filter(CrawlTask.id.in_(user_product_ids))
-        .group_by(CrawlTask.status)
-        .all()
-    )
-    crawl_by_status = {s: c for s, c in crawl_status_rows}
+    user_product_ids = product_base.with_entities(Product.crawl_task_id).all()
+    user_product_ids = [id[0] for id in user_product_ids if id[0]]
+    if user_product_ids:
+        crawl_status_rows = (
+            db.query(CrawlTask.status, func.count())
+            .filter(CrawlTask.id.in_(user_product_ids))
+            .group_by(CrawlTask.status)
+            .all()
+        )
+        crawl_by_status = {s: c for s, c in crawl_status_rows}
+    else:
+        crawl_by_status = {}
 
     # ── 拼多多比价统计（按用户商品）──
-    user_pid_sub = product_base.with_entities(Product.id).subquery()
-    match_base = db.query(PddMatch).filter(PddMatch.product_id.in_(db.query(user_pid_sub)))
-    total_matches = match_base.count()
-    confirmed_matches = match_base.filter(PddMatch.is_confirmed == 1).count()
-    products_with_match = (
-        match_base.with_entities(func.count(distinct(PddMatch.product_id))).scalar()
-    )
+    user_product_ids = product_base.with_entities(Product.id).all()
+    user_product_ids = [id[0] for id in user_product_ids if id[0]]
+    
+    if user_product_ids:
+        user_pid_sub = product_base.with_entities(Product.id).subquery()
+        match_base = db.query(PddMatch).filter(PddMatch.product_id.in_(db.query(user_pid_sub)))
+        total_matches = match_base.count()
+        confirmed_matches = match_base.filter(PddMatch.is_confirmed == 1).count()
+        products_with_match = (
+            match_base.with_entities(func.count(distinct(PddMatch.product_id))).scalar()
+        )
 
-    match_source_rows = (
-        match_base.with_entities(PddMatch.match_source, func.count())
-        .group_by(PddMatch.match_source)
-        .all()
-    )
-    match_by_source = {s: c for s, c in match_source_rows}
+        match_source_rows = (
+            match_base.with_entities(PddMatch.match_source, func.count())
+            .group_by(PddMatch.match_source)
+            .all()
+        )
+        match_by_source = {s: c for s, c in match_source_rows}
+    else:
+        total_matches = 0
+        confirmed_matches = 0
+        products_with_match = 0
+        match_by_source = {}
 
     # ── 利润统计 ──
-    latest_profit_sub = (
-        db.query(
-            ProfitRecord.product_id,
-            func.max(ProfitRecord.id).label("max_id"),
+    if user_product_ids:
+        latest_profit_sub = (
+            db.query(
+                ProfitRecord.product_id,
+                func.max(ProfitRecord.id).label("max_id"),
+            )
+            .filter(ProfitRecord.product_id.in_(user_product_ids))
+            .group_by(ProfitRecord.product_id)
+            .subquery()
         )
-        .filter(ProfitRecord.product_id.in_(db.query(user_pid_sub)))
-        .group_by(ProfitRecord.product_id)
-        .subquery()
-    )
-    latest_profits = (
-        db.query(ProfitRecord)
-        .join(latest_profit_sub, ProfitRecord.id == latest_profit_sub.c.max_id)
-        .all()
-    )
-    products_with_profit = len(latest_profits)
-    if latest_profits:
-        profit_values = [float(p.profit) for p in latest_profits]
-        profit_rates = [float(p.profit_rate) for p in latest_profits]
-        avg_profit = sum(profit_values) / len(profit_values)
-        avg_profit_rate = sum(profit_rates) / len(profit_rates)
-        positive_profit = sum(1 for p in profit_values if p > 0)
-        high_margin = sum(1 for r in profit_rates if r >= 0.2)
+        latest_profits = (
+            db.query(ProfitRecord)
+            .join(latest_profit_sub, ProfitRecord.id == latest_profit_sub.c.max_id)
+            .all()
+        )
+        products_with_profit = len(latest_profits)
+        if latest_profits:
+            profit_values = [float(p.profit) for p in latest_profits]
+            profit_rates = [float(p.profit_rate) for p in latest_profits]
+            avg_profit = sum(profit_values) / len(profit_values)
+            avg_profit_rate = sum(profit_rates) / len(profit_rates)
+            positive_profit = sum(1 for p in profit_values if p > 0)
+            high_margin = sum(1 for r in profit_rates if r >= 0.2)
+        else:
+            avg_profit = 0
+            avg_profit_rate = 0
+            positive_profit = 0
+            high_margin = 0
     else:
+        products_with_profit = 0
         avg_profit = 0
         avg_profit_rate = 0
         positive_profit = 0
         high_margin = 0
 
     # ── 拍照购任务统计 ──
-    photo_status_rows = (
-        db.query(PhotoSearchTask.status, func.count())
-        .filter(PhotoSearchTask.product_id.in_(db.query(user_pid_sub)))
-        .group_by(PhotoSearchTask.status)
-        .all()
-    )
-    photo_by_status = {s: c for s, c in photo_status_rows}
-    photo_total = sum(photo_by_status.values())
-    photo_success = photo_by_status.get("success", 0)
+    if user_product_ids:
+        photo_status_rows = (
+            db.query(PhotoSearchTask.status, func.count())
+            .filter(PhotoSearchTask.product_id.in_(user_product_ids))
+            .group_by(PhotoSearchTask.status)
+            .all()
+        )
+        photo_by_status = {s: c for s, c in photo_status_rows}
+        photo_total = sum(photo_by_status.values())
+        photo_success = photo_by_status.get("success", 0)
+    else:
+        photo_by_status = {}
+        photo_total = 0
+        photo_success = 0
 
     # ── 设备统计（公共资源，不按用户隔离）──
     device_status_rows = (

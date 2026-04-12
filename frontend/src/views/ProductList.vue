@@ -352,6 +352,7 @@ import {
 import { useProductStore } from '@/stores/product'
 import { exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
+import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
 
 const router = useRouter()
 const store = useProductStore()
@@ -377,47 +378,6 @@ const rowSelection = computed(() => ({
 // --- 列表页批量拍照购（串行）---
 const photoBatchRunning = ref(false)
 const photoRowProgress = reactive({})
-
-const PHOTO_POLL_ACTIVE = new Set([
-  'queued', 'dispatching', 'running', 'collecting', 'parsing', 'saving', 'retry_waiting',
-])
-
-const PHOTO_STATUS_LABEL = {
-  queued: '排队中',
-  dispatching: '分配设备',
-  running: '执行中',
-  collecting: '采集结果',
-  parsing: '解析中',
-  saving: '入库中',
-  success: '完成',
-  failed: '失败',
-  cancelled: '已取消',
-  retry_waiting: '等待重试',
-}
-
-function formatPhotoTaskLine(task) {
-  if (!task) return '准备中…'
-  const base = PHOTO_STATUS_LABEL[task.status] || task.status
-  if (task.step && PHOTO_POLL_ACTIVE.has(task.status)) {
-    return `${base} · ${task.step}`
-  }
-  return base
-}
-
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms))
-}
-
-async function pollPhotoTaskUntilDone(taskId, onTick) {
-  while (true) {
-    const res = await photoSearchApi.getTask(taskId)
-    onTick(res)
-    if (!PHOTO_POLL_ACTIVE.has(res.status)) {
-      return res
-    }
-    await sleep(2000)
-  }
-}
 
 async function startBatchPhotoSearch() {
   if (photoBatchRunning.value) return
