@@ -18,7 +18,7 @@ __pycache__/
 # Artifacts
 .logs/
 artifacts/
-logs/
+.logs/
 dev/
 changelog/
 
