@@ -1,0 +1,21 @@
+-- 创建用户积分表
+CREATE TABLE IF NOT EXISTS user_points (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE COMMENT '用户ID',
+    points INT NOT NULL DEFAULT 0 COMMENT '当前积分',
+    total_earned INT NOT NULL DEFAULT 0 COMMENT '总获取积分',
+    total_consumed INT NOT NULL DEFAULT 0 COMMENT '总消耗积分',
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 创建积分交易记录表
+CREATE TABLE IF NOT EXISTS points_transaction (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL COMMENT '用户ID',
+    type ENUM('earn', 'consume') NOT NULL COMMENT '交易类型',
+    amount INT NOT NULL COMMENT '积分数量',
+    reason TEXT NOT NULL COMMENT '交易原因',
+    related_id VARCHAR(128) NULL COMMENT '关联ID',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

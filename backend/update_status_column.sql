@@ -1,0 +1,1 @@
+ALTER TABLE cloud_phone_pool MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'available';
