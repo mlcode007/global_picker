@@ -217,7 +217,7 @@ def cloud_phone_create_adb(id):
     api.set_request_params({
         'Region': 'cn-jsha-cloudphone-3',
         'CloudPhoneIds': [f'{id}'],
-        'Ips': [get_current_id()]
+        'Ips': [get_current_id(), "47.238.72.198"]
     })
     res = api.do()
     print(json.dumps(json.loads(res['Info'])['data'], indent=2, ensure_ascii=False))
