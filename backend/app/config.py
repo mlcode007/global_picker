@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     # Cookie：从浏览器 DevTools 复制后粘贴，JSON 格式 {"name":"value",...}
     TIKTOK_COOKIES: str = ""
     # 有头模式：True 显示浏览器窗口（可手动过验证），False 无界面后台运行
-    TIKTOK_HEADLESS: bool = False
+    TIKTOK_HEADLESS: bool = True
 
     # 阿里云 OSS
     OSS_ACCESS_KEY_ID: str = ""
