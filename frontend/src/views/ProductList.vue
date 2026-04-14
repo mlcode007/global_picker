@@ -90,10 +90,21 @@
                 type="primary"
                 ghost
                 :loading="photoBatchRunning"
-                :disabled="photoBatchRunning || !selectedRowKeys.length"
+                :disabled="photoBatchRunning || crawlBatchRunning || !selectedRowKeys.length"
                 @click="startBatchPhotoSearch"
               >
                 <CameraOutlined /> 自动拍照购
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="对勾选且有采集任务的商品依次重新采集 TikTok 数据，完成后自动刷新本行">
+              <a-button
+                type="primary"
+                ghost
+                :loading="crawlBatchRunning"
+                :disabled="crawlBatchRunning || photoBatchRunning || !selectedRowKeys.length"
+                @click="startBatchCrawl"
+              >
+                <SyncOutlined /> 批量采集
               </a-button>
             </a-tooltip>
             <a-button type="primary" @click="router.push('/import')"><ImportOutlined /> 批量导入</a-button>
@@ -176,6 +187,28 @@
                     <span class="photo-batch-err-text">{{ photoRowProgress[record.id].stepText }}</span>
                   </template>
                 </div>
+                <div v-if="crawlRowProgress[record.id]" class="photo-batch-row crawl-batch-row">
+                  <template v-if="crawlRowProgress[record.id].phase === 'skipped'">
+                    <span class="photo-batch-muted">{{ crawlRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="crawlRowProgress[record.id].phase === 'queued'">
+                    <a-tag color="processing" style="margin:0">采集 {{ crawlRowProgress[record.id].orderIndex }}/{{ crawlRowProgress[record.id].batchTotal }}</a-tag>
+                    <span class="photo-batch-muted">{{ crawlRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="crawlRowProgress[record.id].phase === 'running'">
+                    <a-spin size="small" style="margin-right:6px" />
+                    <span class="photo-batch-active">{{ crawlRowProgress[record.id].stepText }}</span>
+                    <span v-if="crawlRowProgress[record.id].task?.id" class="photo-batch-muted">任务 #{{ crawlRowProgress[record.id].task.id }}</span>
+                  </template>
+                  <template v-else-if="crawlRowProgress[record.id].phase === 'done'">
+                    <CheckCircleOutlined class="photo-batch-ok" />
+                    <span class="photo-batch-done-text">{{ crawlRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="crawlRowProgress[record.id].phase === 'failed'">
+                    <CloseCircleOutlined class="photo-batch-err" />
+                    <span class="photo-batch-err-text">{{ crawlRowProgress[record.id].stepText }}</span>
+                  </template>
+                </div>
               </div>
             </div>
           </template>
@@ -250,8 +283,10 @@
                 <a
                   :style="!record.crawl_task_id
                     ? 'color:#ccc;cursor:not-allowed'
-                    : recrawlingIds.has(record.id) ? 'color:#faad14;opacity:.7' : 'color:#faad14'"
-                  @click="record.crawl_task_id && recrawl(record)"
+                    : (recrawlingIds.has(record.id) || crawlBatchRunning)
+                      ? 'color:#faad14;opacity:.7'
+                      : 'color:#faad14'"
+                  @click="record.crawl_task_id && !crawlBatchRunning && recrawl(record)"
                 >
                   <SyncOutlined :spin="recrawlingIds.has(record.id)" /> 采集
                 </a>
@@ -350,9 +385,10 @@ import {
   CameraOutlined, CheckCircleOutlined, CloseCircleOutlined,
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
-import { exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
+import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
 import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
+import { pollCrawlTaskUntilDone, formatCrawlTaskLine, sleep as crawlSleep } from '@/utils/crawlTask'
 
 const router = useRouter()
 const store = useProductStore()
@@ -372,12 +408,152 @@ const selectedRowKeys = ref([])
 const rowSelection = computed(() => ({
   selectedRowKeys: selectedRowKeys.value,
   onChange: (keys) => { selectedRowKeys.value = keys },
-  getCheckboxProps: () => ({ disabled: photoBatchRunning.value }),
+  getCheckboxProps: () => ({
+    disabled: photoBatchRunning.value || crawlBatchRunning.value,
+  }),
 }))
 
 // --- 列表页批量拍照购（串行）---
 const photoBatchRunning = ref(false)
 const photoRowProgress = reactive({})
+
+// --- 列表页批量采集 TikTok（串行，与拍照购一致：间隔 + 行内进度）---
+const crawlBatchRunning = ref(false)
+const crawlRowProgress = reactive({})
+
+/** 两条商品采集之间的间隔（ms），避免连续打满后端/浏览器 */
+const CRAWL_BATCH_GAP_MS = { min: 720, max: 1100 }
+
+function randomCrawlGap() {
+  const { min, max } = CRAWL_BATCH_GAP_MS
+  return min + Math.floor(Math.random() * (max - min + 1))
+}
+
+async function startBatchCrawl() {
+  if (crawlBatchRunning.value) return
+  const keys = [...selectedRowKeys.value]
+  if (!keys.length) {
+    message.warning('请先勾选要采集的商品')
+    return
+  }
+
+  const rows = store.list.filter(r => keys.includes(r.id))
+  const ordered = keys.map(id => rows.find(r => r.id === id)).filter(Boolean)
+
+  Object.keys(crawlRowProgress).forEach((k) => { delete crawlRowProgress[k] })
+
+  ordered.forEach((r, i) => {
+    const orderIndex = i + 1
+    const batchTotal = ordered.length
+    if (!r.crawl_task_id) {
+      crawlRowProgress[r.id] = {
+        phase: 'skipped',
+        orderIndex,
+        batchTotal,
+        stepText: '无采集任务，已跳过（请通过导入或详情页创建商品）',
+      }
+    } else {
+      crawlRowProgress[r.id] = {
+        phase: 'queued',
+        orderIndex,
+        batchTotal,
+        stepText: `排队中（${orderIndex}/${batchTotal}）`,
+      }
+    }
+  })
+
+  const valid = ordered.filter(r => r.crawl_task_id)
+  if (!valid.length) {
+    message.warning('勾选的商品均无采集任务，无法批量采集')
+    return
+  }
+
+  crawlBatchRunning.value = true
+  let ok = 0
+  let fail = 0
+
+  try {
+    for (let i = 0; i < valid.length; i++) {
+      const r = valid[i]
+      const pid = r.id
+
+      if (i > 0) {
+        await crawlSleep(randomCrawlGap())
+      }
+
+      crawlRowProgress[pid] = {
+        ...crawlRowProgress[pid],
+        phase: 'running',
+        stepText: '提交采集任务…',
+        task: null,
+      }
+
+      try {
+        const submitted = await taskApi.retry(r.crawl_task_id)
+        crawlRowProgress[pid].task = submitted
+        crawlRowProgress[pid].stepText = formatCrawlTaskLine(submitted)
+        console.info(
+          `[批量采集] 商品 id=${pid} 已提交 任务 #${submitted.id} 状态=${submitted.status}`,
+        )
+
+        const finalTask = await pollCrawlTaskUntilDone(
+          r.crawl_task_id,
+          (t) => {
+            crawlRowProgress[pid].task = t
+            crawlRowProgress[pid].stepText = formatCrawlTaskLine(t)
+            if (t.status === 'running' || t.status === 'pending') {
+              console.info(
+                `[批量采集] 商品 id=${pid} 任务 #${t.id} 轮询 → ${t.status}`,
+              )
+            }
+          },
+        )
+
+        if (finalTask.status === 'done') {
+          ok += 1
+          crawlRowProgress[pid].phase = 'done'
+          crawlRowProgress[pid].task = finalTask
+          crawlRowProgress[pid].stepText = formatCrawlTaskLine(finalTask)
+          console.info(`[批量采集] 商品 id=${pid} 采集成功`)
+          try {
+            const updated = await productApi.get(pid)
+            const index = store.list.findIndex(p => p.id === pid)
+            if (index !== -1) {
+              store.list[index] = updated
+            }
+          } catch (e) {
+            console.warn('[批量采集] 刷新商品行失败', pid, e)
+          }
+        } else {
+          fail += 1
+          crawlRowProgress[pid].phase = 'failed'
+          crawlRowProgress[pid].task = finalTask
+          crawlRowProgress[pid].stepText = formatCrawlTaskLine(finalTask)
+          console.warn(
+            `[批量采集] 商品 id=${pid} 采集失败`,
+            finalTask.error_msg || finalTask.status,
+          )
+        }
+      } catch (e) {
+        fail += 1
+        crawlRowProgress[pid].phase = 'failed'
+        const msg = e?.message || '提交或等待任务失败'
+        crawlRowProgress[pid].stepText = msg
+        console.error('[批量采集] 异常', { productId: pid, err: e })
+      }
+    }
+
+    message.success(`批量采集已结束：成功 ${ok} 条，失败 ${fail} 条`)
+    if (fail > 0) {
+      message.warning({
+        content: `有 ${fail} 条未成功，请查看各行说明或稍后单独点击「采集」重试`,
+        duration: 7,
+      })
+    }
+  } finally {
+    crawlBatchRunning.value = false
+  }
+}
 
 async function startBatchPhotoSearch() {
   if (photoBatchRunning.value) return
@@ -477,7 +653,18 @@ async function startBatchPhotoSearch() {
     }
 
     message.success('批量拍照购已执行完毕')
-    await store.fetchList()
+    // 更新每个商品的利润信息
+    for (const r of valid) {
+      try {
+        const updatedProduct = await productApi.get(r.id)
+        const index = store.list.findIndex(p => p.id === r.id)
+        if (index !== -1) {
+          store.list[index] = updatedProduct
+        }
+      } catch (e) {
+        console.error('更新商品利润信息失败:', e)
+      }
+    }
     await loadPddMatchesBatch(valid.map(r => r.id))
   } finally {
     photoBatchRunning.value = false
@@ -558,7 +745,11 @@ async function setPrimaryInList(record, m) {
       pddMatchesMap[record.id].forEach(x => x.is_primary = x.id === m.id ? 1 : 0)
     }
     // 刷新当前商品数据以获取更新后的利润
-    await store.fetchList()
+    const updatedProduct = await productApi.get(record.id)
+    const index = store.list.findIndex(p => p.id === record.id)
+    if (index !== -1) {
+      store.list[index] = updatedProduct
+    }
     message.success('已设为主参照')
   } catch (e) {
     message.error(e?.message || '设置失败')
@@ -572,7 +763,12 @@ async function deleteMatchInList(record, m) {
     if (list) {
       pddMatchesMap[record.id] = list.filter(x => x.id !== m.id)
     }
-    await store.fetchList()
+    // 刷新当前商品数据以获取更新后的利润
+    const updatedProduct = await productApi.get(record.id)
+    const index = store.list.findIndex(p => p.id === record.id)
+    if (index !== -1) {
+      store.list[index] = updatedProduct
+    }
     message.success('已删除该拼多多匹配')
   } catch (e) {
     message.error(e?.message || '删除失败')

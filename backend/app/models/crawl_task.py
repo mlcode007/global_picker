@@ -15,5 +15,6 @@ class CrawlTask(Base):
     )
     retry_count = Column(SmallInteger, nullable=False, default=0)
     error_msg = Column(Text, nullable=True)
+    status_detail = Column(String(512), nullable=True)  # running 时细粒度提示，如验证码
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

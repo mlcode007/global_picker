@@ -9,6 +9,7 @@ class CrawlTaskOut(BaseModel):
     status: str
     retry_count: int
     error_msg: Optional[str]
+    status_detail: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

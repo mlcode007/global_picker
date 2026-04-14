@@ -1,0 +1,159 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<title>Security Check</title>
+<script nonce="46e8820494af98470beeb3d05a94fec9-argus" charset="utf-8" src="https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/oec-ttweb-captcha/loader/sg/1.0.0.53/captcha/index.js"></script>
+<style>
+  .middle_page_loading{
+      width: 150px;
+      height: 15px;
+      margin: 0 auto;
+      position: absolute;
+      top: 45%%;
+      left: 50%%;
+      transform: translate(-50%%, -50%%);
+  }
+  .middle_page_loading span{
+      display: inline-block;
+      width: 15px;
+      height: 100%%;
+      margin-right: 5px;
+      background: #323332;
+      -webkit-transform-origin: right bottom;
+      -moz-transform-origin: right bottom;
+      -ms-transform-origin: right bottom;
+      -o-transform-origin: right bottom;
+      transform-origin: right bottom;
+      -webkit-animation: load 1s ease infinite;
+      -moz-animation: load 1s ease infinite;
+      -ms-animation: load 1s ease infinite;
+      -o-animation: load 1s ease infinite;
+      animation: load 1s ease infinite;
+  }
+  .middle_page_loading span:last-child{
+      margin-right: 0px; 
+  }
+  @keyframes load {
+    0%%{
+          opacity: 1;
+      }
+      100%%{
+          opacity: 0;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+      }
+  }
+  @-webkit-keyframes load {
+    0%%{
+          opacity: 1;
+      }
+      100%%{
+          opacity: 0;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+      }
+  }
+  @-moz-keyframes load {
+      0%%{
+          opacity: 1;
+      }
+      100%%{
+          opacity: 0;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+      }
+  }
+  @-o-keyframes load {
+      0%%{
+          opacity: 1;
+      }
+      100%%{
+          opacity: 0;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+      }
+  }
+  @-ms-keyframes load {
+      0%%{
+          opacity: 1;
+      }
+      100%%{
+          opacity: 0;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+      }
+  }
+  .middle_page_loading span:nth-child(1){
+      -webkit-animation-delay: 0.13s;
+      -moz-animation-delay: 0.13s;
+      -ms-animation-delay: 0.13s;
+      -o-animation-delay: 0.13s;
+      animation-delay: 0.13s;
+  }
+  .middle_page_loading span:nth-child(2){
+      -webkit-animation-delay: 0.26s;
+      -moz-animation-delay: 0.26s;
+      -ms-animation-delay: 0.26s;
+      -o-animation-delay: 0.26s;
+      animation-delay: 0.26s;
+  }
+  .middle_page_loading span:nth-child(3){
+      -webkit-animation-delay: 0.39s;
+      -moz-animation-delay: 0.39s;
+      -ms-animation-delay: 0.39s;
+      -o-animation-delay: 0.39s;
+      animation-delay: 0.39s;
+  }
+  .middle_page_loading span:nth-child(4){
+      -webkit-animation-delay: 0.52s;
+      -moz-animation-delay: 0.52s;
+      -ms-animation-delay: 0.52s;
+      -o-animation-delay: 0.52s;
+      animation-delay: 0.52s;
+  }
+  .middle_page_loading span:nth-child(5){
+      -webkit-animation-delay: 0.65s;
+      -moz-animation-delay: 0.65s;
+      -ms-animation-delay: 0.65s;
+      -o-animation-delay: 0.65s;
+      animation-delay: 0.65s;
+  }
+</style>
+</head>
+<body>
+  <div id="captcha_container"></div>
+  <div class="middle_page_loading">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</body>
+<script nonce="46e8820494af98470beeb3d05a94fec9-argus" type="application/json" id="captcha-config">
+{
+    "aid": 0,
+    "verify_data": {"code":"10000","from":"oec_whale","sub_from":"dispose_center_new","type":"verify","region":"sg","subtype":"slide","detail":"y1pHk7dzcwIR3hPdFwTaoRItQROGcNWHIth15WYHnOOADKoZ0rW05GB1Afsz3jfnvb1t4VOhkC4ANdic97206co-8pXwNr9Cuugy*H6yBk5g6snWNDkYgIt8EFKScjs0jh9j2tBR44wzutjMqAV5dOko7346MOhtppajl0ReA2Wq31*m8ncCPS9Ob88dvGcPDHX1LYEOSKWeAXIYyoVtvXjTy3Mfgs1WAYwqxOSsz1F0cJCICyxPZQtgOULchB2MOlFFSa3Q35eRNuPqPilD9isT15DpVNPeODAywruEeabXQsMwkNt-AP4qZFPtmWwo0xKjvqKQJbWjgmIOIaogU2kUz2iHJJ6mnaTovXHVlBSTZ8V6lttkT01pCMV2*yZL2It31yhKqNGk3u-dl2xRvcsHGWFJOyjRkUvNi*UgwxVEkS2NR6QJEOfDaQkaCJ-gkQiv30AlE54hdkpkHupGklh*YOaDlONLCAHApYjoUjkKCAIsGyqpqZG5dGmZvvrJmTiXeobVgo8Mqjt7zBDqY7CLTM2efV7XwTMor6n4m-OPWaogGk4Ya6wmkXbcfgDYHZNTlcQf85J7Iw1VQsHQuSp83W5ukjpTLKcFxQ9K8TOLOMCeDWRbL7BX-2IJ5z9S2H-sFcdWE1-fwpd2cXGls6Uzw3N2aw9uzNy9ndlU*waElVs4ou0vrlFV8UNckzoNYmrBM7zriHzE-3q*aiotCHfwYR0wGpx2ZdS1mcSF3i6ruIPo4FB06gpxzZUvJ1gZ53sza7gPHmzuYrZarrLoWy*VZ9guLLqunlMuIV8Z5wQD1fuangs9uZIvnGZ3z*dPyUMXupeevKUmrrVCpBVhSggGIsRkSsg57e*ahaKHH54xaL35bWOj","fp":"verify_mnz1zf0y_t3kXEnPm_BYDN_4gIi_BMsv_Bstnoizdz6rk","server_sdk_env":"{\"idc\":\"my\",\"region\":\"ALISG\",\"server_type\":\"business\"}","log_id":"2026041504075243F3A5A9F953B3023DE0","extension":{"setting_version":"3.0.69-1.0.0.862"}}
+}
+</script>
+<script nonce="46e8820494af98470beeb3d05a94fec9-argus" charset="utf-8" src="https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/oec-ttweb-captcha/loader/sg/1.0.0.45/captcha-init.js"></script>
+</html>

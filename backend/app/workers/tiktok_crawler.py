@@ -13,7 +13,12 @@ TikTok Shop 商品采集 Worker — Playwright + 代理 + Cookie 版
 import asyncio
 import json
 import logging
+import os
 import re
+import shutil
+import sys
+import tempfile
+from pathlib import Path
 from decimal import Decimal, InvalidOperation
 from typing import Optional
 
@@ -238,6 +243,79 @@ def _load_cookies() -> list[dict]:
     从 TIKTOK_COOKIES 配置读取 cookie（全局配置，已废弃，保留兼容性）。
     """
     return _parse_cookies(get_settings().TIKTOK_COOKIES)
+
+
+def _tiktok_related_cookie_kv(playwright_cookies: list) -> dict[str, str]:
+    """从 Playwright context.cookies() 提取 TikTok 相关 name->value，用于写回 user_crawl_configs。"""
+    out: dict[str, str] = {}
+    for c in playwright_cookies:
+        dom = (c.get("domain") or "").lower()
+        name = c.get("name")
+        if not name:
+            continue
+        if any(
+            k in dom
+            for k in (
+                "tiktok.com",
+                "tiktokcdn",
+                "ttwstatic",
+                "byteoversea",
+                "tiktokv.com",
+            )
+        ):
+            out[str(name)] = str(c.get("value", ""))
+    return out
+
+
+def _merge_tiktok_cookies_db_string(existing_raw: Optional[str], new_kv: dict[str, str]) -> str:
+    base: dict = {}
+    if existing_raw and existing_raw.strip():
+        try:
+            data = json.loads(existing_raw)
+            if isinstance(data, dict):
+                base = data
+        except json.JSONDecodeError:
+            pass
+    base.update(new_kv)
+    return json.dumps(base, ensure_ascii=False)
+
+
+async def _persist_user_tiktok_cookies(user_id: int, context) -> None:
+    """验证通过后，把当前浏览器中的 TikTok 相关 Cookie 合并写入该用户的 user_crawl_configs。"""
+    if not user_id:
+        return
+    try:
+        pw_cookies = await context.cookies()
+    except Exception as e:
+        logger.warning("读取浏览器 Cookie 失败，无法回写用户表: %s", e)
+        return
+
+    new_kv = _tiktok_related_cookie_kv(pw_cookies)
+    if not new_kv:
+        logger.info("浏览器中无 TikTok 相关 Cookie，跳过回写用户表")
+        return
+
+    db = SessionLocal()
+    try:
+        cfg = db.query(UserCrawlConfig).filter(UserCrawlConfig.user_id == user_id).first()
+        merged = _merge_tiktok_cookies_db_string(
+            cfg.tiktok_cookies if cfg else None, new_kv
+        )
+        if cfg:
+            cfg.tiktok_cookies = merged
+        else:
+            db.add(UserCrawlConfig(user_id=user_id, tiktok_cookies=merged))
+        db.commit()
+        logger.info(
+            "已合并并更新用户 %d 的 tiktok_cookies（共 %d 个键）",
+            user_id,
+            len(json.loads(merged)),
+        )
+    except Exception as e:
+        logger.warning("写入 user_crawl_configs.tiktok_cookies 失败: %s", e)
+        db.rollback()
+    finally:
+        db.close()
 
 
 # ──────────────────────────────────────────────
@@ -716,10 +794,114 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
 
 
 # ──────────────────────────────────────────────
+# TikTok 滑块验证码（与 tiktok_captcha_solver.main 相同逻辑，复用当前 page）
+# ──────────────────────────────────────────────
+
+def _ensure_tiktok_captcha_solver_importable() -> None:
+    """tiktok_captcha_solver 依赖同目录下的 image_captcha_solver，需保证可导入。"""
+    root = Path(__file__).resolve().parent.parent / "spider" / "tiktok_product"
+    p = str(root)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+
+async def _solve_tiktok_slider_captcha(page, context) -> bool:
+    """
+    在当前浏览器上下文中完成滑块验证码，流程与 tiktok_captcha_solver.main 一致：
+    检测 → 取图 → 计算距离 → 拖拽 → 等待页面脱离 Security/CAPTCHA 标题。
+    """
+    from playwright.async_api import TimeoutError as PwTimeout
+
+    _ensure_tiktok_captcha_solver_importable()
+    from tiktok_captcha_solver import TikTokCaptchaSolver
+
+    tmp = tempfile.mkdtemp(prefix="tt_captcha_")
+    try:
+        solver = TikTokCaptchaSolver(
+            download_dir=tmp,
+            cookies_file=os.path.join(tmp, "cookies.json"),
+        )
+        solver.page = page
+        solver.context = context
+
+        await asyncio.sleep(2)
+
+        try:
+            await page.wait_for_selector(
+                "#captcha-verify-image", state="visible", timeout=20_000
+            )
+        except PwTimeout:
+            logger.warning("验证码背景图未在 20s 内出现，将尝试检测 DOM")
+
+        if not await solver.check_captcha_exists():
+            t = (await page.title()).lower()
+            if "security" not in t and "captcha" not in t:
+                logger.info("页面已非验证码状态，跳过自动滑块")
+                return True
+            logger.warning("标题仍像验证页但未找到滑块 DOM")
+            return False
+
+        await solver.get_captcha_images()
+        distance = solver.calculate_slide_distance()
+        if distance <= 0:
+            logger.warning("滑块距离计算为 0，无法自动拖拽")
+            return False
+
+        await solver.drag_slider(distance)
+
+        try:
+            await page.wait_for_function(
+                """() => {
+                    const t = document.title.toLowerCase();
+                    if (document.querySelector('.secsdk-captcha-drag-success')) return true;
+                    return !t.includes('security') && !t.includes('captcha') && t.length > 0;
+                }""",
+                timeout=90_000,
+            )
+        except PwTimeout:
+            logger.warning("等待验证码通过超时（90s）")
+
+        try:
+            await page.wait_for_load_state("networkidle", timeout=25_000)
+        except PwTimeout:
+            pass
+
+        t = (await page.title()).lower()
+        if "security" in t or "captcha" in t:
+            logger.warning("自动滑块后标题仍含 security/captcha，判定未通过")
+            return False
+
+        logger.info("TikTok 滑块验证码已通过（自动）")
+        return True
+    except Exception as e:
+        logger.warning("滑块验证码自动识别失败: %s", e, exc_info=True)
+        return False
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _set_crawl_task_status_detail(task_id: Optional[int], detail: Optional[str]) -> None:
+    if not task_id:
+        return
+    db = SessionLocal()
+    try:
+        t = db.query(CrawlTask).filter(CrawlTask.id == task_id).first()
+        if t and t.status == "running":
+            t.status_detail = detail
+            db.commit()
+    except Exception:
+        db.rollback()
+    finally:
+        db.close()
+
+
+# ──────────────────────────────────────────────
 # Playwright 核心采集
 # ──────────────────────────────────────────────
 
-async def _fetch_with_playwright(url: str, user_id: Optional[int] = None) -> dict:
+async def _fetch_with_playwright(
+    url: str, user_id: Optional[int] = None, task_id: Optional[int] = None
+) -> dict:
     from playwright.async_api import async_playwright, TimeoutError as PwTimeout
     from playwright_stealth import Stealth
 
@@ -753,6 +935,14 @@ async def _fetch_with_playwright(url: str, user_id: Optional[int] = None) -> dic
 
     product_data: dict = {}
     intercepted: list[dict] = []
+
+    # 检查并添加 locale=zh-CN 参数
+    if "shop.tiktok.com/view/product/" in url and "locale=" not in url:
+        if "?" in url:
+            url = f"{url}&locale=zh-CN"
+        else:
+            url = f"{url}?locale=zh-CN"
+        logger.info("已为 URL 添加 locale=zh-CN 参数: %s", url)
 
     async with async_playwright() as pw:
         headless = settings.TIKTOK_HEADLESS
@@ -832,38 +1022,76 @@ async def _fetch_with_playwright(url: str, user_id: Optional[int] = None) -> dic
 
         # ── 检查是否触发 CAPTCHA ──────────────────────────────────────
         is_captcha = "security" in page_title_lower or "captcha" in page_title_lower
+        captcha_encountered = False
 
         if is_captcha:
-            if not headless:
-                # 有头模式：等待用户在弹出的浏览器窗口中手动过验证（最多 120 秒）
+            captcha_encountered = True
+            max_auto_attempts = 3  # 首次 + 重试 2 次
+            _set_crawl_task_status_detail(
+                task_id, "正在处理 TikTok 安全验证（验证码）…"
+            )
+
+            for attempt in range(max_auto_attempts):
+                _set_crawl_task_status_detail(
+                    task_id,
+                    f"正在自动识别滑块验证码（{attempt + 1}/{max_auto_attempts}）…",
+                )
                 logger.warning(
-                    "crawl task %s 触发 CAPTCHA，等待用户在浏览器窗口中手动通过（120s 超时）",
-                    url
+                    "CAPTCHA（Security Check）自动滑块 第 %d/%d 次…",
+                    attempt + 1,
+                    max_auto_attempts,
                 )
-                try:
-                    # 等待页面标题变为非 CAPTCHA（说明验证通过，页面跳转）
-                    await page.wait_for_function(
-                        """() => {
-                            const t = document.title.toLowerCase();
-                            return !t.includes('security') && !t.includes('captcha') && t.length > 0;
-                        }""",
-                        timeout=120_000,
+                await _solve_tiktok_slider_captcha(page, context)
+                page_title_lower = (await page.title()).lower()
+                is_captcha = (
+                    "security" in page_title_lower or "captcha" in page_title_lower
+                )
+                if not is_captcha:
+                    break
+                if attempt < max_auto_attempts - 1:
+                    logger.warning("验证码未通过，重新加载商品页后重试…")
+                    try:
+                        await page.goto(url, wait_until="domcontentloaded", timeout=60_000)
+                        await page.wait_for_load_state("networkidle", timeout=20_000)
+                    except PwTimeout:
+                        logger.warning("重载超时，短暂等待后继续下一轮")
+                        await asyncio.sleep(5)
+
+            if is_captcha:
+                if not headless:
+                    _set_crawl_task_status_detail(
+                        task_id,
+                        "请在弹出的浏览器中手动完成验证（最多 120 秒）…",
                     )
-                    # 验证通过后重新等待页面稳定
-                    await page.wait_for_load_state("networkidle", timeout=20_000)
-                    logger.info("CAPTCHA 已手动通过，继续采集")
-                except PwTimeout:
+                    logger.warning(
+                        "自动滑块仍未通过，等待用户在浏览器窗口中手动完成（120s 超时） url=%s",
+                        url,
+                    )
+                    try:
+                        await page.wait_for_function(
+                            """() => {
+                                const t = document.title.toLowerCase();
+                                return !t.includes('security') && !t.includes('captcha') && t.length > 0;
+                            }""",
+                            timeout=120_000,
+                        )
+                        await page.wait_for_load_state("networkidle", timeout=20_000)
+                        logger.info("CAPTCHA 已手动通过，继续采集")
+                    except PwTimeout:
+                        await browser.close()
+                        raise RuntimeError("等待手动过验证超时（120s），请刷新后重试")
+                else:
                     await browser.close()
-                    raise RuntimeError("等待手动过验证超时（120s），请刷新后重试")
-            else:
-                # 无头模式：无法手动操作，直接报错
-                await browser.close()
-                raise RuntimeError(
-                    "触发 CAPTCHA 安全验证（无头模式）。解决方案：\n"
-                    "① 设置 TIKTOK_HEADLESS=False 后手动在弹出窗口中通过验证\n"
-                    "② 在 .env 设置 TIKTOK_PROXY（住宅代理）\n"
-                    "③ 在 .env 设置 TIKTOK_COOKIES（从浏览器复制登录 Cookie）"
-                )
+                    raise RuntimeError(
+                        "触发 CAPTCHA 且自动滑块 3 次均未通过（无头模式）。可尝试：\n"
+                        "① 设置 TIKTOK_HEADLESS=False，便于自动失败时手动完成\n"
+                        "② 配置住宅代理或有效 TikTok Cookie"
+                    )
+
+            if captcha_encountered and user_id:
+                await _persist_user_tiktok_cookies(user_id, context)
+
+            _set_crawl_task_status_detail(task_id, None)
 
         # Layer 0 — Remix loaderData（TikTok Shop 当前架构，最可靠）
         try:
@@ -956,7 +1184,9 @@ async def run_crawl_task(task_id: int) -> None:
         product.region = region
 
         try:
-            data = await _fetch_with_playwright(task.url, user_id=product.user_id)
+            data = await _fetch_with_playwright(
+                task.url, user_id=product.user_id, task_id=task.id
+            )
 
             if data:
                 _apply_product_data(product, data, db=db)
@@ -980,6 +1210,7 @@ async def run_crawl_task(task_id: int) -> None:
             task.retry_count += 1
             logger.exception("crawl task %d unexpected error", task_id)
 
+        task.status_detail = None
         db.commit()
 
     finally:

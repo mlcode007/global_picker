@@ -365,6 +365,9 @@ def save_candidates_to_matches(
 
     if not has_primary and first_new_match is not None:
         first_new_match.is_primary = 1
+        # 更新商品利润信息
+        from app.services.pdd_service import _update_product_profit
+        _update_product_profit(db, product_id, first_new_match.pdd_price)
 
     if saved or updated_existing:
         db.commit()

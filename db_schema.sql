@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `crawl_tasks` (
   `status`       ENUM('pending','running','done','failed') NOT NULL DEFAULT 'pending' COMMENT '任务状态',
   `retry_count`  TINYINT UNSIGNED NOT NULL DEFAULT 0     COMMENT '已重试次数',
   `error_msg`    TEXT                                    COMMENT '失败时的错误信息',
+  `status_detail` VARCHAR(512)                          NULL COMMENT 'running 时进度提示（如验证码）',
   `created_at`   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

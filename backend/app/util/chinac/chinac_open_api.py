@@ -10,19 +10,24 @@ import json
 import time
 import urllib.parse
 import urllib.request
+import os
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 
 
 class ChinacOpenApi:
     """
         初始化
     """
-    def __init__(self, access_key_id='875dbd8f3ba649e79959d8a540f05f0b', access_key_secret='ac24b38883ca4335aceeb56a9d29e8ce'):
+    def __init__(self, access_key_id=None, access_key_secret=None):
         super(ChinacOpenApi, self).__init__()
         # 用户Access Key，可以通过用控新增、查看
-        self._access_key_id = access_key_id
+        self._access_key_id = access_key_id or os.getenv('CHINAC_ACCESS_KEY_ID', '')
 
         # 用户Access Key Secret，可以通过用控新增、查看
-        self._access_key_secret = access_key_secret
+        self._access_key_secret = access_key_secret or os.getenv('CHINAC_ACCESS_KEY_SECRET', '')
 
         # openapi通信地址地址，默认线上v2版，可以通过setOpenApiUrl修改
         # 结尾不含/

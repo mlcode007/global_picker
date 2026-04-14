@@ -367,7 +367,6 @@ async function saveProfile() {
 }
 
 function rechargePoints() {
-  rechargeForm.value = { amount: 100 }
   showRechargeDialog.value = true
 }
 

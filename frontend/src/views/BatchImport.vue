@@ -113,6 +113,11 @@
             <a-tag :color="statusTagColor(task.status)" style="flex-shrink:0">
               {{ statusLabel(task.status) }}
             </a-tag>
+            <span
+              v-if="task.status === 'running' && task.status_detail"
+              style="font-size:12px;color:#1677ff;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+              :title="task.status_detail"
+            >{{ task.status_detail }}</span>
             <a-tooltip v-if="task.error_msg" :title="task.error_msg">
               <ExclamationCircleOutlined style="color:#ff4d4f;cursor:pointer;flex-shrink:0" />
             </a-tooltip>

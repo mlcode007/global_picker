@@ -32,7 +32,7 @@ async def add_product(
     from fastapi.responses import JSONResponse
     return JSONResponse(
         status_code=409,
-        content={"code": 409, "message": "该链接已存在", "data": None},
+        content={"code": 409, "message": "该商品已存在（同一 TikTok 商品 ID）", "data": None},
     )
 
 

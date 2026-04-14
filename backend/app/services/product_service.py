@@ -1,11 +1,20 @@
+import re
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import or_
 
 from app.models.product import Product
 from app.models.crawl_task import CrawlTask
 from app.schemas.product import ProductCreate, ProductUpdate
+
+
+def _extract_tiktok_product_id(url: str) -> Optional[str]:
+    """从商品链接解析 TikTok 商品数字 ID，用于用户级去重（与查询参数无关）。"""
+    if not url:
+        return None
+    m = re.search(r"/product/(\d+)", url)
+    return m.group(1) if m else None
 
 
 def _copy_crawl_data(source: Product, target: Product) -> None:
@@ -24,48 +33,83 @@ def _copy_crawl_data(source: Product, target: Product) -> None:
             setattr(target, f, val)
 
 
-def _find_shared_product(db: Session, tiktok_url: str, exclude_user_id: int) -> Optional[Product]:
-    """查找其他用户已成功采集的同一商品，用于共享数据"""
-    return (
+def _find_shared_product(
+    db: Session,
+    tiktok_url: str,
+    exclude_user_id: int,
+    tiktok_product_id: Optional[str] = None,
+) -> Optional[Product]:
+    """查找其他用户已成功采集的同一商品（优先按 tiktok_product_id）。"""
+    pid = tiktok_product_id or _extract_tiktok_product_id(tiktok_url)
+    q = (
         db.query(Product)
         .join(CrawlTask, Product.crawl_task_id == CrawlTask.id)
         .filter(
-            Product.tiktok_url == tiktok_url,
             Product.is_deleted == 0,
             Product.user_id != exclude_user_id,
             CrawlTask.status == "done",
         )
-        .first()
     )
+    if pid:
+        q = q.filter(Product.tiktok_product_id == pid)
+    else:
+        q = q.filter(Product.tiktok_url == tiktok_url)
+    return q.first()
 
 
 def create_product(db: Session, data: ProductCreate, user_id: int) -> Tuple[Product, Optional[CrawlTask]]:
     """新增商品并创建抓取任务，支持共享采集数据"""
-    existing = db.query(Product).filter(
-        Product.tiktok_url == data.tiktok_url,
-        Product.user_id == user_id,
-        Product.is_deleted == 0,
-    ).first()
+    pid = _extract_tiktok_product_id(data.tiktok_url)
+    if pid:
+        existing = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 0,
+                or_(Product.tiktok_product_id == pid, Product.tiktok_url == data.tiktok_url),
+            )
+            .first()
+        )
+    else:
+        existing = db.query(Product).filter(
+            Product.tiktok_url == data.tiktok_url,
+            Product.user_id == user_id,
+            Product.is_deleted == 0,
+        ).first()
     if existing:
         return existing, None
 
     # 检查是否有其他用户已采集成功的同一商品
-    shared = _find_shared_product(db, data.tiktok_url, user_id)
+    shared = _find_shared_product(db, data.tiktok_url, user_id, pid)
 
     task = CrawlTask(url=data.tiktok_url, status="pending" if not shared else "done")
     db.add(task)
     db.flush()
 
     # 软删除记录恢复
-    deleted = db.query(Product).filter(
-        Product.tiktok_url == data.tiktok_url,
-        Product.user_id == user_id,
-        Product.is_deleted == 1,
-    ).first()
+    if pid:
+        deleted = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 1,
+                or_(Product.tiktok_product_id == pid, Product.tiktok_url == data.tiktok_url),
+            )
+            .first()
+        )
+    else:
+        deleted = db.query(Product).filter(
+            Product.tiktok_url == data.tiktok_url,
+            Product.user_id == user_id,
+            Product.is_deleted == 1,
+        ).first()
     if deleted:
         deleted.is_deleted = 0
         deleted.status = "pending"
         deleted.crawl_task_id = task.id
+        if pid:
+            deleted.tiktok_product_id = pid
+        deleted.tiktok_url = data.tiktok_url
         deleted.title = data.title or ""
         deleted.price = data.price or Decimal("0")
         deleted.currency = data.currency
@@ -85,6 +129,7 @@ def create_product(db: Session, data: ProductCreate, user_id: int) -> Tuple[Prod
         user_id=user_id,
         crawl_task_id=task.id,
         tiktok_url=data.tiktok_url,
+        tiktok_product_id=pid,
         title=data.title or "",
         price=data.price or Decimal("0"),
         currency=data.currency,
@@ -105,28 +150,58 @@ def create_product(db: Session, data: ProductCreate, user_id: int) -> Tuple[Prod
 def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
     """批量导入商品链接，支持共享采集结果"""
     created, duplicates, task_ids = [], [], []
+    seen_pids: set[str] = set()
     for url in urls:
         url = url.strip()
         if not url:
             continue
 
-        existing = db.query(Product).filter(
-            Product.tiktok_url == url,
-            Product.user_id == user_id,
-            Product.is_deleted == 0,
-        ).first()
-        if existing:
+        pid = _extract_tiktok_product_id(url)
+        if pid and pid in seen_pids:
             duplicates.append(url)
             continue
 
-        shared = _find_shared_product(db, url, user_id)
+        if pid:
+            existing = (
+                db.query(Product)
+                .filter(
+                    Product.user_id == user_id,
+                    Product.is_deleted == 0,
+                    or_(Product.tiktok_product_id == pid, Product.tiktok_url == url),
+                )
+                .first()
+            )
+        else:
+            existing = db.query(Product).filter(
+                Product.tiktok_url == url,
+                Product.user_id == user_id,
+                Product.is_deleted == 0,
+            ).first()
+        if existing:
+            duplicates.append(url)
+            if pid:
+                seen_pids.add(pid)
+            continue
+
+        shared = _find_shared_product(db, url, user_id, pid)
 
         # 已存在但软删除 → 恢复记录
-        deleted = db.query(Product).filter(
-            Product.tiktok_url == url,
-            Product.user_id == user_id,
-            Product.is_deleted == 1,
-        ).first()
+        if pid:
+            deleted = (
+                db.query(Product)
+                .filter(
+                    Product.user_id == user_id,
+                    Product.is_deleted == 1,
+                    or_(Product.tiktok_product_id == pid, Product.tiktok_url == url),
+                )
+                .first()
+            )
+        else:
+            deleted = db.query(Product).filter(
+                Product.tiktok_url == url,
+                Product.user_id == user_id,
+                Product.is_deleted == 1,
+            ).first()
         if deleted:
             task = CrawlTask(url=url, status="done" if shared else "pending")
             db.add(task)
@@ -134,6 +209,9 @@ def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
             deleted.is_deleted = 0
             deleted.status = "pending"
             deleted.crawl_task_id = task.id
+            if pid:
+                deleted.tiktok_product_id = pid
+            deleted.tiktok_url = url
             deleted.title = ""
             deleted.price = Decimal("0")
             deleted.sales_volume = 0
@@ -149,13 +227,20 @@ def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
         task = CrawlTask(url=url, status="done" if shared else "pending")
         db.add(task)
         db.flush()
-        product = Product(user_id=user_id, crawl_task_id=task.id, tiktok_url=url)
+        product = Product(
+            user_id=user_id,
+            crawl_task_id=task.id,
+            tiktok_url=url,
+            tiktok_product_id=pid,
+        )
         if shared:
             _copy_crawl_data(shared, product)
         else:
             task_ids.append(task.id)
         db.add(product)
         created.append(url)
+        if pid:
+            seen_pids.add(pid)
 
     db.commit()
     return {"created": len(created), "duplicates": len(duplicates), "task_ids": task_ids}

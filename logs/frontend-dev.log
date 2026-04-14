@@ -69,3 +69,170 @@
 3:08:46 AM [vite] (client) [Unhandled error] Error: ResizeObserver loop completed with undelivered notifications.
  > ../../../../@vite/client:516:55
 
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 430 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:07:59 [vite] (client) hmr update /src/views/Profile.vue
+01:08:05 [vite] (client) hmr update /src/views/Profile.vue
+01:10:07 [vite] (client) hmr update /src/views/Profile.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 615 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 378 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 607 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 473 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 763 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 434 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 395 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 493 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+04:30:16 [vite] (client) hmr update /src/views/ProductList.vue
+04:30:24 [vite] (client) hmr update /src/views/ProductList.vue
+04:30:30 [vite] (client) hmr update /src/views/ProductList.vue
+04:30:35 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 393 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 457 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+04:46:37 [vite] (client) hmr update /src/views/ProductList.vue
+04:46:44 [vite] (client) hmr update /src/views/ProductList.vue
+04:46:51 [vite] (client) hmr update /src/views/ProductList.vue
+04:47:17 [vite] (client) hmr update /src/views/ProductList.vue
+04:48:09 [vite] (client) hmr update /src/views/ProductList.vue
+04:51:03 [vite] (client) hmr update /src/views/ProductList.vue
+04:52:14 [vite] (client) hmr update /src/views/ProductList.vue
+04:56:45 [vite] (client) hmr update /src/views/ProductList.vue
+04:56:51 [vite] (client) hmr update /src/views/ProductList.vue
+04:56:55 [vite] (client) hmr update /src/views/ProductList.vue
+04:56:59 [vite] (client) hmr update /src/views/ProductList.vue
+04:57:04 [vite] (client) hmr update /src/views/ProductList.vue
+04:57:09 [vite] (client) hmr update /src/views/ProductList.vue
+05:06:45 [vite] (client) hmr update /src/views/ProductList.vue
+05:07:08 [vite] (client) hmr update /src/views/BatchImport.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 479 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 479 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 991 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 711 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 584 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+05:51:19 [vite] (client) hmr update /src/views/Profile.vue
