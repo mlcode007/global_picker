@@ -104,7 +104,13 @@ def recover_interrupted_tasks(db: Session) -> int:
     return recovered
 
 
-def create_task(db: Session, product_id: int, image_index: int = 0) -> PhotoSearchTask:
+def create_task(
+    db: Session,
+    product_id: int,
+    image_index: int = 0,
+    fetch_pdd_links: bool = True,
+    max_candidates: int = 4,
+) -> PhotoSearchTask:
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise ValueError(f"商品 {product_id} 不存在")
@@ -140,10 +146,13 @@ def create_task(db: Session, product_id: int, image_index: int = 0) -> PhotoSear
             else:
                 raise DuplicateTaskError(product_id, running.id)
 
+        mc = max(1, min(int(max_candidates), 50))
         task = PhotoSearchTask(
             product_id=product_id,
             status="queued",
             source_image_url=images[image_index],
+            fetch_pdd_links=1 if fetch_pdd_links else 0,
+            max_candidates=mc,
         )
         db.add(task)
         db.commit()

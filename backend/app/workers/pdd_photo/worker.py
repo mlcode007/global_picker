@@ -23,6 +23,7 @@ import httpx
 
 from app.config import get_settings
 from app.database import SessionLocal
+from app.models.product import Product
 from app.services import photo_search_service
 from .adb_client import AdbClient
 from .link_extractor import fill_product_links_from_detail_taps
@@ -35,6 +36,18 @@ logger = logging.getLogger(__name__)
 
 DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
+
+
+def _task_max_candidates(task) -> int:
+    """任务配置的入库上限；缺省或异常时回退为 MAX_CANDIDATES。"""
+    raw = getattr(task, "max_candidates", None)
+    if raw is None:
+        return MAX_CANDIDATES
+    try:
+        n = int(raw)
+    except (TypeError, ValueError):
+        return MAX_CANDIDATES
+    return max(1, min(n, 50))
 
 
 def execute_photo_search_task(task_id: int):
@@ -54,11 +67,21 @@ def execute_photo_search_task(task_id: int):
             logger.warning("Task #%d status is %s, skip", task_id, task.status)
             return
 
+        product_row = db.query(Product).filter(Product.id == task.product_id).first()
+        if not product_row:
+            photo_search_service.update_task_status(
+                db, task_id, "failed",
+                error_code="NO_PRODUCT", error_message="商品不存在，无法调度设备",
+            )
+            return
+
         photo_search_service.update_task_status(db, task_id, "dispatching")
 
-        # ── 1. 调度设备（云手机池 available + ADB，多任务 SKIP LOCKED 并行）──
+        owner_user_id = product_row.user_id
+
+        # ── 1. 调度设备（仅当前商品所属用户的云手机池，避免多用户串设备）──
         mgr = DeviceManager(db)
-        device = mgr.acquire_device(task_id)
+        device = mgr.acquire_device(task_id, user_id=owner_user_id)
 
         if not device:
             photo_search_service.update_task_status(
@@ -149,14 +172,16 @@ def execute_photo_search_task(task_id: int):
         parser = ResultParser()
         parse_result = parser.parse_xml_files(ctx.result_xml_paths)
 
-        candidates = parse_result.candidates[:MAX_CANDIDATES]
+        cap = _task_max_candidates(task)
+        candidates = parse_result.candidates[:cap]
 
         # ── 5a. 点进详情解析 goods_id → H5 商品链接（仍在结果页操作）──
-        if get_settings().PDD_EXTRACT_PRODUCT_LINKS and candidates:
+        fetch_links = bool(getattr(task, "fetch_pdd_links", True))
+        if fetch_links and get_settings().PDD_EXTRACT_PRODUCT_LINKS and candidates:
             adb_links = AdbClient(serial=device_serial)
             adb_links.kill_uiautomator()
             n_ok = fill_product_links_from_detail_taps(
-                adb_links, candidates, max_items=MAX_CANDIDATES,
+                adb_links, candidates, max_items=cap,
             )
             photo_search_service.save_action_log(
                 db, task_id, device_serial, "EXTRACT_LINKS",

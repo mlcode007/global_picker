@@ -31,7 +31,13 @@ def create_task(
 ):
     product_service.get_product(db, data.product_id, current_user.id)
     try:
-        task = photo_search_service.create_task(db, data.product_id, data.image_index)
+        task = photo_search_service.create_task(
+            db,
+            data.product_id,
+            data.image_index,
+            fetch_pdd_links=data.fetch_pdd_links,
+            max_candidates=data.max_candidates,
+        )
     except DuplicateTaskError as e:
         raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:

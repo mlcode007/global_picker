@@ -1,7 +1,24 @@
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { productApi, profitApi } from '@/api/products'
 import { message } from 'ant-design-vue'
+
+const PAGE_SIZE_STORAGE_KEY = 'gp_product_list_page_size'
+const DEFAULT_PAGE_SIZE = 20
+const ALLOWED_PAGE_SIZES = new Set([10, 20, 50, 100, 200, 500, 1000])
+
+function readStoredPageSize() {
+  if (typeof localStorage === 'undefined') return DEFAULT_PAGE_SIZE
+  try {
+    const raw = localStorage.getItem(PAGE_SIZE_STORAGE_KEY)
+    if (raw == null || raw === '') return DEFAULT_PAGE_SIZE
+    const n = parseInt(raw, 10)
+    if (Number.isFinite(n) && ALLOWED_PAGE_SIZES.has(n)) return n
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_PAGE_SIZE
+}
 
 export const useProductStore = defineStore('product', () => {
   const list = ref([])
@@ -11,7 +28,7 @@ export const useProductStore = defineStore('product', () => {
 
   const filters = reactive({
     page: 1,
-    page_size: 20,
+    page_size: readStoredPageSize(),
     status: undefined,
     region: undefined,
     keyword: undefined,
@@ -22,6 +39,18 @@ export const useProductStore = defineStore('product', () => {
     order_by: 'created_at',
     order_dir: 'desc',
   })
+
+  watch(
+    () => filters.page_size,
+    (n) => {
+      if (!ALLOWED_PAGE_SIZES.has(n)) return
+      try {
+        localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(n))
+      } catch {
+        /* ignore */
+      }
+    }
+  )
 
   async function fetchList() {
     loading.value = true

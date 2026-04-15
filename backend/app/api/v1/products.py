@@ -52,7 +52,7 @@ async def batch_import(
 @router.get("", response_model=Response[PagedResponse[ProductOut]], summary="商品列表")
 def list_products(
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=1000),
     status: Optional[str] = Query(None, description="pending/selected/abandoned"),
     region: Optional[str] = Query(None),
     keyword: Optional[str] = Query(None),

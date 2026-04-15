@@ -1,6 +1,6 @@
 from sqlalchemy import (
     BigInteger, Column, DateTime, Enum, ForeignKey,
-    Integer, JSON, String, Text,
+    Integer, JSON, SmallInteger, String, Text,
 )
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.orm import relationship
@@ -35,6 +35,10 @@ class PhotoSearchTask(Base):
     finished_at = Column(DateTime, nullable=True)
     elapsed_ms = Column(Integer, nullable=True)
     raw_result_json = Column(JSON, nullable=True)
+    # 是否在结果页之后进入商品详情解析拼多多 H5 链接（关闭可缩短耗时）
+    fetch_pdd_links = Column(TINYINT(1), nullable=False, server_default="1")
+    # 单次任务最多入库的拼多多候选条数（与列表「单次最多」一致）
+    max_candidates = Column(SmallInteger, nullable=False, default=4, server_default="4")
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 

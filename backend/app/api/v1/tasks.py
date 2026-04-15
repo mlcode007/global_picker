@@ -7,8 +7,10 @@ from app.database import get_db
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.crawl_task import CrawlTask
+from app.models.product import Product
 from app.schemas.common import Response
 from app.schemas.crawl_task import CrawlTaskOut
+from app.schemas.product import ProductOut
 from app.workers.tiktok_crawler import run_crawl_task
 
 router = APIRouter(prefix="/tasks", tags=["抓取任务"])
@@ -36,7 +38,20 @@ def get_task(
     task = db.query(CrawlTask).filter(CrawlTask.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="任务不存在")
-    return Response(data=CrawlTaskOut.model_validate(task))
+    base = CrawlTaskOut.model_validate(task)
+    if task.status == "done":
+        p = (
+            db.query(Product)
+            .filter(
+                Product.crawl_task_id == task_id,
+                Product.user_id == current_user.id,
+                Product.is_deleted == 0,
+            )
+            .first()
+        )
+        if p:
+            base = base.model_copy(update={"product": ProductOut.model_validate(p)})
+    return Response(data=base)
 
 
 @router.post("/{task_id}/retry", summary="重新采集（支持 failed / done 状态）")

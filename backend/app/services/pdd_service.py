@@ -27,6 +27,21 @@ def _update_product_profit(db: Session, product_id: int, pdd_price: Decimal):
     logger.info("Product #%d profit updated: %.2f (rate %.4f)", product_id, profit, rate)
 
 
+def refresh_product_profit_from_primary_pdd(db: Session, product_id: int) -> None:
+    """TikTok 标价或人民币价变化后，若存在主参照拼多多匹配，则按当前 price_cny 重算预估利润。"""
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product or not product.price_cny or product.price_cny <= 0:
+        return
+    primary = (
+        db.query(PddMatch)
+        .filter(PddMatch.product_id == product_id, PddMatch.is_primary == 1)
+        .first()
+    )
+    if not primary:
+        return
+    _update_product_profit(db, product_id, primary.pdd_price)
+
+
 def add_pdd_match(db: Session, data: PddMatchCreate) -> PddMatch:
     if data.is_primary:
         db.query(PddMatch).filter(

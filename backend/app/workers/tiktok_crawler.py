@@ -172,13 +172,83 @@ def extract_region(url: str) -> str:
 # ──────────────────────────────────────────────
 
 def _safe_decimal(val) -> Optional[Decimal]:
+    """解析页面/API 中的价格字符串。支持 TikTok VN 等：多点千分位（如 9.319.000）、纯数字 *_decimal 字段。"""
     try:
         if val is None:
             return None
-        s = re.sub(r"[^\d.]", "", str(val)).strip(".")
-        return Decimal(s) if s else None
+        s = str(val).strip()
+        if not s:
+            return None
+        if re.fullmatch(r"-?\d+", s):
+            return Decimal(s)
+        s2 = re.sub(r"[^\d.,-]", "", s)
+        if not s2 or s2 == "-":
+            return None
+        neg = s2.startswith("-")
+        if neg:
+            s2 = s2[1:]
+        # 多个「.」：越南盾等用点作千分位（9.319.000），不能交给 Decimal 直接解析
+        if s2.count(".") > 1:
+            digits = re.sub(r"[^\d]", "", s2)
+            if not digits:
+                return None
+            d = Decimal(digits)
+            return -d if neg else d
+        if s2.count(",") > 1:
+            digits = re.sub(r"[^\d]", "", s2)
+            if not digits:
+                return None
+            d = Decimal(digits)
+            return -d if neg else d
+        if "," in s2 and "." in s2:
+            last = max(s2.rfind(","), s2.rfind("."))
+            if s2[last] == ".":
+                d = Decimal(s2.replace(",", ""))
+            else:
+                d = Decimal(s2.replace(".", "").replace(",", "."))
+            return -d if neg else d
+        if "," in s2:
+            parts = s2.split(",")
+            if len(parts) == 2 and len(parts[1]) <= 2:
+                d = Decimal(parts[0].replace(".", "") + "." + parts[1])
+            else:
+                d = Decimal(re.sub(r"[^\d]", "", s2))
+            return -d if neg else d
+        d = Decimal(s2)
+        return -d if neg else d
     except (InvalidOperation, ValueError):
         return None
+
+
+# TikTok 部分接口对 PHP/THB 等会以「分」级大整数返回（>10000 需 /100）。
+# VND/IDR/KRW/JPY 等常见为整数本位，标价常 >10000，绝不能 /100，否则会缩小 100 倍（如 72900→729）。
+_CURRENCIES_NO_MINOR_DIV_100 = frozenset({
+    "VND", "IDR", "KRW", "JPY", "CLP", "PYG", "XAF", "XOF", "BIF", "GNF", "UGX", "RWF", "VUV",
+})
+
+
+def _normalize_tiktok_price_amount(d: Decimal, currency: Optional[str]) -> Decimal:
+    """按币种把接口解析出的数值转为商品主标价（与 TikTok 展示一致）。"""
+    cur = (currency or "").strip().upper()
+    if cur in _CURRENCIES_NO_MINOR_DIV_100:
+        return d
+    if d > 10000:
+        return (d / Decimal("100")).quantize(Decimal("0.01"))
+    return d
+
+
+def _currency_hint_for_price(data: dict, product: "Product") -> str:
+    from app.services.exchange_rate_service import currency_for_region
+
+    c = data.get("currency")
+    if c:
+        return str(c).strip().upper()
+    r = data.get("region") or product.region
+    if r:
+        inferred = currency_for_region(str(r).upper())
+        if inferred:
+            return inferred
+    return (product.currency or "PHP").strip().upper()
 
 
 def _safe_int(val) -> Optional[int]:
@@ -422,7 +492,16 @@ def _parse_remix_component_data(raw: dict) -> dict:
         promo = pi.get("promotion_model") or {}
         promo_price = _dig(promo, "promotion_product_price", "min_price") or {}
 
-        price_val = promo_price.get("sale_price_format")
+        # 优先 API 数值字段；sale_price_format 在 VND 下为「9.319.000」千分位点号，直接 Decimal 会失败→0
+        price_val = (
+            promo_price.get("sale_price_decimal")
+            or promo_price.get("single_product_price_decimal")
+            or promo_price.get("sale_price_format")
+        )
+        original_price_val = (
+            promo_price.get("origin_price_decimal")
+            or promo_price.get("origin_price_format")
+        )
         currency = promo_price.get("currency_name")
 
         logistics_list = promo.get("promotion_logistic_list") or []
@@ -442,6 +521,7 @@ def _parse_remix_component_data(raw: dict) -> dict:
             "soldCount": pm.get("sold_count"),
             "price": price_val,
             "currency": currency,
+            "originalPrice": original_price_val,
             "rating": review.get("product_overall_score"),
             "reviewCount": review.get("product_review_count"),
             "shop": {
@@ -678,7 +758,8 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
     if price_raw:
         d = _safe_decimal(price_raw)
         if d is not None:
-            new_price = d / 100 if d > 10000 else d
+            cur_hint = _currency_hint_for_price(data, product)
+            new_price = _normalize_tiktok_price_amount(d, cur_hint)
             if new_price != product.price:
                 product.price = new_price
                 updated = True
@@ -755,7 +836,8 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
             updated = True
 
     if op := _safe_decimal(data.get("originalPrice")):
-        product.original_price = op / 100 if op > 10000 else op
+        cur_hint = _currency_hint_for_price(data, product)
+        product.original_price = _normalize_tiktok_price_amount(op, cur_hint)
         updated = True
 
     if disc := data.get("discount"):
@@ -1146,6 +1228,19 @@ async def _fetch_with_playwright(
     return product_data
 
 
+def _tiktok_price_changed(before_price, before_cny, product: Product) -> bool:
+    """采集前后 TikTok 标价或人民币价是否变化（用于触发按主参照拼多多重算利润）。"""
+
+    def n(x):
+        if x is None:
+            return None
+        if isinstance(x, Decimal):
+            return x
+        return Decimal(str(x))
+
+    return n(before_price) != n(product.price) or n(before_cny) != n(product.price_cny)
+
+
 # ──────────────────────────────────────────────
 # 后台任务主入口
 # ──────────────────────────────────────────────
@@ -1183,6 +1278,9 @@ async def run_crawl_task(task_id: int) -> None:
         product.tiktok_product_id = product_id
         product.region = region
 
+        old_price = product.price
+        old_price_cny = product.price_cny
+
         try:
             data = await _fetch_with_playwright(
                 task.url, user_id=product.user_id, task_id=task.id
@@ -1190,6 +1288,10 @@ async def run_crawl_task(task_id: int) -> None:
 
             if data:
                 _apply_product_data(product, data, db=db)
+                if _tiktok_price_changed(old_price, old_price_cny, product):
+                    from app.services.pdd_service import refresh_product_profit_from_primary_pdd
+
+                    refresh_product_profit_from_primary_pdd(db, product.id)
                 task.status = "done"
                 task.error_msg = None
                 logger.info("crawl task %d done (product_id=%s, user_id=%s)", 

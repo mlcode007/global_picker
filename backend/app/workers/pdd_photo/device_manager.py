@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Set
 
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
@@ -39,61 +39,61 @@ class DeviceManager:
 
     # ── 设备获取与锁定 ────────────────────────────────────────
 
-    def acquire_device(self, task_id: int) -> Optional[Device]:
-        """从云手机池（available + 有效 ADB）获取一台 idle 设备并锁定；池内有机器但暂忙时会等待轮询。"""
+    def acquire_device(self, task_id: int, user_id: Optional[int] = None) -> Optional[Device]:
+        """从云手机池（available + 有效 ADB）获取一台 idle 设备并锁定；池内有机器但暂忙时会等待轮询。
+        user_id 非空时仅使用 cloud_phone_pool.created_by == user_id 的实例，避免多用户串设备。"""
         deadline = time.monotonic() + ACQUIRE_WAIT_SECONDS
 
         while time.monotonic() < deadline:
-            self._sync_cloud_phones_to_device_pool()
-            cloud_serials = self._list_cloud_pool_adb_serials()
+            self._sync_cloud_phones_to_device_pool(user_id=user_id)
+            cloud_serials = self._list_cloud_pool_adb_serials(user_id=user_id)
             if not cloud_serials:
                 logger.warning(
-                    "No available cloud phone with adb_host_port for task %s",
+                    "No available cloud phone with adb_host_port for task %s user_id=%s",
                     task_id,
+                    user_id,
                 )
                 return None
 
-            device = self._try_acquire_from_cloud_pool(task_id)
+            device = self._try_acquire_from_cloud_pool(task_id, user_id=user_id)
             if device:
                 return device
 
             recovered = self._recover_devices(cloud_serials)
             if recovered:
-                device = self._try_acquire_from_cloud_pool(task_id)
+                device = self._try_acquire_from_cloud_pool(task_id, user_id=user_id)
                 if device:
                     return device
 
             time.sleep(ACQUIRE_POLL_INTERVAL)
 
-        logger.warning("Timeout waiting for cloud pool device (task_id=%s)", task_id)
+        logger.warning("Timeout waiting for cloud pool device (task_id=%s user_id=%s)", task_id, user_id)
         return None
 
-    def _list_cloud_pool_adb_serials(self) -> set[str]:
-        rows = (
-            self.db.query(CloudPhonePool.adb_host_port)
-            .filter(
-                CloudPhonePool.status == "available",
-                CloudPhonePool.adb_host_port.isnot(None),
-            )
-            .all()
+    def _list_cloud_pool_adb_serials(self, user_id: Optional[int] = None) -> Set[str]:
+        q = self.db.query(CloudPhonePool.adb_host_port).filter(
+            CloudPhonePool.status == "available",
+            CloudPhonePool.adb_host_port.isnot(None),
         )
+        if user_id is not None:
+            q = q.filter(CloudPhonePool.created_by == user_id)
+        rows = q.all()
         out: set[str] = set()
         for (adb,) in rows:
             if adb and (s := adb.strip()):
                 out.add(s)
         return out
 
-    def _sync_cloud_phones_to_device_pool(self) -> None:
+    def _sync_cloud_phones_to_device_pool(self, user_id: Optional[int] = None) -> None:
         """为可用云手机自动补全 device_pool 行（adb_host_port 即 ADB serial）。"""
         try:
-            phones = (
-                self.db.query(CloudPhonePool)
-                .filter(
-                    CloudPhonePool.status == "available",
-                    CloudPhonePool.adb_host_port.isnot(None),
-                )
-                .all()
+            q = self.db.query(CloudPhonePool).filter(
+                CloudPhonePool.status == "available",
+                CloudPhonePool.adb_host_port.isnot(None),
             )
+            if user_id is not None:
+                q = q.filter(CloudPhonePool.created_by == user_id)
+            phones = q.all()
             for cp in phones:
                 serial = (cp.adb_host_port or "").strip()
                 if not serial:
@@ -114,7 +114,7 @@ class DeviceManager:
             self.db.rollback()
             logger.debug("device_pool sync skipped (concurrent insert)")
 
-    def _try_acquire_from_cloud_pool(self, task_id: int) -> Optional[Device]:
+    def _try_acquire_from_cloud_pool(self, task_id: int, user_id: Optional[int] = None) -> Optional[Device]:
         """在云手机池可用的实例中锁定一台 idle 设备（SKIP LOCKED 便于并行多任务）。"""
         q = (
             self.db.query(Device)
@@ -128,9 +128,10 @@ class DeviceManager:
                 CloudPhonePool.adb_host_port.isnot(None),
                 func.trim(CloudPhonePool.adb_host_port) != "",
             )
-            .order_by(CloudPhonePool.id)
-            .with_for_update(skip_locked=True)
         )
+        if user_id is not None:
+            q = q.filter(CloudPhonePool.created_by == user_id)
+        q = q.order_by(CloudPhonePool.id).with_for_update(skip_locked=True)
         device = q.first()
 
         if not device:

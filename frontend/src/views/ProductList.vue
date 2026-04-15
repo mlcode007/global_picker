@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="product-list-page">
     <!-- 过滤栏 -->
     <a-card class="filter-card" :bordered="false">
       <a-row :gutter="[12, 12]" align="middle">
@@ -85,7 +85,7 @@
           <a-space>
             <a-button @click="onSearch"><ReloadOutlined /> 刷新</a-button>
             <a-button type="primary" ghost @click="exportAll"><DownloadOutlined /> 导出 Excel</a-button>
-            <a-tooltip title="对左侧勾选的商品依次执行拍照购（需有主图），无需进入详情页">
+            <a-tooltip title="对勾选且有主图的商品依次执行拍照购（本批全部处理）。侧栏数字表示每笔任务最多入库几条拼多多匹配。每步前会对你名下非离线云手机做健康检查（与云手机管理「检查」一致），失败自动重试最多 3 次。">
               <a-button
                 type="primary"
                 ghost
@@ -108,6 +108,25 @@
               </a-button>
             </a-tooltip>
             <a-button type="primary" @click="router.push('/import')"><ImportOutlined /> 批量导入</a-button>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+        <a-col :span="24">
+          <a-space wrap :size="12" align="center">
+            <span class="toolbar-muted">自动拍照购</span>
+            <span>每笔最多入库</span>
+            <a-input-number
+              v-model:value="photoBatchMaxItems"
+              :min="1"
+              :max="50"
+              size="small"
+              style="width: 72px"
+            />
+            <span>条拼多多</span>
+            <a-divider type="vertical" />
+            <a-checkbox v-model:checked="photoBatchFetchPddLinks">获取拼多多商品链接</a-checkbox>
+            <span class="toolbar-hint">关闭则跳过详情页链接步骤，速度更快</span>
           </a-space>
         </a-col>
       </a-row>
@@ -252,6 +271,12 @@
                 {{ (Number(record.profit_rate) * 100).toFixed(1) }}%
               </div>
             </template>
+            <a-tooltip
+              v-else-if="!record.price_cny || Number(record.price_cny) <= 0"
+              title="预估利润需商品有 TikTok 人民币价（先完成采集/补全价格）"
+            >
+              <span class="no-data">需TikTok价</span>
+            </a-tooltip>
             <span v-else class="no-data">—</span>
           </template>
 
@@ -386,6 +411,7 @@ import {
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
 import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
+import { cloudPhoneApi } from '@/api/cloudPhone'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
 import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
 import { pollCrawlTaskUntilDone, formatCrawlTaskLine, sleep as crawlSleep } from '@/utils/crawlTask'
@@ -416,6 +442,59 @@ const rowSelection = computed(() => ({
 // --- 列表页批量拍照购（串行）---
 const photoBatchRunning = ref(false)
 const photoRowProgress = reactive({})
+const PHOTO_BATCH_DEFAULT_MAX = 2
+const LS_PHOTO_BATCH_MAX = 'gp_photo_batch_max_items'
+const LS_PHOTO_BATCH_FETCH_LINKS = 'gp_photo_batch_fetch_pdd_links'
+
+function readStoredPhotoBatchMax() {
+  if (typeof localStorage === 'undefined') return PHOTO_BATCH_DEFAULT_MAX
+  try {
+    const raw = localStorage.getItem(LS_PHOTO_BATCH_MAX)
+    if (raw == null || raw === '') return PHOTO_BATCH_DEFAULT_MAX
+    const n = parseInt(raw, 10)
+    if (!Number.isFinite(n)) return PHOTO_BATCH_DEFAULT_MAX
+    return Math.min(Math.max(1, n), 50)
+  } catch {
+    return PHOTO_BATCH_DEFAULT_MAX
+  }
+}
+
+function readStoredPhotoBatchFetchPddLinks() {
+  if (typeof localStorage === 'undefined') return true
+  try {
+    const raw = localStorage.getItem(LS_PHOTO_BATCH_FETCH_LINKS)
+    if (raw == null) return true
+    return raw === '1' || raw === 'true'
+  } catch {
+    return true
+  }
+}
+
+const photoBatchMaxItems = ref(readStoredPhotoBatchMax())
+/** 为 true 时后端会进拼多多详情补全商品链接；为 false 时跳过该步骤以提速 */
+const photoBatchFetchPddLinks = ref(readStoredPhotoBatchFetchPddLinks())
+
+watch(photoBatchMaxItems, (v) => {
+  try {
+    const n = Math.floor(Number(v))
+    if (Number.isFinite(n) && n >= 1 && n <= 50) {
+      localStorage.setItem(LS_PHOTO_BATCH_MAX, String(n))
+    }
+  } catch {
+    /* ignore */
+  }
+})
+
+watch(photoBatchFetchPddLinks, (v) => {
+  try {
+    localStorage.setItem(LS_PHOTO_BATCH_FETCH_LINKS, v ? '1' : '0')
+  } catch {
+    /* ignore */
+  }
+})
+
+/** 最近一次健康检查通过的云手机 phone_id，减少重复拉列表 */
+const photoHealthPhoneCache = ref(null)
 
 // --- 列表页批量采集 TikTok（串行，与拍照购一致：间隔 + 行内进度）---
 const crawlBatchRunning = ref(false)
@@ -516,7 +595,7 @@ async function startBatchCrawl() {
           crawlRowProgress[pid].stepText = formatCrawlTaskLine(finalTask)
           console.info(`[批量采集] 商品 id=${pid} 采集成功`)
           try {
-            const updated = await productApi.get(pid)
+            const updated = finalTask.product ?? await productApi.get(pid)
             const index = store.list.findIndex(p => p.id === pid)
             if (index !== -1) {
               store.list[index] = updated
@@ -555,6 +634,168 @@ async function startBatchCrawl() {
   }
 }
 
+function httpErrorDetail(err) {
+  const d = err?.response?.data?.detail
+  if (typeof d === 'string') return d
+  if (Array.isArray(d) && d[0]?.msg) return d[0].msg
+  return null
+}
+
+/** 与云手机列表一致：排除离线、已删除，其余均参与轮询检查（含「检查中」等） */
+const _POOL_STATUS_EXCLUDE = new Set(['offline', 'off', 'deleted', 'del'])
+/** 每轮之间间隔；设备之间短间隔，减轻并发压力 */
+const PHONE_CHECK_MAX_ROUNDS = 3
+const PHONE_CHECK_ROUND_GAP_MS = 900
+const PHONE_CHECK_DEVICE_GAP_MS = 120
+/** 单商品拍照购：失败或异常时最多尝试次数（含首次）；第 2 次起强制重做云手机检查并 retry 任务 */
+const PHOTO_BATCH_MAX_ATTEMPTS = 3
+const PHOTO_BATCH_RETRY_GAP_MS = 500
+
+function _isPoolDeviceNotOffline(status) {
+  return !_POOL_STATUS_EXCLUDE.has(String(status || '').toLowerCase())
+}
+
+/** 优先：可用 > 已绑定/检查中 > 超时类 > 其它；同优先内有 ADB 端口优先 */
+function _poolDeviceSortKey(p) {
+  const s = String(p.status || '').toLowerCase()
+  const raw = String(p.status || '')
+  let pri = 5
+  if (s === 'available' || s === 'ok') pri = 0
+  else if (
+    s === 'bound'
+    || s === 'checking'
+    || s.includes('check')
+    || raw.includes('检查')
+  ) pri = 1
+  else if (s === 'timeo' || s === 'adb_timeout' || s === 'timeout' || s === 'to') pri = 2
+  else if (s === 'maintenance') pri = 3
+  const adb = p.adb_host_port ? 0 : 1
+  return [pri, adb, p.phone_id || '']
+}
+
+function _sortPoolDevicesForCheck(items) {
+  return [...items].sort((a, b) => {
+    const ka = _poolDeviceSortKey(a)
+    const kb = _poolDeviceSortKey(b)
+    for (let i = 0; i < 3; i++) {
+      if (ka[i] < kb[i]) return -1
+      if (ka[i] > kb[i]) return 1
+    }
+    return 0
+  })
+}
+
+/**
+ * 与「云手机管理」中「检查」相同接口（/cloud-phone/health）。
+ * 遍历当前账号云手机池内所有非离线设备，逐台检查；最多 3 轮；onLog 用于更新单行 stepText 提示。
+ */
+async function ensureUserCloudPhoneReady(options = {}) {
+  const { onLog } = options
+  const log = (msg) => {
+    onLog?.(msg)
+  }
+
+  if (photoHealthPhoneCache.value) {
+    log(`复用缓存设备 ${photoHealthPhoneCache.value}，快速校验…`)
+    try {
+      const quick = await cloudPhoneApi.checkHealth(photoHealthPhoneCache.value)
+      if (quick?.is_healthy) {
+        log('缓存设备健康，可用')
+        return
+      }
+      log('缓存设备未通过，重新扫描云手机池')
+    } catch (e) {
+      log(`缓存校验失败：${httpErrorDetail(e) || e?.message || '未知错误'}`)
+    }
+    photoHealthPhoneCache.value = null
+  }
+
+  for (let round = 1; round <= PHONE_CHECK_MAX_ROUNDS; round++) {
+    if (round > 1) {
+      log(`第 ${round}/${PHONE_CHECK_MAX_ROUNDS} 轮：等待 ${PHONE_CHECK_ROUND_GAP_MS / 1000}s 后重试…`)
+      await new Promise((r) => setTimeout(r, PHONE_CHECK_ROUND_GAP_MS))
+    }
+
+    const data = await cloudPhoneApi.listPool({ page: 1, page_size: 100 })
+    const items = data?.items || []
+    const eligible = _sortPoolDevicesForCheck(
+      items.filter((p) => _isPoolDeviceNotOffline(p.status)),
+    )
+
+    if (!eligible.length) {
+      log(`第 ${round} 轮：无非离线设备（已排除 离线/已删除）`)
+      if (round === PHONE_CHECK_MAX_ROUNDS) {
+        throw new Error(
+          '当前账号下无非离线云手机，请到「云手机管理」创建或恢复设备后再试。',
+        )
+      }
+      continue
+    }
+
+    log(`第 ${round} 轮：待检查 ${eligible.length} 台（非离线，按状态与 ADB 优先）`)
+
+    for (let i = 0; i < eligible.length; i++) {
+      const c = eligible[i]
+      const name = c.phone_name || c.phone_id
+      const st = c.status || '-'
+      const adbInfo = c.adb_host_port ? `ADB ${c.adb_host_port}` : '未配置 ADB 端口'
+      log(`[${i + 1}/${eligible.length}] ${name} · 状态 ${st} · ${adbInfo}`)
+
+      if (i > 0) {
+        await new Promise((r) => setTimeout(r, PHONE_CHECK_DEVICE_GAP_MS))
+      }
+
+      try {
+        const info = await cloudPhoneApi.checkHealth(c.phone_id)
+        if (info?.is_healthy) {
+          photoHealthPhoneCache.value = c.phone_id
+          log(`→ 健康检查通过，已选用 ${c.phone_id}`)
+          return
+        }
+        log('→ 未通过（is_healthy=false），后台可能已将状态更新为离线等')
+      } catch (e) {
+        log(`→ 请求失败：${httpErrorDetail(e) || e?.message || '未知错误'}`)
+      }
+    }
+
+    if (round < PHONE_CHECK_MAX_ROUNDS) {
+      log(`第 ${round} 轮结束仍无可用设备，将进入下一轮`)
+    }
+  }
+
+  throw new Error(
+    `已对非离线设备完成 ${PHONE_CHECK_MAX_ROUNDS} 轮健康检查，仍无可用设备。请到「云手机管理」排查或稍后重试。`,
+  )
+}
+
+/**
+ * 每笔拍照购任务最多入库几条拼多多候选（对应接口 max_candidates）。
+ * 勿用 `|| 默认`：0/falsy 会与默认混淆。
+ */
+function resolvePhotoMaxCandidates() {
+  const v = photoBatchMaxItems.value
+  if (v === null || v === undefined || v === '') {
+    return PHOTO_BATCH_DEFAULT_MAX
+  }
+  const n = Math.floor(Number(v))
+  if (!Number.isFinite(n)) {
+    return PHOTO_BATCH_DEFAULT_MAX
+  }
+  return Math.min(Math.max(1, n), 50)
+}
+
+async function refreshProductRow(productId) {
+  try {
+    const updated = await productApi.get(productId)
+    const index = store.list.findIndex(p => p.id === productId)
+    if (index !== -1) {
+      store.list[index] = updated
+    }
+  } catch (e) {
+    console.error('刷新商品行失败', productId, e)
+  }
+}
+
 async function startBatchPhotoSearch() {
   if (photoBatchRunning.value) return
   const keys = [...selectedRowKeys.value]
@@ -565,108 +806,165 @@ async function startBatchPhotoSearch() {
   const rows = store.list.filter(r => keys.includes(r.id))
   const ordered = keys.map(id => rows.find(r => r.id === id)).filter(Boolean)
 
-  Object.keys(photoRowProgress).forEach((k) => { delete photoRowProgress[k] })
+  /** 本批依次执行：所有勾选且有主图的 TikTok 商品；「每笔最多入库」只限制 max_candidates，不限制本批行数 */
+  const validAll = ordered.filter(r => r.main_image_url)
+  const toRun = validAll
 
+  Object.keys(photoRowProgress).forEach((k) => {
+    delete photoRowProgress[k]
+  })
+
+  const bt = toRun.length
   ordered.forEach((r, i) => {
     const orderIndex = i + 1
-    const batchTotal = ordered.length
     if (!r.main_image_url) {
       photoRowProgress[r.id] = {
         phase: 'skipped',
         orderIndex,
-        batchTotal,
+        batchTotal: bt,
         stepText: '无主图，已跳过',
       }
-    } else {
-      photoRowProgress[r.id] = {
-        phase: 'queued',
-        orderIndex,
-        batchTotal,
-        stepText: `排队中（${orderIndex}/${batchTotal}）`,
-      }
+      return
+    }
+    const qi = validAll.findIndex((x) => x.id === r.id) + 1
+    photoRowProgress[r.id] = {
+      phase: 'queued',
+      orderIndex: qi,
+      batchTotal: bt,
+      stepText: `排队中（${qi}/${bt}）`,
     }
   })
 
-  const valid = ordered.filter(r => r.main_image_url)
-  if (!valid.length) {
+  if (!validAll.length) {
     message.warning('勾选的商品均无主图，无法拍照购')
+    return
+  }
+  if (!toRun.length) {
+    message.warning('本批次可执行商品数为 0')
     return
   }
 
   photoBatchRunning.value = true
   try {
-    for (const r of valid) {
+    for (const r of toRun) {
       const pid = r.id
-      photoRowProgress[pid] = {
-        ...photoRowProgress[pid],
-        phase: 'running',
-        stepText: '创建任务…',
-        task: null,
-      }
+      let photoTaskId = null
+      let lastFailMsg = ''
 
-      let task
-      try {
-        task = await photoSearchApi.createTask({ product_id: pid })
-      } catch (e) {
-        if (e?.status === 409) {
-          photoRowProgress[pid].stepText = '检测到已有任务，接续进度…'
-          try {
-            const tasks = await photoSearchApi.getTasksByProduct(pid)
-            task = tasks?.find(t => PHOTO_POLL_ACTIVE.has(t.status)) || tasks?.[0]
-          } catch {
-            task = null
-          }
-          if (!task) {
+      for (let attempt = 1; attempt <= PHOTO_BATCH_MAX_ATTEMPTS; attempt++) {
+        const isRetry = attempt > 1
+        photoRowProgress[pid] = {
+          ...photoRowProgress[pid],
+          phase: 'running',
+          stepText: isRetry
+            ? `第 ${attempt}/${PHOTO_BATCH_MAX_ATTEMPTS} 次重试：检查云手机…`
+            : '检查云手机…',
+          task: null,
+        }
+
+        if (isRetry) {
+          photoHealthPhoneCache.value = null
+          await new Promise((res) => setTimeout(res, PHOTO_BATCH_RETRY_GAP_MS))
+        }
+
+        try {
+          await ensureUserCloudPhoneReady({
+            onLog: (hint) => {
+              photoRowProgress[pid].stepText = hint
+            },
+          })
+        } catch (err) {
+          lastFailMsg = err?.message || '云手机不可用'
+          if (attempt >= PHOTO_BATCH_MAX_ATTEMPTS) {
             photoRowProgress[pid].phase = 'failed'
-            photoRowProgress[pid].stepText = e?.message || '已有任务但无法获取状态'
-            continue
+            photoRowProgress[pid].stepText = `已重试 ${PHOTO_BATCH_MAX_ATTEMPTS} 次：${lastFailMsg}`
           }
-        } else {
-          photoRowProgress[pid].phase = 'failed'
-          photoRowProgress[pid].stepText = e?.message || '创建任务失败'
           continue
         }
-      }
 
-      photoRowProgress[pid].task = task
-      photoRowProgress[pid].stepText = formatPhotoTaskLine(task)
+        photoRowProgress[pid].stepText = photoTaskId && isRetry ? '重新提交任务…' : '创建任务…'
 
-      const finalTask = await pollPhotoTaskUntilDone(task.id, (t) => {
-        photoRowProgress[pid].task = t
-        photoRowProgress[pid].stepText = formatPhotoTaskLine(t)
-      })
-
-      if (finalTask.status === 'success') {
-        photoRowProgress[pid].phase = 'done'
-        photoRowProgress[pid].stepText = `完成 · 候选 ${finalTask.candidates_found}，入库 ${finalTask.candidates_saved}`
-        photoRowProgress[pid].task = finalTask
+        let task
         try {
-          await photoSearchApi.syncTaskImages(finalTask.id)
-        } catch { /* 同步失败不阻断 */ }
-        await loadPddMatches(pid)
-      } else {
-        photoRowProgress[pid].phase = 'failed'
-        photoRowProgress[pid].task = finalTask
-        photoRowProgress[pid].stepText = finalTask.error_message
+          if (photoTaskId && isRetry) {
+            task = await photoSearchApi.retryTask(photoTaskId)
+          } else {
+            task = await photoSearchApi.createTask({
+              product_id: pid,
+              fetch_pdd_links: photoBatchFetchPddLinks.value,
+              max_candidates: resolvePhotoMaxCandidates(),
+            })
+          }
+          photoTaskId = task.id
+        } catch (e) {
+          if (e?.status === 409) {
+            photoRowProgress[pid].stepText = '检测到已有任务，接续进度…'
+            try {
+              const tasks = await photoSearchApi.getTasksByProduct(pid)
+              task = tasks?.find(t => PHOTO_POLL_ACTIVE.has(t.status)) || tasks?.[0]
+            } catch {
+              task = null
+            }
+            if (!task) {
+              lastFailMsg = e?.message || '已有任务但无法获取状态'
+              if (attempt >= PHOTO_BATCH_MAX_ATTEMPTS) {
+                photoRowProgress[pid].phase = 'failed'
+                photoRowProgress[pid].stepText = lastFailMsg
+              }
+              continue
+            }
+            photoTaskId = task.id
+          } else {
+            lastFailMsg = httpErrorDetail(e) || e?.message || '创建任务失败'
+            if (attempt >= PHOTO_BATCH_MAX_ATTEMPTS) {
+              photoRowProgress[pid].phase = 'failed'
+              photoRowProgress[pid].stepText = lastFailMsg
+            }
+            continue
+          }
+        }
+
+        photoRowProgress[pid].task = task
+        photoRowProgress[pid].stepText = formatPhotoTaskLine(task)
+
+        const finalTask = await pollPhotoTaskUntilDone(task.id, (t) => {
+          photoRowProgress[pid].task = t
+          photoRowProgress[pid].stepText = formatPhotoTaskLine(t)
+        })
+
+        if (finalTask.status === 'success') {
+          photoRowProgress[pid].phase = 'done'
+          photoRowProgress[pid].stepText =
+            `完成 · 本商品 候选 ${finalTask.candidates_found}，入库 ${finalTask.candidates_saved}`
+          photoRowProgress[pid].task = finalTask
+          try {
+            await photoSearchApi.syncTaskImages(finalTask.id)
+          } catch { /* 同步失败不阻断 */ }
+          await loadPddMatches(pid)
+          await refreshProductRow(pid)
+          break
+        }
+
+        lastFailMsg = finalTask.error_message
           || (finalTask.status === 'cancelled' ? '已取消' : `状态：${finalTask.status}`)
+
+        if (attempt >= PHOTO_BATCH_MAX_ATTEMPTS) {
+          photoRowProgress[pid].phase = 'failed'
+          photoRowProgress[pid].task = finalTask
+          photoRowProgress[pid].stepText = `已重试 ${PHOTO_BATCH_MAX_ATTEMPTS} 次：${lastFailMsg}`
+        } else {
+          photoRowProgress[pid].stepText = `第 ${attempt} 次未成功，将重试（${lastFailMsg}）`
+        }
       }
     }
 
     message.success('批量拍照购已执行完毕')
-    // 更新每个商品的利润信息
-    for (const r of valid) {
-      try {
-        const updatedProduct = await productApi.get(r.id)
-        const index = store.list.findIndex(p => p.id === r.id)
-        if (index !== -1) {
-          store.list[index] = updatedProduct
-        }
-      } catch (e) {
-        console.error('更新商品利润信息失败:', e)
-      }
+    await store.fetchList()
+    if (toRun.length) {
+      await loadPddMatchesBatch(toRun.map((x) => x.id))
     }
-    await loadPddMatchesBatch(valid.map(r => r.id))
   } finally {
+    photoHealthPhoneCache.value = null
     photoBatchRunning.value = false
   }
 }
@@ -728,12 +1026,18 @@ async function loadPddMatches(productId) {
   }
 }
 
+/** 每批 ID 数量：避免 product_ids 查询串过长被网关/浏览器截断 */
+const PD_MATCH_BATCH_SIZE = 50
+
 async function loadPddMatchesBatch(productIds) {
   if (!productIds.length) return
   try {
-    const data = await pddApi.getMatchesBatch(productIds)
-    for (const [pid, matches] of Object.entries(data)) {
-      pddMatchesMap[pid] = matches
+    for (let i = 0; i < productIds.length; i += PD_MATCH_BATCH_SIZE) {
+      const chunk = productIds.slice(i, i + PD_MATCH_BATCH_SIZE)
+      const data = await pddApi.getMatchesBatch(chunk)
+      for (const [pid, matches] of Object.entries(data)) {
+        pddMatchesMap[pid] = matches
+      }
     }
   } catch {}
 }
@@ -813,7 +1117,7 @@ const pagination = computed(() => ({
   total: store.total,
   showSizeChanger: true,
   showTotal: t => `共 ${t} 条`,
-  pageSizeOptions: ['10', '20', '50', '100'],
+  pageSizeOptions: ['10', '20', '50', '100', '200', '500', '1000'],
 }))
 
 function onSearch() {
@@ -837,12 +1141,26 @@ function exportAll() {
 
 async function recrawl(record) {
   if (recrawlingIds.value.has(record.id)) return
+  if (!record.crawl_task_id) {
+    message.warning('该商品无采集任务')
+    return
+  }
   recrawlingIds.value = new Set([...recrawlingIds.value, record.id])
   try {
     await taskApi.retry(record.crawl_task_id)
-    message.success(`已提交重新采集：${record.title || record.tiktok_url}`)
+    const finalTask = await pollCrawlTaskUntilDone(record.crawl_task_id, () => {})
+    if (finalTask.status === 'done') {
+      const updated = finalTask.product ?? await productApi.get(record.id)
+      const index = store.list.findIndex(p => p.id === record.id)
+      if (index !== -1) {
+        store.list[index] = updated
+      }
+      message.success('采集完成，商品信息已更新')
+    } else {
+      message.error(finalTask.error_msg || '采集失败')
+    }
   } catch (e) {
-    message.error(e?.message || '提交采集失败')
+    message.error(e?.message || '采集失败')
   } finally {
     recrawlingIds.value = new Set([...recrawlingIds.value].filter(i => i !== record.id))
   }
@@ -859,6 +1177,20 @@ onMounted(async () => {
 
 <style scoped>
 .filter-card { border-radius: 8px; }
+.photo-batch-toolbar-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+.toolbar-muted {
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+}
+.toolbar-hint {
+  font-size: 12px;
+  color: #8c8c8c;
+}
 .expand-col-title {
   display: flex;
   flex-direction: column;
@@ -963,4 +1295,17 @@ a.shop:hover { color: #1677ff; }
 .pdd-link { color: #1677ff; font-size: 12px; }
 .pdd-match-tags { display: flex; gap: 4px; flex-shrink: 0; }
 .pdd-match-actions { flex-shrink: 0; }
+
+/* 分页「每页条数」：选择器与下拉层加宽，避免 1000/page 等文案被截断 */
+.product-list-page :deep(.ant-pagination-options-size-changer .ant-select-selector) {
+  min-width: 118px;
+}
+.product-list-page :deep(.ant-pagination-options .ant-select-dropdown) {
+  min-width: 148px !important;
+}
+.product-list-page :deep(.ant-pagination-options .ant-select-item-option-content) {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
 </style>

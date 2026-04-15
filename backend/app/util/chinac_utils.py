@@ -223,6 +223,14 @@ def cloud_phone_create_adb(id):
     print(json.dumps(json.loads(res['Info'])['data'], indent=2, ensure_ascii=False))
     return json.loads(res['Info'])
 
+def _adb_port_present(adb_host_port) -> bool:
+    """AdbHostPort 是否存在且非空（云端可能返回 None / 空串）。"""
+    if adb_host_port is None:
+        return False
+    s = str(adb_host_port).strip()
+    return bool(s)
+
+
 def cloud_phone_check_status(id):
     """
     检查云手机状态
@@ -235,36 +243,67 @@ def cloud_phone_check_status(id):
             code: 状态码，0表示成功，-1表示设备不存在，-2表示ADB连接失败，-3表示ADB连接超时
             message: 状态描述
     """
+    import time
+
+    def _read_adb_from_describe(info: dict):
+        if not info or "data" not in info:
+            return None, None, None
+        basic = info["data"].get("BasicInfo", {}) or {}
+        return basic.get("AdbHostPort"), basic.get("AdbStatus"), basic
+
     try:
         device_info = cloud_phone_describe_phone(id)
+        adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
         # 检查返回格式
-        if 'data' not in device_info:
+        if "data" not in device_info:
             return {
-                "code" : -1,
-                "message": "设备不存在或返回格式错误"
+                "code": -1,
+                "message": "设备不存在或返回格式错误",
             }
-        
-        basic_info = device_info['data'].get("BasicInfo", {})
-        adb_host_port = basic_info.get('AdbHostPort')
-        adb_status = basic_info.get('AdbStatus')
-        
-        # 检查AdbStatus是否为CLOSE，如果是则开启ADB
-        if adb_status == 'CLOSE':
-            print("设备ADB状态为CLOSE，尝试开启ADB")
-            cloud_phone_create_adb(id)
-            # 重新获取设备信息
-            device_info = cloud_phone_describe_phone(id)
-            basic_info = device_info['data'].get("BasicInfo", {})
-            adb_host_port = basic_info.get('AdbHostPort')
-        
-        if not adb_host_port:
-            print("设备未开启ADB权限")
+
+        # AdbStatus 为 CLOSE，或尚未下发 AdbHostPort 时，调用云端开通 ADB
+        need_create_adb = (adb_status == "CLOSE") or not _adb_port_present(adb_host_port)
+        if need_create_adb:
+            logger.info(
+                "设备 %s ADB 未就绪(AdbStatus=%s, AdbHostPort=%s)，调用 CreateCloudPhoneAdb",
+                id,
+                adb_status,
+                adb_host_port,
+            )
+            try:
+                cloud_phone_create_adb(id)
+            except Exception as e:
+                logger.warning("CreateCloudPhoneAdb 调用异常: %s", e)
+
+            # 开通后端口可能异步就绪，轮询 Describe 若干次
+            for attempt in range(4):
+                if attempt:
+                    time.sleep(2.0)
+                else:
+                    time.sleep(0.6)
+                device_info = cloud_phone_describe_phone(id)
+                adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
+                if "data" not in device_info:
+                    return {
+                        "code": -1,
+                        "message": "设备不存在或返回格式错误",
+                    }
+                if _adb_port_present(adb_host_port):
+                    break
+                logger.debug(
+                    "Describe 后仍无 AdbHostPort，第 %s/4 次 (AdbStatus=%s)",
+                    attempt + 1,
+                    adb_status,
+                )
+
+        if not _adb_port_present(adb_host_port):
+            logger.warning("设备 %s 仍无有效 AdbHostPort", id)
             return {
-                "code" : -4,
-                "message": "设备未开启ADB权限"
+                "code": -4,
+                "message": "设备未开启ADB权限或端口未就绪",
             }
-        
-        print(f"设备ADB端口: {adb_host_port}")
+
+        logger.info("设备 %s ADB 端口: %s", id, adb_host_port)
     except Exception as e:
         print(f"获取设备信息失败: {e}")
         return {

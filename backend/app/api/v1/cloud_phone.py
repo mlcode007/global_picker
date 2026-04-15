@@ -486,20 +486,24 @@ async def check_phone_health(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """检查云手机健康状态"""
-    # 验证 phone_id 参数
+    """检查云手机健康状态（仅允许检查当前用户名下云手机，与池列表权限一致）。"""
     if not phone_id or "object PointerEvent" in phone_id:
-        return {
-            "code": -1,
-            "message": "无效的设备ID",
-            "data": None
-        }
-    
+        raise HTTPException(status_code=400, detail="无效的设备ID")
+
+    from sqlalchemy import inspect as sa_inspect
+
+    inspector = sa_inspect(CloudPhonePool)
+    has_created_by = "created_by" in [c.name for c in inspector.columns]
+
+    phone = db.query(CloudPhonePool).filter(CloudPhonePool.phone_id == phone_id).first()
+    if not phone:
+        raise HTTPException(status_code=404, detail="设备不存在")
+    if has_created_by and phone.created_by is not None and phone.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="无权检查该设备")
+
     manager = CloudPhoneManager(db)
     is_healthy = manager.check_phone_health(phone_id)
-    
-    # 获取设备的当前状态
-    phone = db.query(CloudPhonePool).filter(CloudPhonePool.phone_id == phone_id).first()
+
     status = phone.status if phone else "unknown"
     
     return {
