@@ -42,6 +42,16 @@ http.interceptors.response.use(
       return Promise.reject(err)
     }
 
+    // 网关错误：多为上游 API 未启动、崩溃或反向代理配置错误
+    if (status === 502 || status === 503 || status === 504) {
+      message.error(
+        '无法连接后端服务（网关 ' +
+          status +
+          '）。本地开发请确认已启动 API（如 uvicorn 监听 :8000）且与前端代理一致；线上环境请检查 Nginx/容器与健康检查。',
+      )
+      return Promise.reject(err)
+    }
+
     if (status === 409) {
       const e = new Error(serverMsg || '资源已存在')
       e.status = 409
@@ -53,6 +63,11 @@ http.interceptors.response.use(
       (typeof err.message === 'string' && err.message.toLowerCase().includes('timeout'))
     if (isTimeout) {
       message.error('请求超时，请稍后重试（云手机创建或检查耗时较长）')
+      return Promise.reject(err)
+    }
+
+    if (!status && err.message === 'Network Error') {
+      message.error('网络异常或后端未响应，请确认服务已启动后再试')
       return Promise.reject(err)
     }
 
