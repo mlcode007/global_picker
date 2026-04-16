@@ -85,10 +85,16 @@ export const useProductStore = defineStore('product', () => {
     message.success('已删除')
   }
 
+  async function batchDeleteProducts(ids) {
+    const res = await productApi.batchRemove(ids)
+    await fetchList()
+    message.success(`成功删除 ${res.deleted_count} 个商品`)
+  }
+
   async function fetchExchangeRates() {
     if (exchangeRates.value.length) return
     exchangeRates.value = await profitApi.exchangeRates()
   }
 
-  return { list, total, loading, filters, fetchList, updateStatus, deleteProduct, fetchExchangeRates, exchangeRates }
+  return { list, total, loading, filters, fetchList, updateStatus, deleteProduct, batchDeleteProducts, fetchExchangeRates, exchangeRates }
 })

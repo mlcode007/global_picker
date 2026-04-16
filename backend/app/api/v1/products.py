@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.user import User
 from app.core.security import get_current_user
 from app.schemas.common import PagedResponse, Response
-from app.schemas.product import ProductCreate, ProductUpdate, ProductOut, ProductBatchImport
+from app.schemas.product import ProductCreate, ProductUpdate, ProductOut, ProductBatchImport, ProductBatchDelete
 from app.services import product_service
 from app.workers.tiktok_crawler import run_crawl_task
 
@@ -47,6 +47,17 @@ async def batch_import(
     for task_id in result.get("task_ids", []):
         background_tasks.add_task(run_crawl_task, task_id)
     return Response(data=result)
+
+
+@router.post("/batch-delete", summary="批量删除商品（软删除）")
+def batch_delete_products_post(
+    data: ProductBatchDelete,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """使用 JSON 传 ID，避免 DELETE + Query 与 /{product_id} 路由冲突及 URL 过长。"""
+    count = product_service.batch_delete_products(db, data.product_ids, current_user.id)
+    return Response(data={"deleted_count": count}, message=f"成功删除 {count} 个商品")
 
 
 @router.get("", response_model=Response[PagedResponse[ProductOut]], summary="商品列表")
@@ -107,6 +118,19 @@ def update_product(
     if not product:
         raise HTTPException(status_code=404, detail="商品不存在")
     return Response(data=ProductOut.model_validate(product))
+
+
+@router.delete("/batch", summary="批量删除商品（软删除，Query 传参，已弃用请用 POST /batch-delete）")
+def batch_delete_products_query(
+    product_ids: str = Query(..., description="商品ID列表，逗号分隔"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    ids = [int(i.strip()) for i in product_ids.split(",") if i.strip().isdigit()]
+    if not ids:
+        raise HTTPException(status_code=400, detail="请选择要删除的商品")
+    count = product_service.batch_delete_products(db, ids, current_user.id)
+    return Response(data={"deleted_count": count}, message=f"成功删除 {count} 个商品")
 
 
 @router.delete("/{product_id}", summary="删除商品（软删除）")

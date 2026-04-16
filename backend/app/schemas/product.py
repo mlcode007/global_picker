@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ProductCreate(BaseModel):
@@ -19,6 +19,11 @@ class ProductCreate(BaseModel):
 class ProductBatchImport(BaseModel):
     """批量导入，只需 URL 列表"""
     urls: List[str]
+
+
+class ProductBatchDelete(BaseModel):
+    """批量软删除"""
+    product_ids: List[int] = Field(..., min_length=1, max_length=5000)
 
 
 class ProductUpdate(BaseModel):

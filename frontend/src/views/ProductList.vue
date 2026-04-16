@@ -108,6 +108,18 @@
         <a-col :flex="1" style="text-align:right">
           <a-space>
             <a-button @click="onSearch"><ReloadOutlined /> 刷新</a-button>
+            <a-popconfirm
+              v-if="selectedRowKeys.length"
+              :title="`确认删除选中的 ${selectedRowKeys.length} 个商品？`"
+              ok-text="确认删除"
+              cancel-text="取消"
+              ok-type="danger"
+              @confirm="batchDelete"
+            >
+              <a-button danger ghost :disabled="photoBatchRunning || crawlBatchRunning">
+                <DeleteOutlined /> 批量删除
+              </a-button>
+            </a-popconfirm>
             <a-button
               type="primary"
               ghost
@@ -474,7 +486,7 @@ import { message } from 'ant-design-vue'
 import {
   ReloadOutlined, DownloadOutlined, ImportOutlined, PictureOutlined,
   SyncOutlined, DownOutlined, UpOutlined, LinkOutlined,
-  CameraOutlined, CheckCircleOutlined, CloseCircleOutlined,
+  CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined,
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
 import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
@@ -861,6 +873,16 @@ async function refreshProductRow(productId) {
     }
   } catch (e) {
     console.error('刷新商品行失败', productId, e)
+  }
+}
+
+async function batchDelete() {
+  if (!selectedRowKeys.value.length) return
+  try {
+    await store.batchDeleteProducts([...selectedRowKeys.value])
+    selectedRowKeys.value = []
+  } catch (e) {
+    console.error('批量删除失败', e)
   }
 }
 

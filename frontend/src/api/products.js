@@ -17,6 +17,7 @@ export const productApi = {
   batchImport: (urls) => http.post('/products/batch', { urls }),
   update: (id, data) => http.patch(`/products/${id}`, data),
   remove: (id) => http.delete(`/products/${id}`),
+  batchRemove: (ids) => http.post('/products/batch-delete', { product_ids: ids }),
 }
 
 export const pddApi = {

@@ -327,3 +327,16 @@ def delete_product(db: Session, product_id: int, user_id: int = None) -> bool:
     product.is_deleted = 1
     db.commit()
     return True
+
+
+def batch_delete_products(db: Session, product_ids: List[int], user_id: int = None) -> int:
+    """批量软删除，单次 UPDATE，返回实际更新行数。"""
+    if not product_ids:
+        return 0
+    q = db.query(Product).filter(Product.id.in_(product_ids), Product.is_deleted == 0)
+    if user_id is not None:
+        q = q.filter(Product.user_id == user_id)
+    # synchronize_session=False 避免 ORM 逐行加载，大批量时更稳
+    updated = q.update({Product.is_deleted: 1}, synchronize_session=False)
+    db.commit()
+    return int(updated or 0)
