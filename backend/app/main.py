@@ -1,4 +1,5 @@
 import logging
+import os
 import threading
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -82,8 +83,12 @@ async def response_validation_handler(request: Request, exc: ResponseValidationE
 app.include_router(v1_router)
 
 # 暴露 artifacts 目录为静态文件服务，前端可通过 /artifacts/... 访问截图
+# 线上 Linux 不可用 macOS 绝对路径；默认使用仓库根目录下 artifacts（与 backend 并列）
 from pathlib import Path as _Path
-_artifacts_dir = _Path("/Users/smzdm/global_picker/artifacts")
+
+_repo_root = _Path(__file__).resolve().parents[2]
+_default_art = _repo_root / "artifacts"
+_artifacts_dir = _Path(os.environ.get("GLOBAL_PICKER_ARTIFACTS_DIR", str(_default_art)))
 _artifacts_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/artifacts", StaticFiles(directory=str(_artifacts_dir)), name="artifacts")
 
