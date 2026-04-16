@@ -60,6 +60,8 @@ def list_products(
     price_cny_max: Optional[float] = Query(None, description="TikTok人民币价格上限"),
     profit_min: Optional[float] = Query(None, description="预估利润下限"),
     profit_max: Optional[float] = Query(None, description="预估利润上限"),
+    profit_rate_min: Optional[float] = Query(None, description="预估利润率下限(小数,例如0.2表示20%)"),
+    profit_rate_max: Optional[float] = Query(None, description="预估利润率上限(小数,例如0.2表示20%)"),
     order_by: str = Query("created_at"),
     order_dir: str = Query("desc", pattern="^(asc|desc)$"),
     current_user: User = Depends(get_current_user),
@@ -70,6 +72,7 @@ def list_products(
         order_by, order_dir,
         price_cny_min=price_cny_min, price_cny_max=price_cny_max,
         profit_min=profit_min, profit_max=profit_max,
+        profit_rate_min=profit_rate_min, profit_rate_max=profit_rate_max,
     )
     return Response(
         data=PagedResponse(

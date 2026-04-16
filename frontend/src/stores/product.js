@@ -36,6 +36,8 @@ export const useProductStore = defineStore('product', () => {
     price_cny_max: undefined,
     profit_min: undefined,
     profit_max: undefined,
+    profit_rate_min: undefined,
+    profit_rate_max: undefined,
     order_by: 'created_at',
     order_dir: 'desc',
   })
@@ -55,7 +57,14 @@ export const useProductStore = defineStore('product', () => {
   async function fetchList() {
     loading.value = true
     try {
-      const res = await productApi.list(filters)
+      const params = { ...filters }
+      if (params.profit_rate_min != null) {
+        params.profit_rate_min = params.profit_rate_min / 100
+      }
+      if (params.profit_rate_max != null) {
+        params.profit_rate_max = params.profit_rate_max / 100
+      }
+      const res = await productApi.list(params)
       list.value = res.items
       total.value = res.total
     } finally {

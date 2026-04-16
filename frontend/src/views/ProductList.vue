@@ -35,7 +35,7 @@
             <a-select-option v-for="(v, k) in REGION_MAP" :key="k" :value="k">{{ v }}</a-select-option>
           </a-select>
         </a-col>
-        <a-col :span="4">
+        <a-col :span="3">
           <div class="range-filter">
             <span class="range-label">TikTok¥</span>
             <a-input-number
@@ -44,7 +44,7 @@
               :min="0"
               :precision="0"
               size="small"
-              style="width:70px"
+              style="width:60px"
               @pressEnter="onSearch"
             />
             <span class="range-sep">-</span>
@@ -54,12 +54,12 @@
               :min="0"
               :precision="0"
               size="small"
-              style="width:70px"
+              style="width:60px"
               @pressEnter="onSearch"
             />
           </div>
         </a-col>
-        <a-col :span="4">
+        <a-col :span="3">
           <div class="range-filter">
             <span class="range-label">利润¥</span>
             <a-input-number
@@ -67,7 +67,7 @@
               placeholder="最低"
               :precision="0"
               size="small"
-              style="width:70px"
+              style="width:60px"
               @pressEnter="onSearch"
             />
             <span class="range-sep">-</span>
@@ -76,7 +76,31 @@
               placeholder="最高"
               :precision="0"
               size="small"
-              style="width:70px"
+              style="width:60px"
+              @pressEnter="onSearch"
+            />
+          </div>
+        </a-col>
+        <a-col :span="3">
+          <div class="range-filter">
+            <span class="range-label">利润率%</span>
+            <a-input-number
+              v-model:value="store.filters.profit_rate_min"
+              placeholder="最低"
+              :precision="1"
+              :step="0.1"
+              size="small"
+              style="width:60px"
+              @pressEnter="onSearch"
+            />
+            <span class="range-sep">-</span>
+            <a-input-number
+              v-model:value="store.filters.profit_rate_max"
+              placeholder="最高"
+              :precision="1"
+              :step="0.1"
+              size="small"
+              style="width:60px"
               @pressEnter="onSearch"
             />
           </div>
@@ -274,9 +298,6 @@
               <div :style="{ color: profitColor(record.estimated_profit), fontWeight: 600 }">
                 ¥{{ Number(record.estimated_profit).toFixed(2) }}
               </div>
-              <div v-if="record.profit_rate != null" class="profit-rate-text">
-                {{ (Number(record.profit_rate) * 100).toFixed(1) }}%
-              </div>
             </template>
             <a-tooltip
               v-else-if="!record.price_cny || Number(record.price_cny) <= 0"
@@ -284,6 +305,16 @@
             >
               <span class="no-data">需TikTok价</span>
             </a-tooltip>
+            <span v-else class="no-data">—</span>
+          </template>
+
+          <!-- 预估利润率列 -->
+          <template v-else-if="column.key === 'profit_rate'">
+            <template v-if="record.profit_rate != null">
+              <div :style="{ color: profitColor(record.profit_rate * record.price_cny), fontWeight: 600 }">
+                {{ (Number(record.profit_rate) * 100).toFixed(1) }}%
+              </div>
+            </template>
             <span v-else class="no-data">—</span>
           </template>
 
@@ -1141,7 +1172,8 @@ const columns = [
   { title: '销量', key: 'sales_volume', width: 90, sorter: true, dataIndex: 'sales_volume' },
   { title: '评分', dataIndex: 'rating', width: 70 },
   { title: '拼多多匹配', key: 'pdd_toggle', width: 110 },
-  { title: '预估利润', key: 'profit', width: 110, sorter: true, dataIndex: 'estimated_profit' },
+  { title: '预估利润', key: 'profit', width: 100, sorter: true, dataIndex: 'estimated_profit' },
+  { title: '预估利润率', key: 'profit_rate', width: 100, sorter: true, dataIndex: 'profit_rate' },
   { title: '选品状态', key: 'status', width: 100 },
   { title: '备注', dataIndex: 'remark', width: 120, ellipsis: true },
   { title: '添加时间', dataIndex: 'created_at', width: 150, sorter: true },
@@ -1341,7 +1373,8 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.filter-card { border-radius: 8px; }
+.filter-card { border-radius: 8px; text-align: left; }
+.filter-card :deep(.ant-row) { justify-content: flex-start; }
 .photo-batch-toolbar-row {
   margin-top: 10px;
   padding-top: 10px;

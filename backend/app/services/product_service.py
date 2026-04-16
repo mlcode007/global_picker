@@ -260,6 +260,8 @@ def get_products(
     price_cny_max: Optional[float] = None,
     profit_min: Optional[float] = None,
     profit_max: Optional[float] = None,
+    profit_rate_min: Optional[float] = None,
+    profit_rate_max: Optional[float] = None,
 ) -> Tuple[int, List[Product]]:
     """商品列表（按用户隔离，分页、过滤、排序）"""
     query = db.query(Product).filter(Product.is_deleted == 0, Product.user_id == user_id)
@@ -283,6 +285,10 @@ def get_products(
         query = query.filter(Product.estimated_profit >= profit_min)
     if profit_max is not None:
         query = query.filter(Product.estimated_profit <= profit_max)
+    if profit_rate_min is not None:
+        query = query.filter(Product.profit_rate >= profit_rate_min)
+    if profit_rate_max is not None:
+        query = query.filter(Product.profit_rate <= profit_rate_max)
 
     total = query.count()
 
