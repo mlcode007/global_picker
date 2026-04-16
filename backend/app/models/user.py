@@ -24,4 +24,5 @@ class User(Base):
     role = Column(Enum("admin", "editor", "viewer"), nullable=False, default="editor")
     is_active = Column(TINYINT(1), nullable=False, default=1)
     last_login = Column(DateTime, nullable=True)
+    preferences = Column(JSON, nullable=True, comment="用户偏好 JSON，如导出列配置")
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

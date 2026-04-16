@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 import re
 
 
@@ -100,6 +100,16 @@ class UserOut(BaseModel):
     is_active: int
 
     model_config = {"from_attributes": True}
+
+
+class ExportFieldPreferencesOut(BaseModel):
+    """商品 Excel 导出列偏好（存于 users.preferences.export_product_field_keys）"""
+
+    export_product_field_keys: Optional[List[str]] = None
+
+
+class ExportFieldPreferencesUpdate(BaseModel):
+    export_product_field_keys: List[str] = Field(..., min_length=1, description="至少选一列")
 
 
 class LoginResponse(BaseModel):

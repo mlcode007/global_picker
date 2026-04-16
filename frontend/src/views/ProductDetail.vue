@@ -20,7 +20,7 @@
               </a-menu>
             </template>
           </a-dropdown>
-          <a-button type="primary" ghost @click="exportApi.exportExcel([product.id])">
+          <a-button type="primary" ghost :loading="exportOneLoading" @click="exportCurrentProduct">
             <DownloadOutlined /> 导出
           </a-button>
           <a :href="product.tiktok_url" target="_blank">
@@ -364,6 +364,7 @@ const matchLoading = ref(false)
 const photoTask = ref(null)
 const photoSearchSubmitting = ref(false)
 const syncImagesLoading = ref(false)
+const exportOneLoading = ref(false)
 const photoTaskRunning = computed(() => {
   if (!photoTask.value) return false
   return PHOTO_POLL_ACTIVE.has(photoTask.value.status)
@@ -459,6 +460,18 @@ async function changeStatus(status) {
   await productApi.update(product.value.id, { status })
   product.value.status = status
   message.success('状态已更新')
+}
+
+async function exportCurrentProduct() {
+  if (!product.value?.id) return
+  exportOneLoading.value = true
+  try {
+    await exportApi.exportProductsExcel([product.value.id], null)
+  } catch {
+    /* 提示在 exportApi */
+  } finally {
+    exportOneLoading.value = false
+  }
 }
 
 async function saveRemark() {

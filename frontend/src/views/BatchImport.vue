@@ -82,7 +82,7 @@
         </a-descriptions>
         <a-divider />
         <a-space direction="vertical" style="width:100%">
-          <a-button type="primary" block @click="exportApi.exportExcel()">
+          <a-button type="primary" block :loading="exportAllLoading" @click="onExportAllProducts">
             <DownloadOutlined /> 导出全部商品
           </a-button>
           <a-button block @click="router.push('/products')">
@@ -240,6 +240,7 @@ const router = useRouter()
 const urlsText = ref('')
 const importing = ref(false)
 const singleLoading = ref(false)
+const exportAllLoading = ref(false)
 
 const singleForm = reactive({
   tiktok_url: '', title: '', price: null, currency: 'PHP', region: 'PH', remark: '',
@@ -291,6 +292,17 @@ function statusTagColor(status) {
 
 function statusLabel(status) {
   return { pending: '等待中', running: '采集中', done: '完成', failed: '失败' }[status] || status
+}
+
+async function onExportAllProducts() {
+  exportAllLoading.value = true
+  try {
+    await exportApi.exportProductsExcel(null, null, { exportAll: true })
+  } catch {
+    /* 提示在 exportApi */
+  } finally {
+    exportAllLoading.value = false
+  }
 }
 
 function truncateUrl(url) {

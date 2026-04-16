@@ -4,8 +4,14 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 from app.schemas.common import Response
-from app.schemas.user import UserOut, UserProfileUpdate
+from app.schemas.user import (
+    UserOut,
+    UserProfileUpdate,
+    ExportFieldPreferencesOut,
+    ExportFieldPreferencesUpdate,
+)
 from app.core.security import get_current_user
+from app.services.export_service import VALID_FIELD_KEYS
 
 router = APIRouter(prefix="/user", tags=["用户"])
 
@@ -14,6 +20,47 @@ router = APIRouter(prefix="/user", tags=["用户"])
 def get_user_info(current_user: User = Depends(get_current_user)):
     """获取当前用户的详细信息"""
     return Response(data=UserOut.model_validate(current_user))
+
+
+@router.get(
+    "/export-field-preferences",
+    response_model=Response[ExportFieldPreferencesOut],
+    summary="获取导出 Excel 列偏好",
+)
+def get_export_field_preferences(
+    current_user: User = Depends(get_current_user),
+):
+    """优先由前端 localStorage 使用；缓存清空后调用本接口从数据库恢复。"""
+    prefs = current_user.preferences or {}
+    keys = prefs.get("export_product_field_keys")
+    if keys is not None and not isinstance(keys, list):
+        keys = None
+    return Response(data=ExportFieldPreferencesOut(export_product_field_keys=keys))
+
+
+@router.put(
+    "/export-field-preferences",
+    response_model=Response[ExportFieldPreferencesOut],
+    summary="保存导出 Excel 列偏好",
+)
+def put_export_field_preferences(
+    data: ExportFieldPreferencesUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    unknown = [k for k in data.export_product_field_keys if k not in VALID_FIELD_KEYS]
+    if unknown:
+        raise HTTPException(status_code=400, detail=f"未知字段: {', '.join(unknown)}")
+    merged = dict(current_user.preferences) if current_user.preferences else {}
+    merged["export_product_field_keys"] = list(data.export_product_field_keys)
+    current_user.preferences = merged
+    db.commit()
+    db.refresh(current_user)
+    return Response(
+        data=ExportFieldPreferencesOut(
+            export_product_field_keys=merged["export_product_field_keys"],
+        )
+    )
 
 
 @router.patch("/info", response_model=Response[UserOut], summary="更新用户信息")

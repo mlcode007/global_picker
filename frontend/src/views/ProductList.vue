@@ -84,7 +84,14 @@
         <a-col :flex="1" style="text-align:right">
           <a-space>
             <a-button @click="onSearch"><ReloadOutlined /> 刷新</a-button>
-            <a-button type="primary" ghost @click="exportAll"><DownloadOutlined /> 导出 Excel</a-button>
+            <a-button
+              type="primary"
+              ghost
+              :disabled="!selectedRowKeys.length"
+              @click="openExportModal"
+            >
+              <DownloadOutlined /> 导出 Excel
+            </a-button>
             <a-tooltip title="对勾选且有主图的商品依次执行拍照购（本批全部处理）。侧栏数字表示每笔任务最多入库几条拼多多匹配。每步前会对你名下非离线云手机做健康检查（与云手机管理「检查」一致），失败自动重试最多 3 次。">
               <a-button
                 type="primary"
@@ -397,6 +404,35 @@
         </template>
       </a-table>
     </a-card>
+
+    <a-modal
+      v-model:open="exportModalOpen"
+      title="导出 Excel"
+      ok-text="开始导出"
+      cancel-text="取消"
+      :confirm-loading="exportSubmitting"
+      width="720px"
+      destroy-on-close
+      @ok="confirmExport"
+    >
+      <p class="export-modal-summary">
+        将导出当前已勾选的 <strong>{{ selectedRowKeys.length }}</strong> 条商品。请选择需要包含的列（无需的列可不选）。列选择会保存在本机与账号中，清除浏览器数据后将自动从账号恢复。
+      </p>
+      <div class="export-field-toolbar">
+        <a-space>
+          <a-button size="small" @click="selectAllExportFields">全选</a-button>
+          <a-button size="small" @click="clearExportFields">全不选</a-button>
+          <a-button size="small" type="link" @click="resetExportFields">恢复默认</a-button>
+        </a-space>
+      </div>
+      <a-checkbox-group v-model:value="exportSelectedFields" class="export-checkbox-group">
+        <a-row :gutter="[8, 6]">
+          <a-col v-for="opt in exportFieldOptions" :key="opt.key" :span="12">
+            <a-checkbox :value="opt.key">{{ opt.label }}</a-checkbox>
+          </a-col>
+        </a-row>
+      </a-checkbox-group>
+    </a-modal>
   </div>
 </template>
 
@@ -411,6 +447,7 @@ import {
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
 import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
+import { userApi } from '@/api/user'
 import { cloudPhoneApi } from '@/api/cloudPhone'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
 import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
@@ -1135,8 +1172,136 @@ function onTableChange(pag, _, sorter) {
   store.fetchList()
 }
 
-function exportAll() {
-  exportApi.exportExcel()
+/** 与后端 export_service.EXPORT_COLUMNS 的 key、顺序保持一致 */
+const exportFieldOptions = [
+  { key: 'id', label: '商品ID' },
+  { key: 'tiktok_product_id', label: 'TikTok商品ID' },
+  { key: 'title', label: '商品标题' },
+  { key: 'description', label: '商品描述' },
+  { key: 'tiktok_url', label: 'TikTok链接' },
+  { key: 'main_image_url', label: '主图URL' },
+  { key: 'region', label: '区域代码' },
+  { key: 'region_label', label: '区域' },
+  { key: 'category', label: '分类' },
+  { key: 'price', label: 'TikTok售价' },
+  { key: 'currency', label: '货币' },
+  { key: 'price_cny', label: '折合人民币' },
+  { key: 'original_price', label: '原价' },
+  { key: 'discount', label: '折扣' },
+  { key: 'sales_volume', label: '销量' },
+  { key: 'rating', label: '评分' },
+  { key: 'review_count', label: '评价数' },
+  { key: 'stock_status', label: '库存状态' },
+  { key: 'shop_name', label: '店铺名称' },
+  { key: 'shop_id', label: '店铺ID' },
+  { key: 'seller_location', label: '卖家地区' },
+  { key: 'shipping_fee', label: '运费' },
+  { key: 'free_shipping', label: '是否包邮' },
+  { key: 'delivery_days_min', label: '配送天数(最少)' },
+  { key: 'delivery_days_max', label: '配送天数(最多)' },
+  { key: 'status', label: '选品状态代码' },
+  { key: 'status_label', label: '选品状态' },
+  { key: 'remark', label: '备注' },
+  { key: 'estimated_profit', label: '预估利润' },
+  { key: 'profit_rate', label: '预估利润率' },
+  { key: 'pdd_price', label: '拼多多价格(主匹配)' },
+  { key: 'pdd_shop_name', label: '拼多多店铺(主匹配)' },
+  { key: 'pdd_product_url', label: '拼多多商品链接(主匹配)' },
+  { key: 'pdd_title', label: '拼多多标题(主匹配)' },
+  { key: 'latest_profit', label: '最新核算利润' },
+  { key: 'latest_profit_rate', label: '最新核算利润率' },
+  { key: 'created_at', label: '添加时间' },
+  { key: 'updated_at', label: '更新时间' },
+]
+
+const LS_EXPORT_FIELDS = 'gp_export_field_keys'
+
+const DEFAULT_EXPORT_FIELDS = exportFieldOptions
+  .map(o => o.key)
+  .filter(k => k !== 'description')
+
+function normalizeExportFieldKeys(keys) {
+  if (!Array.isArray(keys) || !keys.length) return null
+  const valid = new Set(exportFieldOptions.map(o => o.key))
+  const filtered = keys.filter(k => valid.has(k))
+  return filtered.length ? filtered : null
+}
+
+function readStoredExportFields() {
+  if (typeof localStorage === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(LS_EXPORT_FIELDS)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    return normalizeExportFieldKeys(parsed)
+  } catch {
+    return null
+  }
+}
+
+const exportModalOpen = ref(false)
+const exportSubmitting = ref(false)
+const exportSelectedFields = ref([...DEFAULT_EXPORT_FIELDS])
+
+async function openExportModal() {
+  const n = selectedRowKeys.value.length
+  if (!n) {
+    message.warning('请先勾选要导出的商品')
+    return
+  }
+  let fields = readStoredExportFields()
+  if (!fields) {
+    try {
+      const data = await userApi.getExportFieldPreferences()
+      fields = normalizeExportFieldKeys(data?.export_product_field_keys)
+    } catch {
+      /* 忽略，使用默认列 */
+    }
+  }
+  exportSelectedFields.value = fields?.length ? [...fields] : [...DEFAULT_EXPORT_FIELDS]
+  exportModalOpen.value = true
+}
+
+function selectAllExportFields() {
+  exportSelectedFields.value = exportFieldOptions.map(o => o.key)
+}
+
+function clearExportFields() {
+  exportSelectedFields.value = []
+}
+
+function resetExportFields() {
+  exportSelectedFields.value = [...DEFAULT_EXPORT_FIELDS]
+}
+
+async function confirmExport() {
+  if (!exportSelectedFields.value.length) {
+    message.warning('请至少选择一列导出')
+    return false
+  }
+  const ids = [...selectedRowKeys.value]
+  if (!ids.length) {
+    message.warning('请先勾选要导出的商品')
+    return false
+  }
+  exportSubmitting.value = true
+  try {
+    await exportApi.exportProductsExcel(ids, exportSelectedFields.value)
+    try {
+      localStorage.setItem(LS_EXPORT_FIELDS, JSON.stringify(exportSelectedFields.value))
+    } catch {
+      /* ignore */
+    }
+    userApi.putExportFieldPreferences({
+      export_product_field_keys: exportSelectedFields.value,
+    }).catch(() => {})
+    exportModalOpen.value = false
+  } catch {
+    /* 错误提示在 exportApi 内；返回 rejected Promise 避免 Modal 误关 */
+    return Promise.reject(new Error('export failed'))
+  } finally {
+    exportSubmitting.value = false
+  }
 }
 
 async function recrawl(record) {
@@ -1207,6 +1372,22 @@ onMounted(async () => {
 }
 .expand-col-link:hover {
   color: #4096ff;
+}
+
+.export-modal-summary {
+  margin-bottom: 12px;
+  color: #595959;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.export-field-toolbar {
+  margin-bottom: 10px;
+}
+.export-checkbox-group {
+  width: 100%;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px 0;
 }
 .range-filter {
   display: flex; align-items: center; gap: 4px;
