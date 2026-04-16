@@ -105,21 +105,17 @@
             />
           </div>
         </a-col>
-        <a-col :flex="1" style="text-align:right">
-          <a-space>
+        <a-col flex="1" class="filter-toolbar-actions-col">
+          <a-space wrap align="center" :size="8">
             <a-button @click="onSearch"><ReloadOutlined /> 刷新</a-button>
-            <a-popconfirm
-              v-if="selectedRowKeys.length"
-              :title="`确认删除选中的 ${selectedRowKeys.length} 个商品？`"
-              ok-text="确认删除"
-              cancel-text="取消"
-              ok-type="danger"
-              @confirm="batchDelete"
+            <a-button
+              danger
+              ghost
+              :disabled="!selectedRowKeys.length || photoBatchRunning || crawlBatchRunning"
+              @click="confirmBatchDelete"
             >
-              <a-button danger ghost :disabled="photoBatchRunning || crawlBatchRunning">
-                <DeleteOutlined /> 批量删除
-              </a-button>
-            </a-popconfirm>
+              <DeleteOutlined /> 批量删除
+            </a-button>
             <a-button
               type="primary"
               ghost
@@ -482,7 +478,7 @@
 <script setup>
 import { computed, onMounted, ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { message } from 'ant-design-vue'
+import { message, Modal } from 'ant-design-vue'
 import {
   ReloadOutlined, DownloadOutlined, ImportOutlined, PictureOutlined,
   SyncOutlined, DownOutlined, UpOutlined, LinkOutlined,
@@ -874,6 +870,18 @@ async function refreshProductRow(productId) {
   } catch (e) {
     console.error('刷新商品行失败', productId, e)
   }
+}
+
+function confirmBatchDelete() {
+  const n = selectedRowKeys.value.length
+  if (!n) return
+  Modal.confirm({
+    title: `确认删除选中的 ${n} 个商品？`,
+    okText: '确认删除',
+    okType: 'danger',
+    cancelText: '取消',
+    onOk: () => batchDelete(),
+  })
 }
 
 async function batchDelete() {
@@ -1397,6 +1405,17 @@ onMounted(async () => {
 <style scoped>
 .filter-card { border-radius: 8px; text-align: left; }
 .filter-card :deep(.ant-row) { justify-content: flex-start; }
+/* 右侧操作区：始终占位，避免「批量删除」v-if 导致整行按钮错位；与筛选项垂直居中 */
+.filter-toolbar-actions-col {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+  flex: 1 1 260px;
+}
+.filter-toolbar-actions-col :deep(.ant-space) {
+  justify-content: flex-end;
+}
 .photo-batch-toolbar-row {
   margin-top: 10px;
   padding-top: 10px;
