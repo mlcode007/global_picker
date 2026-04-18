@@ -111,7 +111,7 @@
             <a-button
               danger
               ghost
-              :disabled="!selectedRowKeys.length || photoBatchRunning || crawlBatchRunning"
+              :disabled="!selectedRowKeys.length || photoBatchRunning || crawlBatchRunning || erpBatchRunning"
               @click="confirmBatchDelete"
             >
               <DeleteOutlined /> 批量删除
@@ -129,7 +129,7 @@
                 type="primary"
                 ghost
                 :loading="photoBatchRunning"
-                :disabled="photoBatchRunning || crawlBatchRunning || !selectedRowKeys.length"
+                :disabled="photoBatchRunning || crawlBatchRunning || erpBatchRunning || !selectedRowKeys.length"
                 @click="startBatchPhotoSearch"
               >
                 <CameraOutlined /> 自动拍照购
@@ -140,12 +140,31 @@
                 type="primary"
                 ghost
                 :loading="crawlBatchRunning"
-                :disabled="crawlBatchRunning || photoBatchRunning || !selectedRowKeys.length"
+                :disabled="crawlBatchRunning || photoBatchRunning || erpBatchRunning || !selectedRowKeys.length"
                 @click="startBatchCrawl"
               >
                 <SyncOutlined /> 批量采集
               </a-button>
             </a-tooltip>
+            <a-tooltip title="逐个打开：第一件在您点击时新开标签页；若该标签未被关闭，下一件会在同一标签内切换；若标签已关且自动打开被拦截，会提示您手动点「打开下一件」。两件之间按下方随机间隔。">
+              <a-button
+                type="primary"
+                ghost
+                :loading="erpBatchRunning"
+                :disabled="erpBatchRunning || photoBatchRunning || crawlBatchRunning || !selectedRowKeys.length"
+                @click="startBatchSyncErp"
+              >
+                <ExportOutlined /> 同步ERP
+              </a-button>
+            </a-tooltip>
+            <a-button
+              v-if="erpBatchRunning"
+              danger
+              ghost
+              @click="cancelBatchSyncErp"
+            >
+              取消同步
+            </a-button>
             <a-button type="primary" @click="router.push('/import')"><ImportOutlined /> 批量导入</a-button>
           </a-space>
         </a-col>
@@ -169,6 +188,47 @@
           </a-space>
         </a-col>
       </a-row>
+      <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+        <a-col :span="24">
+          <a-space wrap :size="12" align="center">
+            <span class="toolbar-muted">同步ERP</span>
+            <span>间隔</span>
+            <a-input-number
+              v-model:value="erpGapMinSec"
+              :min="1"
+              :max="600"
+              size="small"
+              style="width: 72px"
+            />
+            <span>~</span>
+            <a-input-number
+              v-model:value="erpGapMaxSec"
+              :min="1"
+              :max="600"
+              size="small"
+              style="width: 72px"
+            />
+            <span>秒（随机）</span>
+            <a-divider type="vertical" />
+            <span v-if="erpBatchRunning || erpBatchTotal" class="toolbar-hint">
+              进度：{{ erpBatchDoneCount }} / {{ erpBatchTotal }}
+              <template v-if="erpBatchRunning && erpNextDelayMs > 0">
+                · {{ erpCountdownSec }}s 后打开下一件
+              </template>
+            </span>
+            <span v-else class="toolbar-hint">
+              勾选商品后点「同步ERP」，新标签页加载 TikTok 供插件处理；列表页不会跳转
+            </span>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-alert
+        v-if="erpBatchRunning"
+        type="info"
+        show-icon
+        class="erp-batch-alert"
+        :message="erpBatchAlertMessage"
+      />
     </a-card>
 
     <!-- 数据表格 -->
@@ -265,6 +325,30 @@
                   <template v-else-if="crawlRowProgress[record.id].phase === 'failed'">
                     <CloseCircleOutlined class="photo-batch-err" />
                     <span class="photo-batch-err-text">{{ crawlRowProgress[record.id].stepText }}</span>
+                  </template>
+                </div>
+                <div v-if="erpRowProgress[record.id]" class="photo-batch-row erp-batch-row">
+                  <template v-if="erpRowProgress[record.id].phase === 'skipped'">
+                    <span class="photo-batch-muted">{{ erpRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="erpRowProgress[record.id].phase === 'queued'">
+                    <a-tag color="default" style="margin:0">ERP {{ erpRowProgress[record.id].orderIndex }}/{{ erpRowProgress[record.id].batchTotal }}</a-tag>
+                    <span class="photo-batch-muted">{{ erpRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="erpRowProgress[record.id].phase === 'running'">
+                    <a-spin size="small" style="margin-right:6px" />
+                    <span class="photo-batch-active">{{ erpRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="erpRowProgress[record.id].phase === 'done'">
+                    <CheckCircleOutlined class="photo-batch-ok" />
+                    <span class="photo-batch-done-text">{{ erpRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="erpRowProgress[record.id].phase === 'failed'">
+                    <CloseCircleOutlined class="photo-batch-err" />
+                    <span class="photo-batch-err-text">{{ erpRowProgress[record.id].stepText }}</span>
+                  </template>
+                  <template v-else-if="erpRowProgress[record.id].phase === 'cancelled'">
+                    <span class="photo-batch-muted">{{ erpRowProgress[record.id].stepText }}</span>
                   </template>
                 </div>
               </div>
@@ -476,13 +560,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, reactive, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import {
   ReloadOutlined, DownloadOutlined, ImportOutlined, PictureOutlined,
   SyncOutlined, DownOutlined, UpOutlined, LinkOutlined,
   CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined,
+  ExportOutlined,
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
 import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
@@ -511,7 +596,7 @@ const rowSelection = computed(() => ({
   selectedRowKeys: selectedRowKeys.value,
   onChange: (keys) => { selectedRowKeys.value = keys },
   getCheckboxProps: () => ({
-    disabled: photoBatchRunning.value || crawlBatchRunning.value,
+    disabled: photoBatchRunning.value || crawlBatchRunning.value || erpBatchRunning.value,
   }),
 }))
 
@@ -707,6 +792,379 @@ async function startBatchCrawl() {
     }
   } finally {
     crawlBatchRunning.value = false
+  }
+}
+
+// --- 同步 ERP：新标签页打开 TikTok（供妙手/其它扩展自动化），间隔可配，状态落盘 ---
+const LS_ERP_GAP_MIN = 'gp_erp_sync_gap_min_sec'
+const LS_ERP_GAP_MAX = 'gp_erp_sync_gap_max_sec'
+const LS_ERP_PROGRESS = 'gp_erp_sync_progress'
+const ERP_GAP_DEFAULT_MIN = 10
+const ERP_GAP_DEFAULT_MAX = 20
+
+function readStoredErpGap(key, fallback) {
+  if (typeof localStorage === 'undefined') return fallback
+  try {
+    const raw = localStorage.getItem(key)
+    if (raw == null || raw === '') return fallback
+    const n = parseInt(raw, 10)
+    if (!Number.isFinite(n) || n < 1 || n > 600) return fallback
+    return n
+  } catch {
+    return fallback
+  }
+}
+
+const erpGapMinSec = ref(readStoredErpGap(LS_ERP_GAP_MIN, ERP_GAP_DEFAULT_MIN))
+const erpGapMaxSec = ref(readStoredErpGap(LS_ERP_GAP_MAX, ERP_GAP_DEFAULT_MAX))
+
+watch(erpGapMinSec, (v) => {
+  try {
+    const n = Math.floor(Number(v))
+    if (Number.isFinite(n) && n >= 1 && n <= 600) {
+      localStorage.setItem(LS_ERP_GAP_MIN, String(n))
+    }
+  } catch { /* ignore */ }
+})
+watch(erpGapMaxSec, (v) => {
+  try {
+    const n = Math.floor(Number(v))
+    if (Number.isFinite(n) && n >= 1 && n <= 600) {
+      localStorage.setItem(LS_ERP_GAP_MAX, String(n))
+    }
+  } catch { /* ignore */ }
+})
+
+const erpBatchRunning = ref(false)
+const erpRowProgress = reactive({})
+const erpBatchTotal = ref(0)
+const erpBatchDoneCount = ref(0)
+const erpNextDelayMs = ref(0)
+const erpCountdownSec = computed(() => Math.max(0, Math.ceil(erpNextDelayMs.value / 1000)))
+const erpBatchAlertMessage = computed(() => {
+  const base = '正在同步 ERP：第一件会新开标签；之后若该标签仍在，会在同一标签内打开下一件。若标签已被插件关闭且自动打开被拦，请按提示点「打开下一件」。列表页不会跳转。'
+  if (erpBatchRunning.value && erpNextDelayMs.value > 0) {
+    return `${base} 下一件倒计时 ${erpCountdownSec.value}s。`
+  }
+  return base
+})
+
+let erpCountdownTimer = null
+let erpCancelRequested = false
+let erpWakeCancel = null
+
+function persistErpProgress() {
+  try {
+    const snapshot = {
+      updatedAt: Date.now(),
+      total: erpBatchTotal.value,
+      done: erpBatchDoneCount.value,
+      running: erpBatchRunning.value,
+      rows: Object.entries(erpRowProgress).map(([id, v]) => ({
+        id: Number(id),
+        phase: v.phase,
+        orderIndex: v.orderIndex,
+        batchTotal: v.batchTotal,
+        stepText: v.stepText,
+      })),
+    }
+    localStorage.setItem(LS_ERP_PROGRESS, JSON.stringify(snapshot))
+  } catch { /* ignore */ }
+}
+
+function restoreErpProgress() {
+  try {
+    const raw = localStorage.getItem(LS_ERP_PROGRESS)
+    if (!raw) return
+    const snapshot = JSON.parse(raw)
+    if (!snapshot?.rows?.length) return
+    erpBatchTotal.value = snapshot.total || 0
+    erpBatchDoneCount.value = snapshot.done || 0
+    snapshot.rows.forEach((r) => {
+      const phase = r.phase === 'running' ? 'cancelled' : r.phase
+      erpRowProgress[r.id] = {
+        phase,
+        orderIndex: r.orderIndex,
+        batchTotal: r.batchTotal,
+        stepText: phase === 'cancelled' ? '上次刷新前任务已中断' : r.stepText,
+      }
+    })
+  } catch { /* ignore */ }
+}
+
+function resolveErpGapRange() {
+  let min = Math.floor(Number(erpGapMinSec.value)) || ERP_GAP_DEFAULT_MIN
+  let max = Math.floor(Number(erpGapMaxSec.value)) || ERP_GAP_DEFAULT_MAX
+  min = Math.min(Math.max(1, min), 600)
+  max = Math.min(Math.max(1, max), 600)
+  if (min > max) [min, max] = [max, min]
+  return { min, max }
+}
+
+function randomErpGapMs() {
+  const { min, max } = resolveErpGapRange()
+  const sec = min + Math.random() * (max - min)
+  return Math.round(sec * 1000)
+}
+
+function erpSleepWithCountdown(ms, onTick) {
+  erpNextDelayMs.value = ms
+  if (erpCountdownTimer) {
+    clearInterval(erpCountdownTimer)
+    erpCountdownTimer = null
+  }
+  const startedAt = Date.now()
+  let lastSec = -1
+  const tick = () => {
+    const remain = ms - (Date.now() - startedAt)
+    erpNextDelayMs.value = remain > 0 ? remain : 0
+    const sec = Math.max(0, Math.ceil(erpNextDelayMs.value / 1000))
+    if (sec !== lastSec) {
+      lastSec = sec
+      try { onTick?.(sec) } catch { /* ignore */ }
+    }
+  }
+  tick()
+  erpCountdownTimer = setInterval(tick, 250)
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      erpWakeCancel = null
+      if (erpCountdownTimer) {
+        clearInterval(erpCountdownTimer)
+        erpCountdownTimer = null
+      }
+      erpNextDelayMs.value = 0
+      resolve(true)
+    }, ms)
+    erpWakeCancel = () => {
+      clearTimeout(timer)
+      if (erpCountdownTimer) {
+        clearInterval(erpCountdownTimer)
+        erpCountdownTimer = null
+      }
+      erpNextDelayMs.value = 0
+      erpWakeCancel = null
+      resolve(false)
+    }
+  })
+}
+
+/** 在用户点击栈内打开新标签（第一件），并切断 opener，避免当前页被带跑 */
+function openErpTabOnce(url) {
+  let w
+  try {
+    w = window.open(url, '_blank')
+  } catch (e) {
+    console.error('[同步ERP] window.open 失败', e)
+    return { ok: false, win: null, blocked: true }
+  }
+  if (!w) return { ok: false, win: null, blocked: true }
+  try { w.opener = null } catch { /* ignore */ }
+  return { ok: true, win: w, blocked: false }
+}
+
+/**
+ * 标签已被关或不存在时尝试再开；异步阶段 window.open 常被拦，失败则弹窗让用户点一次「打开下一件」。
+ */
+function openErpTabOrPrompt(url) {
+  const first = openErpTabOnce(url)
+  if (first.ok && first.win) return Promise.resolve({ ok: true, win: first.win })
+  return new Promise((resolve) => {
+    Modal.confirm({
+      title: '需要手动打开下一件',
+      content: '自动打开新标签被浏览器拦截，或上一标签已被关闭。请点击「打开下一件」继续（仍在本批次内）。',
+      okText: '打开下一件',
+      cancelText: '结束本批',
+      onOk: () => {
+        const second = openErpTabOnce(url)
+        resolve(second.ok ? { ok: true, win: second.win } : { ok: false, win: null })
+      },
+      onCancel: () => resolve({ ok: false, win: null, userCancel: true }),
+    })
+  })
+}
+
+function navigatePreOpenedTab(win, url) {
+  if (!url) return { ok: false, error: new Error('无 URL') }
+  if (!win || win.closed) return { ok: false, closed: true }
+  try {
+    try { win.opener = null } catch { /* ignore */ }
+    win.location.replace(url)
+    return { ok: true }
+  } catch (e) {
+    console.error('[同步ERP] 导航失败', e)
+    return { ok: false, error: e }
+  }
+}
+
+function cancelBatchSyncErp() {
+  if (!erpBatchRunning.value) return
+  erpCancelRequested = true
+  if (erpWakeCancel) erpWakeCancel()
+}
+
+async function startBatchSyncErp() {
+  if (erpBatchRunning.value) return
+  const keys = [...selectedRowKeys.value]
+  if (!keys.length) {
+    message.warning('请先勾选要同步的商品')
+    return
+  }
+  const rows = store.list.filter(r => keys.includes(r.id))
+  const ordered = keys.map(id => rows.find(r => r.id === id)).filter(Boolean)
+
+  Object.keys(erpRowProgress).forEach((k) => { delete erpRowProgress[k] })
+
+  const valid = ordered.filter(r => r.tiktok_url)
+  const bt = valid.length
+  ordered.forEach((r, i) => {
+    const orderIndex = i + 1
+    if (!r.tiktok_url) {
+      erpRowProgress[r.id] = {
+        phase: 'skipped',
+        orderIndex,
+        batchTotal: bt,
+        stepText: '无 TikTok 链接，已跳过',
+      }
+      return
+    }
+    const qi = valid.findIndex((x) => x.id === r.id) + 1
+    erpRowProgress[r.id] = {
+      phase: 'queued',
+      orderIndex: qi,
+      batchTotal: bt,
+      stepText: `排队中（${qi}/${bt}）`,
+    }
+  })
+
+  if (!valid.length) {
+    message.warning('勾选的商品均无 TikTok 链接，无法同步 ERP')
+    return
+  }
+
+  /** 本批共用的工作标签引用：优先同一标签内 replace，避免一次预开多个空白页 */
+  let erpWorkTab = null
+
+  const firstOpen = openErpTabOnce(valid[0].tiktok_url)
+  if (!firstOpen.ok || !firstOpen.win) {
+    Modal.confirm({
+      title: '需要允许弹窗',
+      content: '同步 ERP 要在新标签页打开 TikTok（供插件运行）。请先在地址栏允许本站「弹出式窗口」，再重新点「同步ERP」。',
+      okText: '知道了',
+      cancelButtonProps: { style: { display: 'none' } },
+    })
+    return
+  }
+  erpWorkTab = firstOpen.win
+
+  erpBatchRunning.value = true
+  erpCancelRequested = false
+  erpBatchTotal.value = valid.length
+  erpBatchDoneCount.value = 0
+  persistErpProgress()
+
+  let okCount = 0
+  let failCount = 0
+
+  try {
+    for (let i = 0; i < valid.length; i++) {
+      if (erpCancelRequested) break
+      const r = valid[i]
+      const pid = r.id
+
+      if (i > 0) {
+        const gap = randomErpGapMs()
+        const gapSec = Math.round(gap / 1000)
+        erpRowProgress[pid] = {
+          ...erpRowProgress[pid],
+          phase: 'running',
+          stepText: `等待 ${gapSec}s 后处理下一件…`,
+        }
+        persistErpProgress()
+        const finished = await erpSleepWithCountdown(gap, (remainSec) => {
+          const row = erpRowProgress[pid]
+          if (!row) return
+          erpRowProgress[pid] = {
+            ...row,
+            stepText: `等待 ${remainSec}s 后处理下一件（间隔 ${gapSec}s）…`,
+          }
+        })
+        if (!finished || erpCancelRequested) break
+      }
+
+      erpRowProgress[pid] = {
+        ...erpRowProgress[pid],
+        phase: 'running',
+        stepText: i === 0
+          ? '已打开新标签加载 TikTok（同标签将依次切换下一件）…'
+          : '正在切换本标签到当前商品…',
+      }
+      persistErpProgress()
+
+      let navOk = false
+      if (i === 0) {
+        navOk = true
+      } else if (erpWorkTab && !erpWorkTab.closed) {
+        const result = navigatePreOpenedTab(erpWorkTab, r.tiktok_url)
+        navOk = result.ok
+        if (!navOk && result.closed) {
+          erpWorkTab = null
+        }
+      }
+
+      if (i > 0 && !navOk) {
+        const opened = await openErpTabOrPrompt(r.tiktok_url)
+        if (opened.userCancel) {
+          erpCancelRequested = true
+          break
+        }
+        if (opened.ok && opened.win) {
+          erpWorkTab = opened.win
+          navOk = true
+        } else {
+          navOk = false
+        }
+      }
+
+      if (navOk) {
+        okCount += 1
+        erpBatchDoneCount.value += 1
+        erpRowProgress[pid] = {
+          ...erpRowProgress[pid],
+          phase: 'done',
+          stepText: `已打开（${erpBatchDoneCount.value}/${erpBatchTotal.value}）`,
+        }
+      } else {
+        failCount += 1
+        erpRowProgress[pid] = {
+          ...erpRowProgress[pid],
+          phase: 'failed',
+          stepText: '未能打开：请允许弹窗或点「打开下一件」重试',
+        }
+      }
+      persistErpProgress()
+    }
+
+    if (erpCancelRequested) {
+      valid.forEach((row) => {
+        const pr = erpRowProgress[row.id]
+        if (pr && pr.phase !== 'done' && pr.phase !== 'failed' && pr.phase !== 'skipped') {
+          erpRowProgress[row.id] = { ...pr, phase: 'cancelled', stepText: '已取消' }
+        }
+      })
+      message.info(`同步 ERP 已取消：已完成 ${okCount} 条，失败 ${failCount} 条`)
+    } else {
+      message.success(`同步 ERP 已结束：成功 ${okCount} 条，失败 ${failCount} 条`)
+    }
+  } finally {
+    if (erpCountdownTimer) {
+      clearInterval(erpCountdownTimer)
+      erpCountdownTimer = null
+    }
+    erpNextDelayMs.value = 0
+    erpBatchRunning.value = false
+    erpCancelRequested = false
+    persistErpProgress()
   }
 }
 
@@ -1394,11 +1852,20 @@ async function recrawl(record) {
 }
 
 onMounted(async () => {
+  restoreErpProgress()
   await store.fetchList()
   if (store.list.length) {
     const ids = store.list.map(p => p.id)
     await loadPddMatchesBatch(ids)
   }
+})
+
+onBeforeUnmount(() => {
+  if (erpCountdownTimer) {
+    clearInterval(erpCountdownTimer)
+    erpCountdownTimer = null
+  }
+  if (erpWakeCancel) erpWakeCancel()
 })
 </script>
 
@@ -1420,6 +1887,9 @@ onMounted(async () => {
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid #f0f0f0;
+}
+.erp-batch-alert {
+  margin-top: 10px;
 }
 .toolbar-muted {
   font-size: 13px;
