@@ -22,6 +22,7 @@
             <a-select-option value="pending">待定</a-select-option>
             <a-select-option value="selected">已选</a-select-option>
             <a-select-option value="abandoned">放弃</a-select-option>
+            <a-select-option value="erp_synced">已同步ERP</a-select-option>
           </a-select>
         </a-col>
         <a-col :span="3">
@@ -424,6 +425,7 @@
                   <a-menu-item key="pending">待定</a-menu-item>
                   <a-menu-item key="selected">已选</a-menu-item>
                   <a-menu-item key="abandoned">放弃</a-menu-item>
+                  <a-menu-item key="erp_synced">已同步ERP</a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
@@ -433,6 +435,19 @@
           <template v-else-if="column.key === 'action'">
             <a-space :size="4">
               <a @click="router.push(`/products/${record.id}`)">详情</a>
+              <a-divider type="vertical" style="margin:0" />
+              <a-tooltip title="新标签打开 TikTok 商品页（无 locale 时自动补全为中文）">
+                <a
+                  v-if="record.tiktok_url"
+                  :href="productTiktokOpenUrl(record)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  @click.stop
+                >
+                  打开商品
+                </a>
+                <span v-else style="color:#ccc;cursor:not-allowed;user-select:none">打开商品</span>
+              </a-tooltip>
               <a-divider type="vertical" style="margin:0" />
               <a-tooltip :title="record.crawl_task_id ? '重新采集' : '无采集任务'">
                 <a
@@ -1134,6 +1149,13 @@ async function startBatchSyncErp() {
           phase: 'done',
           stepText: `已打开（${erpBatchDoneCount.value}/${erpBatchTotal.value}）`,
         }
+        try {
+          await productApi.update(pid, { status: 'erp_synced' })
+          const row = store.list.find((p) => p.id === pid)
+          if (row) row.status = 'erp_synced'
+        } catch (e) {
+          console.warn('[同步ERP] 选品状态更新为已同步ERP 失败', pid, e)
+        }
       } else {
         failCount += 1
         erpRowProgress[pid] = {
@@ -1646,6 +1668,28 @@ watch(() => store.list, (newList) => {
 }, { immediate: false })
 
 // --- 原有逻辑 ---
+/**
+ * TikTok 商品链接若无 locale=zh-CN 则补上（已有其它 locale 时改为 zh-CN）。
+ */
+function ensureLocaleZhCN(raw) {
+  if (!raw || typeof raw !== 'string') return ''
+  try {
+    const u = new URL(raw)
+    if (u.searchParams.get('locale') === 'zh-CN') return u.href
+    u.searchParams.set('locale', 'zh-CN')
+    return u.href
+  } catch {
+    const s = raw.trim()
+    if (/[?&]locale=zh-CN(?:&|#|$)/i.test(s)) return s
+    const join = s.includes('?') ? '&' : '?'
+    return `${s}${join}locale=zh-CN`
+  }
+}
+
+function productTiktokOpenUrl(record) {
+  return ensureLocaleZhCN(record?.tiktok_url || '')
+}
+
 function getShopUrl(record) {
   const url = record.tiktok_url || ''
   const m = url.match(/(https?:\/\/[^/]+\/@[^/]+)/)
@@ -1665,7 +1709,7 @@ const columns = [
   { title: '选品状态', key: 'status', width: 100 },
   { title: '备注', dataIndex: 'remark', width: 120, ellipsis: true },
   { title: '添加时间', dataIndex: 'created_at', width: 150, sorter: true },
-  { title: '操作', key: 'action', fixed: 'right', width: 160 },
+  { title: '操作', key: 'action', fixed: 'right', width: 220 },
 ]
 
 const pagination = computed(() => ({

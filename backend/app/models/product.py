@@ -39,7 +39,7 @@ class Product(Base):
     image_urls = Column(JSON, nullable=True)
     category = Column(String(128), nullable=True)
     status = Column(
-        Enum("pending", "selected", "abandoned"),
+        Enum("pending", "selected", "abandoned", "erp_synced"),
         nullable=False,
         default="pending",
     )

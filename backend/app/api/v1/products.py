@@ -64,7 +64,7 @@ def batch_delete_products_post(
 def list_products(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=1000),
-    status: Optional[str] = Query(None, description="pending/selected/abandoned"),
+    status: Optional[str] = Query(None, description="pending/selected/abandoned/erp_synced"),
     region: Optional[str] = Query(None),
     keyword: Optional[str] = Query(None),
     price_cny_min: Optional[float] = Query(None, description="TikTok人民币价格下限"),

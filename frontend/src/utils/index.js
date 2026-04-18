@@ -1,7 +1,8 @@
 export const STATUS_MAP = {
-  pending:   { text: '待定',   color: 'default' },
-  selected:  { text: '已选',   color: 'success' },
-  abandoned: { text: '放弃',   color: 'error'   },
+  pending:    { text: '待定',      color: 'default' },
+  selected:   { text: '已选',      color: 'success' },
+  abandoned:  { text: '放弃',      color: 'error' },
+  erp_synced: { text: '已同步ERP', color: 'processing' },
 }
 
 export const REGION_MAP = {

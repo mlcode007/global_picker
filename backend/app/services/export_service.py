@@ -24,6 +24,7 @@ STATUS_LABEL_ZH = {
     "pending": "待定",
     "selected": "已选",
     "abandoned": "放弃",
+    "erp_synced": "已同步ERP",
 }
 
 STOCK_LABEL_ZH = {

@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "TikTok Shop 采集助手",
+  "version": "1.0.0",
+  "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，随后延时关闭标签页",
+  "permissions": ["tabs"],
+  "host_permissions": ["https://shop.tiktok.com/*", "https://*.tiktok.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://shop.tiktok.com/view/product/*",
+        "https://*.tiktok.com/view/product/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

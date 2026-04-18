@@ -17,6 +17,7 @@
                 <a-menu-item key="pending">待定</a-menu-item>
                 <a-menu-item key="selected">已选</a-menu-item>
                 <a-menu-item key="abandoned">放弃</a-menu-item>
+                <a-menu-item key="erp_synced">已同步ERP</a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>

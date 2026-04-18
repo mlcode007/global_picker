@@ -330,6 +330,7 @@ const productStatusList = computed(() => {
     { key: 'pending', label: '待定', count: s.pending || 0, dotColor: '#d9d9d9', barColor: '#d9d9d9' },
     { key: 'selected', label: '已选', count: s.selected || 0, dotColor: '#52c41a', barColor: '#52c41a' },
     { key: 'abandoned', label: '放弃', count: s.abandoned || 0, dotColor: '#ff4d4f', barColor: '#ff4d4f' },
+    { key: 'erp_synced', label: '已同步ERP', count: s.erp_synced || 0, dotColor: '#1677ff', barColor: '#1677ff' },
   ]
 })
 
