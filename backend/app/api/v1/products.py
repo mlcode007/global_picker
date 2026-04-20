@@ -73,6 +73,9 @@ def list_products(
     profit_max: Optional[float] = Query(None, description="预估利润上限"),
     profit_rate_min: Optional[float] = Query(None, description="预估利润率下限(小数,例如0.2表示20%)"),
     profit_rate_max: Optional[float] = Query(None, description="预估利润率上限(小数,例如0.2表示20%)"),
+    pdd_matched: Optional[bool] = Query(None, description="是否已匹配拼多多(True=已匹配/False=未匹配)"),
+    created_at_start: Optional[str] = Query(None, description="导入时间起始(ISO格式,如2026-01-01)"),
+    created_at_end: Optional[str] = Query(None, description="导入时间截止(ISO格式,如2026-12-31)"),
     order_by: str = Query("created_at"),
     order_dir: str = Query("desc", pattern="^(asc|desc)$"),
     current_user: User = Depends(get_current_user),
@@ -84,6 +87,8 @@ def list_products(
         price_cny_min=price_cny_min, price_cny_max=price_cny_max,
         profit_min=profit_min, profit_max=profit_max,
         profit_rate_min=profit_rate_min, profit_rate_max=profit_rate_max,
+        pdd_matched=pdd_matched,
+        created_at_start=created_at_start, created_at_end=created_at_end,
     )
     return Response(
         data=PagedResponse(

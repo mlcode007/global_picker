@@ -106,6 +106,51 @@
             />
           </div>
         </a-col>
+      </a-row>
+      <a-row :gutter="[12, 12]" align="middle" style="margin-top: 4px">
+        <a-col :span="3">
+          <a-select
+            v-model:value="store.filters.pdd_matched"
+            placeholder="匹配状态"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          >
+            <a-select-option :value="true">已匹配</a-select-option>
+            <a-select-option :value="false">未匹配</a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="10">
+          <div class="date-range-filter">
+            <span class="range-label">导入时间</span>
+            <a-date-picker
+              v-model:value="dateStart"
+              placeholder="开始日期"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+              style="width: 130px"
+              @change="onDateChange"
+            />
+            <span class="range-sep">~</span>
+            <a-date-picker
+              v-model:value="dateEnd"
+              placeholder="结束日期"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+              style="width: 130px"
+              @change="onDateChange"
+            />
+            <a-space :size="4" style="margin-left: 8px">
+              <a-button size="small" @click="setDateRange('today')">今天</a-button>
+              <a-button size="small" @click="setDateRange('yesterday')">昨天</a-button>
+              <a-button size="small" @click="setDateRange('3d')">近3天</a-button>
+              <a-button size="small" @click="setDateRange('7d')">近7天</a-button>
+              <a-button size="small" danger @click="clearDateRange">清除</a-button>
+            </a-space>
+          </div>
+        </a-col>
+      </a-row>
+      <a-row :gutter="[12, 12]" align="middle" style="margin-top: 4px">
         <a-col flex="1" class="filter-toolbar-actions-col">
           <a-space wrap align="center" :size="8">
             <a-button @click="onSearch"><ReloadOutlined /> 刷新</a-button>
@@ -591,10 +636,60 @@ import { cloudPhoneApi } from '@/api/cloudPhone'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
 import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
 import { pollCrawlTaskUntilDone, formatCrawlTaskLine, sleep as crawlSleep } from '@/utils/crawlTask'
+import dayjs from 'dayjs'
 
 const router = useRouter()
 const store = useProductStore()
 const recrawlingIds = ref(new Set())
+
+const dateStart = ref(null)
+const dateEnd = ref(null)
+
+function onDateChange() {
+  store.filters.created_at_start = dateStart.value || undefined
+  store.filters.created_at_end = dateEnd.value || undefined
+  onSearch()
+}
+
+function setDateRange(type) {
+  const now = dayjs()
+  let start, end
+
+  switch (type) {
+    case 'today':
+      start = now.startOf('day')
+      end = now.endOf('day')
+      break
+    case 'yesterday':
+      start = now.subtract(1, 'day').startOf('day')
+      end = now.subtract(1, 'day').endOf('day')
+      break
+    case '3d':
+      start = now.subtract(2, 'day').startOf('day')
+      end = now.endOf('day')
+      break
+    case '7d':
+      start = now.subtract(6, 'day').startOf('day')
+      end = now.endOf('day')
+      break
+    default:
+      return
+  }
+
+  dateStart.value = start.format('YYYY-MM-DD')
+  dateEnd.value = end.format('YYYY-MM-DD')
+  store.filters.created_at_start = dateStart.value
+  store.filters.created_at_end = dateEnd.value
+  onSearch()
+}
+
+function clearDateRange() {
+  dateStart.value = null
+  dateEnd.value = null
+  store.filters.created_at_start = undefined
+  store.filters.created_at_end = undefined
+  onSearch()
+}
 
 const fallbackImg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjZjBmMGYwIi8+PC9zdmc+'
 
@@ -1979,6 +2074,9 @@ onBeforeUnmount(() => {
 }
 .range-filter {
   display: flex; align-items: center; gap: 4px;
+}
+.date-range-filter {
+  display: flex; align-items: center; gap: 6px;
 }
 .range-label {
   font-size: 12px; color: #666; white-space: nowrap; flex-shrink: 0;

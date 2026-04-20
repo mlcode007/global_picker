@@ -262,8 +262,14 @@ def get_products(
     profit_max: Optional[float] = None,
     profit_rate_min: Optional[float] = None,
     profit_rate_max: Optional[float] = None,
+    pdd_matched: Optional[bool] = None,
+    created_at_start: Optional[str] = None,
+    created_at_end: Optional[str] = None,
 ) -> Tuple[int, List[Product]]:
     """商品列表（按用户隔离，分页、过滤、排序）"""
+    from app.models.pdd_match import PddMatch
+    from datetime import datetime, timedelta
+
     query = db.query(Product).filter(Product.is_deleted == 0, Product.user_id == user_id)
 
     if status:
@@ -289,6 +295,30 @@ def get_products(
         query = query.filter(Product.profit_rate >= profit_rate_min)
     if profit_rate_max is not None:
         query = query.filter(Product.profit_rate <= profit_rate_max)
+    if pdd_matched is not None:
+        matched_ids = (
+            db.query(PddMatch.product_id)
+            .filter(PddMatch.product_id.isnot(None))
+            .distinct()
+            .subquery()
+        )
+        if pdd_matched is True:
+            query = query.filter(Product.id.in_(matched_ids))
+        else:
+            query = query.filter(~Product.id.in_(matched_ids))
+    if created_at_start:
+        try:
+            start_dt = datetime.fromisoformat(created_at_start)
+            query = query.filter(Product.created_at >= start_dt)
+        except (ValueError, TypeError):
+            pass
+    if created_at_end:
+        try:
+            end_dt = datetime.fromisoformat(created_at_end)
+            end_dt = end_dt.replace(hour=23, minute=59, second=59)
+            query = query.filter(Product.created_at <= end_dt)
+        except (ValueError, TypeError):
+            pass
 
     total = query.count()
 
