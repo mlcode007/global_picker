@@ -8,7 +8,7 @@ from app.services import product_service
 from app.core.security import get_current_user
 from app.schemas.common import PagedResponse, Response
 from app.schemas.product import ProductCreate, ProductUpdate, ProductOut, ProductBatchImport, ProductBatchDelete
-from app.workers.tiktok_crawler import run_crawl_task
+from app.workers.tiktok_crawler_v2 import run_crawl_task
 
 router = APIRouter(prefix="/products", tags=["商品管理"])
 

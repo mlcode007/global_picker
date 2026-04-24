@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models.user import User
 from app.services.points_service import PointsManager
 from app.core.security import get_current_user
+from app.schemas.common import Response
 
 router = APIRouter(tags=["points"])
 

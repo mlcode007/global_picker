@@ -22,6 +22,7 @@ from app.core.security import (
     get_current_user,
 )
 from app.services import sms_service
+from app.services.points_service import PointsManager
 
 router = APIRouter(prefix="/auth", tags=["认证"])
 
@@ -134,3 +135,18 @@ def update_me(
     db.commit()
     db.refresh(current_user)
     return Response(data=UserOut.model_validate(current_user))
+
+
+@router.post("/verify", response_model=Response, summary="验证登录状态（扩展插件用）")
+def verify_auth(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """验证用户登录状态，返回用户信息和积分"""
+    points_manager = PointsManager(db)
+    user_points = points_manager.get_user_points(current_user.id)
+    
+    return Response(data={
+        "user": UserOut.model_validate(current_user),
+        "points": user_points.points,
+    })

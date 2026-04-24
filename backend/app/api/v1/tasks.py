@@ -11,7 +11,7 @@ from app.models.product import Product
 from app.schemas.common import Response
 from app.schemas.crawl_task import CrawlTaskOut
 from app.schemas.product import ProductOut
-from app.workers.tiktok_crawler import run_crawl_task
+from app.workers.tiktok_crawler_v2 import run_crawl_task
 
 router = APIRouter(prefix="/tasks", tags=["抓取任务"])
 

@@ -125,19 +125,21 @@
             <span class="range-label">导入时间</span>
             <a-date-picker
               v-model:value="dateStart"
-              placeholder="开始日期"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 130px"
+              placeholder="开始时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              show-time
+              style="width: 170px"
               @change="onDateChange"
             />
             <span class="range-sep">~</span>
             <a-date-picker
               v-model:value="dateEnd"
-              placeholder="结束日期"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 130px"
+              placeholder="结束时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              show-time
+              style="width: 170px"
               @change="onDateChange"
             />
             <a-space :size="4" style="margin-left: 8px">
@@ -181,6 +183,14 @@
                 <CameraOutlined /> 自动拍照购
               </a-button>
             </a-tooltip>
+            <a-button
+              v-if="photoBatchRunning"
+              danger
+              ghost
+              @click="cancelBatchPhotoSearch"
+            >
+              停止拍照购
+            </a-button>
             <a-tooltip title="对勾选且有采集任务的商品依次重新采集 TikTok 数据，完成后自动刷新本行">
               <a-button
                 type="primary"
@@ -493,7 +503,7 @@
                 </a>
                 <span v-else style="color:#ccc;cursor:not-allowed;user-select:none">打开商品</span>
               </a-tooltip>
-              <a-divider type="vertical" style="margin:0" />
+              <!-- <a-divider type="vertical" style="margin:0" />
               <a-tooltip :title="record.crawl_task_id ? '重新采集' : '无采集任务'">
                 <a
                   :style="!record.crawl_task_id
@@ -505,7 +515,7 @@
                 >
                   <SyncOutlined :spin="recrawlingIds.has(record.id)" /> 采集
                 </a>
-              </a-tooltip>
+              </a-tooltip> -->
               <a-divider type="vertical" style="margin:0" />
               <a-popconfirm title="确认删除？" @confirm="store.deleteProduct(record.id)">
                 <a style="color:#ff4d4f">删除</a>
@@ -676,8 +686,8 @@ function setDateRange(type) {
       return
   }
 
-  dateStart.value = start.format('YYYY-MM-DD')
-  dateEnd.value = end.format('YYYY-MM-DD')
+  dateStart.value = start.format('YYYY-MM-DD HH:mm:ss')
+  dateEnd.value = end.format('YYYY-MM-DD HH:mm:ss')
   store.filters.created_at_start = dateStart.value
   store.filters.created_at_end = dateEnd.value
   onSearch()
@@ -712,6 +722,7 @@ const rowSelection = computed(() => ({
 
 // --- 列表页批量拍照购（串行）---
 const photoBatchRunning = ref(false)
+const photoBatchCancelled = ref(false)
 const photoRowProgress = reactive({})
 const PHOTO_BATCH_DEFAULT_MAX = 2
 const LS_PHOTO_BATCH_MAX = 'gp_photo_batch_max_items'
@@ -1469,8 +1480,14 @@ async function batchDelete() {
   }
 }
 
+function cancelBatchPhotoSearch() {
+  photoBatchCancelled.value = true
+  message.info('已发送停止信号，当前任务完成后将停止')
+}
+
 async function startBatchPhotoSearch() {
   if (photoBatchRunning.value) return
+  photoBatchCancelled.value = false
   const keys = [...selectedRowKeys.value]
   if (!keys.length) {
     message.warning('请先勾选要执行拍照购的商品')
@@ -1520,11 +1537,20 @@ async function startBatchPhotoSearch() {
   photoBatchRunning.value = true
   try {
     for (const r of toRun) {
+      if (photoBatchCancelled.value) {
+        message.warning('拍照购已停止')
+        break
+      }
       const pid = r.id
       let photoTaskId = null
       let lastFailMsg = ''
 
       for (let attempt = 1; attempt <= PHOTO_BATCH_MAX_ATTEMPTS; attempt++) {
+        if (photoBatchCancelled.value) {
+          photoRowProgress[pid].phase = 'skipped'
+          photoRowProgress[pid].stepText = '已停止'
+          break
+        }
         const isRetry = attempt > 1
         photoRowProgress[pid] = {
           ...photoRowProgress[pid],
@@ -1631,13 +1657,18 @@ async function startBatchPhotoSearch() {
       }
     }
 
-    message.success('批量拍照购已执行完毕')
+    if (photoBatchCancelled.value) {
+      message.warning('拍照购已停止')
+    } else {
+      message.success('批量拍照购已执行完毕')
+    }
     await store.fetchList()
     if (toRun.length) {
       await loadPddMatchesBatch(toRun.map((x) => x.id))
     }
   } finally {
     photoHealthPhoneCache.value = null
+    photoBatchCancelled.value = false
     photoBatchRunning.value = false
   }
 }

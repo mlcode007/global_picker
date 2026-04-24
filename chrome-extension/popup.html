@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Shop 采集助手</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 400px;
+    }
+
+    .container { padding: 16px; }
+
+    .header {
+      text-align: center;
+      padding: 16px 0;
+      color: white;
+    }
+    .header h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.9; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon { width: 20px; height: 20px; }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .status-row:last-child { border-bottom: none; }
+
+    .status-label { font-size: 13px; color: #6b7280; }
+    .status-value { font-size: 13px; font-weight: 500; color: #111827; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-badge.success { background: #d1fae5; color: #065f46; }
+    .status-badge.error { background: #fee2e2; color: #991b1b; }
+    .status-badge.warning { background: #fef3c7; color: #92400e; }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .progress-fill.warning { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
+    .progress-fill.error { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .message {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    .message.success { background: #d1fae5; color: #065f46; display: block; }
+    .message.error { background: #fee2e2; color: #991b1b; display: block; }
+    .message.info { background: #dbeafe; color: #1e40af; display: block; }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer {
+      text-align: center;
+      padding: 12px 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>TikTok Shop 采集助手</h1>
+      <p>v2.0.0</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+        </svg>
+        账户状态
+      </div>
+      <div class="status-row">
+        <span class="status-label">登录状态</span>
+        <span class="status-badge" id="loginStatus">
+          <span class="status-dot"></span>
+          <span id="loginText">检测中...</span>
+        </span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">用户名</span>
+        <span class="status-value" id="username">-</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">积分余额</span>
+        <span class="status-value" id="points">-</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+          <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+        </svg>
+        今日采集配额
+      </div>
+      <div class="status-row">
+        <span class="status-label">已采集 / 总配额</span>
+        <span class="status-value" id="quotaText">0 / 10000</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="quotaBar" style="width: 0%"></div>
+      </div>
+      <div class="status-row" style="margin-top: 8px;">
+        <span class="status-label">剩余配额</span>
+        <span class="status-value" id="remainingQuota">10000</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="syncButton">
+      <span id="syncButtonText">同步登录状态</span>
+    </button>
+
+    <div class="message" id="message"></div>
+
+    <div class="footer">© 2026 Global Picker</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

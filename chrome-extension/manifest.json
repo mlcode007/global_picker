@@ -1,10 +1,15 @@
 {
   "manifest_version": 3,
   "name": "TikTok Shop 采集助手",
-  "version": "1.0.0",
-  "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，随后延时关闭标签页",
-  "permissions": ["tabs"],
-  "host_permissions": ["https://shop.tiktok.com/*", "https://*.tiktok.com/*"],
+  "version": "2.0.0",
+  "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，支持登录状态检测和采集配额管理",
+  "permissions": ["tabs", "storage", "alarms", "scripting"],
+  "host_permissions": [
+    "https://shop.tiktok.com/*",
+    "https://*.tiktok.com/*",
+    "http://localhost:8000/*",
+    "http://localhost:5173/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -17,6 +22,28 @@
       "js": ["content.js"],
       "run_at": "document_idle",
       "all_frames": false
+    },
+    {
+      "matches": [
+        "http://localhost:5173/*",
+        "http://localhost:8000/*"
+      ],
+      "js": ["sync-inject.js"],
+      "run_at": "document_idle",
+      "all_frames": false
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
 }

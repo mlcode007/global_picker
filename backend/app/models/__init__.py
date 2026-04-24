@@ -9,6 +9,8 @@ from app.models.device import Device
 from app.models.photo_search_task import PhotoSearchTask, DeviceActionLog
 from app.models.user_crawl_config import UserCrawlConfig
 from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
+from app.models.points import UserPoints, PointsTransaction
+from app.models.quota import UserQuota, CollectionHistory
 
 __all__ = [
     "CrawlTask",
@@ -24,4 +26,8 @@ __all__ = [
     "UserCrawlConfig",
     "CloudPhonePool",
     "UserCloudPhone",
+    "UserPoints",
+    "PointsTransaction",
+    "UserQuota",
+    "CollectionHistory",
 ]
