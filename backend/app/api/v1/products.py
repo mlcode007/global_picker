@@ -36,16 +36,14 @@ async def add_product(
     )
 
 
-@router.post("/batch", summary="批量导入商品链接")
+@router.post("/batch", summary="批量导入商品链接（不触发采集，仅创建商品记录）")
 async def batch_import(
     data: ProductBatchImport,
-    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    result = product_service.batch_create_products(db, data.urls, current_user.id)
-    for task_id in result.get("task_ids", []):
-        background_tasks.add_task(run_crawl_task, task_id)
+    """批量导入商品链接，每次最多处理50条，不触发Playwright采集"""
+    result = product_service.batch_create_products(db, data.urls, current_user.id, batch_size=50)
     return Response(data=result)
 
 

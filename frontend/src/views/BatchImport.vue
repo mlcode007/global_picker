@@ -22,6 +22,28 @@
             </a-button>
           </a-space>
         </div>
+        
+        <a-progress
+          v-if="importProgress.total > 0"
+          :percent="importProgress.percent"
+          :status="importProgress.status"
+          style="margin-top:16px"
+        />
+        <a-alert
+          v-if="importProgress.total > 0"
+          :type="importProgress.status === 'success' ? 'success' : 'info'"
+          show-icon
+          style="margin-top:8px"
+        >
+          <template #message>
+            <span v-if="importProgress.status === 'success'">
+              导入完成！共 {{ importProgress.total }} 条，新增 {{ importProgress.created }} 条，跳过重复 {{ importProgress.duplicates }} 条
+            </span>
+            <span v-else>
+              正在导入... 已处理 {{ importProgress.current }} / {{ importProgress.total }} 条
+            </span>
+          </template>
+        </a-alert>
       </a-card>
 
       <!-- 单条添加 -->
@@ -242,6 +264,15 @@ const importing = ref(false)
 const singleLoading = ref(false)
 const exportAllLoading = ref(false)
 
+const importProgress = reactive({
+  total: 0,
+  current: 0,
+  created: 0,
+  duplicates: 0,
+  percent: 0,
+  status: '',
+})
+
 const singleForm = reactive({
   tiktok_url: '', title: '', price: null, currency: 'PHP', region: 'PH', remark: '',
 })
@@ -342,29 +373,67 @@ onUnmounted(stopPolling)
 async function doImport() {
   const urls = urlsText.value.split('\n').map(s => s.trim()).filter(Boolean)
   if (!urls.length) return
+  
   importing.value = true
   taskList.value = []
+  
+  importProgress.total = urls.length
+  importProgress.current = 0
+  importProgress.created = 0
+  importProgress.duplicates = 0
+  importProgress.percent = 0
+  importProgress.status = 'active'
+  
+  const BATCH_SIZE = 50
+  const batches = []
+  
+  for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+    batches.push(urls.slice(i, i + BATCH_SIZE))
+  }
+  
+  let totalCreated = 0
+  let totalDuplicates = 0
+  let allTaskIds = []
+  
   try {
-    const result = await productApi.batchImport(urls)
-    const { created = 0, duplicates = 0, task_ids = [] } = result
-
-    if (created === 0 && duplicates > 0) {
-      // 全部重复
-      message.warning(`${duplicates} 条链接已存在，未新增商品`)
-    } else if (created > 0 && duplicates > 0) {
-      // 部分重复
-      message.info(`新增 ${created} 条，跳过重复 ${duplicates} 条，后台开始采集`)
-      urlsText.value = ''
-    } else if (created > 0) {
-      // 全部新增
-      message.success(`已提交 ${created} 条，后台开始采集`)
-      urlsText.value = ''
-    } else {
-      message.warning('未导入任何商品，请检查链接格式')
+    for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
+      const batch = batches[batchIdx]
+      
+      try {
+        const result = await productApi.batchImport(batch)
+        const { created = 0, duplicates = 0, task_ids = [] } = result
+        
+        totalCreated += created
+        totalDuplicates += duplicates
+        allTaskIds = allTaskIds.concat(task_ids)
+        
+        importProgress.current = Math.min((batchIdx + 1) * BATCH_SIZE, urls.length)
+        importProgress.created = totalCreated
+        importProgress.duplicates = totalDuplicates
+        importProgress.percent = Math.round((importProgress.current / urls.length) * 100)
+      } catch (e) {
+        console.error(`第 ${batchIdx + 1} 批导入失败:`, e)
+        message.error(`第 ${batchIdx + 1} 批导入失败，已停止`)
+        importProgress.status = 'exception'
+        break
+      }
     }
-
-    if (task_ids.length) {
-      startPolling(task_ids)
+    
+    if (importProgress.status !== 'exception') {
+      importProgress.status = 'success'
+      importProgress.percent = 100
+      
+      if (totalCreated === 0 && totalDuplicates > 0) {
+        message.warning(`${totalDuplicates} 条链接已存在，未新增商品`)
+      } else if (totalCreated > 0 && totalDuplicates > 0) {
+        message.info(`新增 ${totalCreated} 条，跳过重复 ${totalDuplicates} 条`)
+        urlsText.value = ''
+      } else if (totalCreated > 0) {
+        message.success(`已导入 ${totalCreated} 条商品，请到商品列表页面进行采集`)
+        urlsText.value = ''
+      } else {
+        message.warning('未导入任何商品，请检查链接格式')
+      }
     }
   } finally {
     importing.value = false

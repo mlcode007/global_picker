@@ -147,11 +147,12 @@ def create_product(db: Session, data: ProductCreate, user_id: int) -> Tuple[Prod
     return product, task if not shared else None
 
 
-def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
-    """批量导入商品链接，支持共享采集结果"""
+def batch_create_products(db: Session, urls: List[str], user_id: int, batch_size: int = 50) -> dict:
+    """批量导入商品链接，支持分批导入（默认每批最多50条），导入时不触发Playwright采集"""
     created, duplicates, task_ids = [], [], []
     seen_pids: set[str] = set()
-    for url in urls:
+    
+    for idx, url in enumerate(urls):
         url = url.strip()
         if not url:
             continue
@@ -203,7 +204,7 @@ def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
                 Product.is_deleted == 1,
             ).first()
         if deleted:
-            task = CrawlTask(url=url, status="done" if shared else "pending")
+            task = CrawlTask(url=url, status="pending")
             db.add(task)
             db.flush()
             deleted.is_deleted = 0
@@ -224,7 +225,7 @@ def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
             created.append(url)
             continue
 
-        task = CrawlTask(url=url, status="done" if shared else "pending")
+        task = CrawlTask(url=url, status="pending")
         db.add(task)
         db.flush()
         product = Product(
@@ -241,9 +242,19 @@ def batch_create_products(db: Session, urls: List[str], user_id: int) -> dict:
         created.append(url)
         if pid:
             seen_pids.add(pid)
+        
+        if (idx + 1) % batch_size == 0:
+            db.commit()
 
     db.commit()
-    return {"created": len(created), "duplicates": len(duplicates), "task_ids": task_ids}
+    total = len(urls)
+    return {
+        "created": len(created), 
+        "duplicates": len(duplicates), 
+        "task_ids": task_ids,
+        "total": total,
+        "batches": (total + batch_size - 1) // batch_size,
+    }
 
 
 def get_products(
