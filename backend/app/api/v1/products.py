@@ -67,6 +67,7 @@ def list_products(
     status: Optional[str] = Query(None, description="pending/selected/abandoned/erp_synced"),
     region: Optional[str] = Query(None),
     keyword: Optional[str] = Query(None),
+    crawl_status: Optional[str] = Query(None, description="pending=待抓取/done=已抓取"),
     price_cny_min: Optional[float] = Query(None, description="TikTok人民币价格下限"),
     price_cny_max: Optional[float] = Query(None, description="TikTok人民币价格上限"),
     profit_min: Optional[float] = Query(None, description="预估利润下限"),
@@ -89,6 +90,7 @@ def list_products(
         profit_rate_min=profit_rate_min, profit_rate_max=profit_rate_max,
         pdd_matched=pdd_matched,
         created_at_start=created_at_start, created_at_end=created_at_end,
+        crawl_status=crawl_status,
     )
     return Response(
         data=PagedResponse(

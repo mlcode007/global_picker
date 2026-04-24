@@ -27,6 +27,18 @@
         </a-col>
         <a-col :span="3">
           <a-select
+            v-model:value="store.filters.crawl_status"
+            placeholder="抓取状态"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          >
+            <a-select-option value="pending">待抓取</a-select-option>
+            <a-select-option value="done">已抓取</a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="3">
+          <a-select
             v-model:value="store.filters.region"
             placeholder="销售区域"
             allow-clear

@@ -41,6 +41,7 @@ export const useProductStore = defineStore('product', () => {
     pdd_matched: undefined,
     created_at_start: undefined,
     created_at_end: undefined,
+    crawl_status: undefined,
     order_by: 'created_at',
     order_dir: 'desc',
   })

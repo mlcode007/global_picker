@@ -265,6 +265,7 @@ def get_products(
     pdd_matched: Optional[bool] = None,
     created_at_start: Optional[str] = None,
     created_at_end: Optional[str] = None,
+    crawl_status: Optional[str] = None,
 ) -> Tuple[int, List[Product]]:
     """商品列表（按用户隔离，分页、过滤、排序）"""
     from app.models.pdd_match import PddMatch
@@ -283,6 +284,10 @@ def get_products(
                 Product.shop_name.ilike(f"%{keyword}%"),
             )
         )
+    if crawl_status == "pending":
+        query = query.filter(or_(Product.title == "", Product.title is None))
+    elif crawl_status == "done":
+        query = query.filter(Product.title != "", Product.title is not None)
     if price_cny_min is not None:
         query = query.filter(Product.price_cny >= price_cny_min)
     if price_cny_max is not None:
