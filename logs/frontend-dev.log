@@ -236,3 +236,1411 @@
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
 05:51:19 [vite] (client) hmr update /src/views/Profile.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 403 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:15:10 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:12 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:19 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:22 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:24 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:27 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:36 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:15:55 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 388 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:16:15 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:17:42 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:17:48 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:17:57 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:18:03 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 311 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:19:50 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:19:52 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:19:52 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:19:52 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:21:23 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:22:30 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:22:31 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:22:31 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+01:22:32 [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 339 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+1:30:53 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.0.0  ready in 511 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+1:32:12 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.0.0  ready in 345 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+1:32:19 AM [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+1:32:22 AM [vite] http proxy error: /api/v1/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+1:33:56 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.0.0  ready in 480 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+1:34:12 AM [vite] (client) [console.warn] [Vue warn] Write operation failed: computed value is readonly
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #3f8600". 
+  at <AStatistic title="可用数量" value=0 value-style="color: #3f8600" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #cf1322". 
+  at <AStatistic title="不可用数量" value=0 value-style="color: #cf1322" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #3f8600". 
+  at <AStatistic title="可用数量" value=0 value-style="color: #3f8600" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #cf1322". 
+  at <AStatistic title="不可用数量" value=0 value-style="color: #cf1322" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #3f8600". 
+  at <AStatistic title="可用数量" value=0 value-style="color: #3f8600" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:12 AM [vite] (client) [console.warn] [Vue warn]: Invalid prop: type check failed for prop "valueStyle". Expected Object, got String with value "color: #cf1322". 
+  at <AStatistic title="不可用数量" value=8 value-style="color: #cf1322" > 
+  at <ACard class="stat-card" hoverable="" > 
+  at <ACol xs=24 lg=8 > 
+  at <ARow gutter= [16,16] style= {"margin-top":"16px"} > 
+  at <CloudPhone onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout-content" tagName="main"  ... > 
+  at <ALayoutContent class="content" > 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section" > 
+  at <ALayout> 
+  at <Anonymous hasSider=undefined prefixCls="ant-layout" tagName="section"  ... > 
+  at <ALayout style= {"min-height":"100vh"} > 
+  at <AppLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+1:34:15 AM [vite] (client) [console.warn] [Vue warn] Write operation failed: computed value is readonly
+1:34:16 AM [vite] (client) [console.warn] [Vue warn] Write operation failed: computed value is readonly
+1:34:16 AM [vite] (client) [Unhandled error] Error: ResizeObserver loop completed with undelivered notifications.
+ > ../../../../@vite/client:516:55
+
+
+> frontend@0.0.0 dev
+> vite
+
+01:35:40 [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.0.0  ready in 373 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:37:13 [vite] (client) hmr update /src/views/ProductList.vue
+01:38:50 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:22 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:23 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:18 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:47 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:53 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:58 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:58 [vite] (client) hmr update /src/views/ProductList.vue
+01:42:36 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:01 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:08 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:13 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:13 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:20 [vite] (client) hmr update /src/views/ProductList.vue
+01:43:28 [vite] (client) hmr update /src/views/ProductList.vue
+01:49:41 [vite] (client) hmr update /src/views/ProductList.vue
+01:49:42 [vite] (client) hmr update /src/views/ProductList.vue
+01:50:41 [vite] (client) hmr update /src/views/ProductList.vue
+01:52:37 [vite] (client) hmr update /src/views/ProductList.vue
+01:53:12 [vite] (client) hmr update /src/views/ProductList.vue
+01:53:25 [vite] (client) hmr update /src/views/ProductList.vue
+01:53:40 [vite] (client) hmr update /src/views/ProductList.vue
+02:00:14 [vite] (client) hmr update /src/views/ProductList.vue
+02:00:18 [vite] (client) hmr update /src/views/ProductList.vue
+02:00:23 [vite] (client) hmr update /src/views/ProductList.vue
+02:00:27 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 493 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+2:05:00 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:05:04 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:05:11 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:24:22 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:24:34 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:20 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:28 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:28 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:41 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 780 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:32:43 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+02:32:56 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 617 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+2:34:07 AM [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:34:22 AM [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:34:34 AM [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:34:36 AM [vite] http proxy error: /api/v1/settings/crawl
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:34:37 AM [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:36:07 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:36:08 AM [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 435 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:45:36 [vite] (client) hmr update /src/views/ProductList.vue
+02:45:40 [vite] (client) hmr update /src/views/ProductList.vue
+02:45:43 [vite] (client) hmr update /src/views/ProductList.vue
+02:46:12 [vite] (client) hmr update /src/views/ProductList.vue
+02:50:39 [vite] (client) hmr update /src/views/ProductList.vue
+02:50:43 [vite] (client) hmr update /src/views/ProductList.vue
+02:50:47 [vite] (client) hmr update /src/views/ProductList.vue
+02:50:51 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 388 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+2:52:59 AM [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:00 AM [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:02 AM [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:04 AM [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:05 AM [vite] http proxy error: /api/v1/settings/crawl
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:06 AM [vite] http proxy error: /api/v1/cloud-phone/pool/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:06 AM [vite] http proxy error: /api/v1/cloud-phone/my-phone
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:06 AM [vite] http proxy error: /api/v1/points
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:06 AM [vite] http proxy error: /api/v1/cloud-phone/pool/list?page=1&page_size=10
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:07 AM [vite] http proxy error: /api/v1/user/info
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:07 AM [vite] http proxy error: /api/v1/points
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:07 AM [vite] http proxy error: /api/v1/cloud-phone/my-phone
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+2:53:07 AM [vite] http proxy error: /api/v1/points/transactions?limit=10&offset=0
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 430 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 1240 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+3:15:30 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:15:34 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:15:38 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:15:41 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:15:44 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:15:53 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:17:23 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 402 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 467 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 484 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+3:42:47 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:42:52 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 1352 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+3:47:50 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:48:01 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 473 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:02:03 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:02:40 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:03:05 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:03:13 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:03:25 AM [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+4:03:51 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 405 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:08:08 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:08:12 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:08:17 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:08:21 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:08:26 AM [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+4:16:58 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:17:06 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:26:19 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:26:23 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:26:28 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:26:32 AM [vite] (client) hmr update /src/views/ProductList.vue
+4:26:37 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 336 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:36:05 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:36:34 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 430 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:42:33 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:46:01 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue, /src/components/AppLayout.vue
+12:47:10 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:47:13 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:47:17 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:47:24 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:47:30 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:48:14 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue, /src/components/AppLayout.vue
+12:48:14 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:48:14 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:51:15 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:51:20 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:51:34 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:51:41 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:51:42 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:53:22 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:53:40 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:54:07 AM [vite] (client) hmr update /src/views/ProductList.vue
+12:54:58 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+12:55:15 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 369 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+1:02:24 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:02:25 AM [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue, /src/views/BatchImport.vue
+1:05:28 AM [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue, /src/views/BatchImport.vue
+1:05:32 AM [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue, /src/views/BatchImport.vue
+1:05:53 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:06:00 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:06:10 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:06:37 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:06:43 AM [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+1:07:51 AM [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue, /src/views/BatchImport.vue
+1:08:30 AM [vite] (client) hmr update /src/views/BatchImport.vue
+1:08:40 AM [vite] (client) hmr update /src/views/BatchImport.vue
+1:08:46 AM [vite] (client) hmr update /src/views/BatchImport.vue
+1:08:51 AM [vite] (client) hmr update /src/views/BatchImport.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 831 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+1:22:48 AM [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue
+1:22:50 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:22:50 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:22:59 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:23:07 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:23:12 AM [vite] (client) hmr update /src/views/ProductList.vue
+1:23:17 AM [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 795 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+1:38:34 AM [vite] (client) hmr update /src/components/AppLayout.vue, /src/views/Dashboard.vue, /src/views/ProductList.vue
+1:38:39 AM [vite] (client) hmr update /src/components/AppLayout.vue, /src/views/Dashboard.vue, /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 457 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+2:10:32 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:12:18 AM [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 714 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+2:24:24 AM [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue
+2:24:37 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:24:53 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:24:53 AM [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+      at async handleHMRUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/vite/dist/node/chunks/node.js:26537:28)
+2:25:01 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:01 AM [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+      at async handleHMRUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/vite/dist/node/chunks/node.js:26537:28)
+2:25:54 AM [vite] (client) hmr update /src/views/ProductList.vue
+2:25:54 AM [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+      at async handleHMRUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/vite/dist/node/chunks/node.js:26537:28)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 540 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:28:36 [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at transformMain (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1319:33)
+      at TransformPluginContext.handler (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1722:27)
+02:28:45 [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at transformMain (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1319:33)
+      at TransformPluginContext.handler (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1722:27)
+02:32:22 [vite] Internal server error: Unquoted attribute value cannot contain U+0022 ("), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:113:22
+  111 |              <a-popconfirm
+  112 |                v-if="selectedRowKeys.length"
+  113 |                title={`确认删除选中的 ${selectedRowKeys.length} 个商品？`}
+      |                        ^
+  114 |                ok-text="确认删除"
+  115 |                cancel-text="取消"
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrValueNoQuotes (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:982:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1193:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at transformMain (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1319:33)
+      at TransformPluginContext.handler (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1722:27)
+
+> frontend@0.0.0 dev
+> vite
+
+02:36:26 [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.0.0  ready in 898 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 462 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:41:01 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 400 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:55:56 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 911 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+3:12:27 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:12:31 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:12:35 AM [vite] (client) hmr update /src/views/ProductList.vue
+3:12:40 AM [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 470 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+00:14:29 [vite] (client) hmr update /src/views/ProductList.vue
+00:14:51 [vite] (client) hmr update /src/views/ProductList.vue
+00:15:32 [vite] (client) hmr update /src/views/ProductList.vue
+00:15:55 [vite] (client) hmr update /src/views/ProductList.vue
+00:16:20 [vite] (client) hmr update /src/views/ProductList.vue
+00:17:08 [vite] (client) hmr update /src/views/ProductList.vue
+00:17:26 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+00:17:35 [vite] (client) hmr update /src/views/ProductList.vue
+00:20:05 [vite] (client) hmr update /src/views/ProductList.vue
+00:20:27 [vite] (client) hmr update /src/views/ProductList.vue
+00:20:39 [vite] (client) hmr update /src/views/ProductList.vue
+00:22:12 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 454 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+00:35:42 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+00:38:45 [vite] (client) hmr update /src/views/ProductList.vue
+00:39:01 [vite] (client) hmr update /src/views/ProductList.vue
+00:39:13 [vite] (client) hmr update /src/views/ProductList.vue
+00:39:23 [vite] (client) hmr update /src/views/ProductList.vue
+00:39:34 [vite] (client) hmr update /src/views/ProductList.vue
+00:40:19 [vite] (client) hmr update /src/views/ProductList.vue
+00:40:31 [vite] (client) hmr update /src/views/ProductList.vue
+00:55:59 [vite] (client) hmr update /src/views/ProductList.vue
+01:02:05 [vite] (client) hmr update /src/views/ProductList.vue
+01:02:22 [vite] (client) hmr update /src/views/ProductList.vue
+01:02:42 [vite] (client) hmr update /src/views/ProductList.vue
+01:16:21 [vite] (client) hmr update /src/views/ProductList.vue
+01:16:54 [vite] (client) hmr update /src/views/ProductList.vue
+01:29:07 [vite] (client) hmr update /src/views/ProductList.vue
+01:29:11 [vite] (client) hmr update /src/views/ProductList.vue
+01:29:14 [vite] (client) hmr update /src/views/ProductList.vue
+01:29:45 [vite] (client) hmr update /src/views/ProductList.vue
+01:30:12 [vite] (client) hmr update /src/views/ProductList.vue
+01:30:23 [vite] (client) hmr update /src/views/ProductList.vue
+01:30:45 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+01:33:27 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+01:38:52 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:00 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:17 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:33 [vite] (client) hmr update /src/views/ProductList.vue
+01:39:41 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:11 [vite] (client) hmr update /src/views/ProductList.vue
+01:40:47 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+01:40:58 [vite] (client) hmr update /src/views/ProductList.vue
+01:42:37 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+01:44:10 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:14 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:19 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:23 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:31 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:37 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:43 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:48 [vite] (client) hmr update /src/views/ProductList.vue
+01:44:55 [vite] (client) hmr update /src/views/ProductList.vue
+01:45:12 [vite] (client) hmr update /src/views/ProductList.vue
+01:45:16 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+01:50:50 [vite] (client) hmr update /src/views/ProductList.vue
+01:50:55 [vite] (client) hmr update /src/views/ProductList.vue
+01:51:07 [vite] (client) hmr update /src/views/ProductList.vue
+01:51:31 [vite] (client) hmr update /src/views/ProductList.vue
+04:00:28 [vite] (client) hmr update /src/views/ProductList.vue
+04:00:31 [vite] (client) hmr update /src/views/ProductList.vue
+04:00:34 [vite] (client) hmr update /src/views/ProductList.vue
+04:13:53 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue, /src/views/ProductDetail.vue
+04:13:53 [vite] (client) hmr update /src/views/ProductList.vue
+04:13:55 [vite] (client) hmr update /src/views/ProductDetail.vue
+04:13:56 [vite] (client) hmr update /src/views/Dashboard.vue
+04:13:58 [vite] (client) hmr update /src/views/ProductList.vue
+04:14:02 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 387 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 411 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:44:31 [vite] (client) hmr update /src/views/ProductList.vue
+02:45:16 [vite] (client) hmr update /src/views/ProductList.vue
+02:45:16 [vite] Internal server error: Invalid end tag.
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:216:7
+  214 |            </a-space>
+  215 |          </a-col>
+  216 |        </a-row>
+      |         ^
+  217 |        <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+  218 |          <a-col :span="24">
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+02:45:44 [vite] (client) hmr update /src/views/ProductList.vue
+02:45:44 [vite] Internal server error: Invalid end tag.
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:216:7
+  214 |            </a-space>
+  215 |          </a-col>
+  216 |        </a-row>
+      |         ^
+  217 |        <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+  218 |          <a-col :span="24">
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+02:46:11 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+02:46:11 [vite] Internal server error: Invalid end tag.
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+02:46:50 [vite] (client) hmr update /src/views/ProductList.vue
+02:46:50 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+02:50:05 [vite] (client) hmr update /src/views/ProductList.vue
+02:51:32 [vite] (client) hmr update /src/views/ProductList.vue
+02:51:32 [vite] Internal server error: Invalid end tag.
+  Plugin: vite:vue
+  File: /Users/smzdm/global_picker/frontend/src/views/ProductList.vue:215:9
+  213 |              <a-button type="primary" @click="router.push('/import')"><ImportOutlined /> 批量导入</a-button>
+  214 |            </a-space>
+  215 |          </a-col>
+      |           ^
+  216 |        </a-row>
+  217 |        <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+      at createCompilerError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at Object.parse (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (/Users/smzdm/global_picker/frontend/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///Users/smzdm/global_picker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+02:53:37 [vite] (client) hmr update /src/views/ProductList.vue
+02:54:00 [vite] (client) hmr update /src/views/ProductList.vue
+02:54:01 [vite] (client) ✨ new dependencies optimized: dayjs
+02:54:01 [vite] (client) ✨ optimized dependencies changed. reloading
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 515 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:54:55 [vite] (client) hmr update /src/views/ProductList.vue?vue&type=style&index=0&scoped=8e15b32c&lang.css
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 515 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+03:34:52 [vite] (client) hmr update /src/components/AppLayout.vue
+03:35:01 [vite] (client) hmr update /src/components/AppLayout.vue
+03:35:13 [vite] (client) hmr update /src/components/AppLayout.vue
+03:36:58 [vite] (client) hmr update /src/components/AppLayout.vue
+03:37:08 [vite] (client) hmr update /src/components/AppLayout.vue
+03:37:21 [vite] (client) hmr update /src/components/AppLayout.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 499 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 367 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 383 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 469 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 609 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 621 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 395 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 734 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 413 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+05:40:19 [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+05:40:21 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+05:40:24 [vite] http proxy error: /api/v1/settings/crawl
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+05:40:29 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+05:40:37 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+05:41:32 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 384 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+05:41:55 [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 375 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 461 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 419 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 385 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 809 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 467 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 337 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 459 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 462 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 404 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 391 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 499 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 404 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 429 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 419 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 534 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 439 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 806 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 460 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 385 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 457 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 384 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 749 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 697 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+15:20:29 [vite] (client) hmr update /src/views/ProductList.vue
+15:21:16 [vite] (client) hmr update /src/views/ProductList.vue
+15:26:45 [vite] (client) hmr update /src/views/ProductList.vue
+15:33:42 [vite] (client) hmr update /src/views/ProductList.vue
+15:34:06 [vite] (client) hmr update /src/views/ProductList.vue
+15:34:51 [vite] (client) hmr update /src/views/ProductList.vue
+15:35:30 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 712 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 350 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+23:44:32 [vite] (client) hmr update /src/views/ProductList.vue
+23:44:50 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 350 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
