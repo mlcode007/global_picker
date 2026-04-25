@@ -50,6 +50,22 @@ _UA_DESKTOP = (
 )
 
 
+def _update_task_status(task_id: Optional[int], status_detail: str) -> None:
+    if not task_id:
+        return
+    try:
+        db = SessionLocal()
+        try:
+            task = db.query(CrawlTask).filter(CrawlTask.id == task_id).first()
+            if task:
+                task.status_detail = status_detail
+                db.commit()
+        finally:
+            db.close()
+    except Exception as e:
+        logger.warning("更新任务状态失败: %s", e)
+
+
 class BaseCrawler(ABC):
     """采集器基类"""
     name: str = "base"
@@ -62,6 +78,7 @@ class BaseCrawler(ABC):
         user_id: Optional[int] = None,
         proxy: Optional[str] = None,
         cookies_str: Optional[str] = None,
+        task_id: Optional[int] = None,
     ) -> Optional[Dict[str, Any]]:
         """采集商品数据，返回统一格式的商品信息"""
         pass
@@ -82,6 +99,7 @@ class CrawlerDispatcher:
         user_id: Optional[int] = None,
         proxy: Optional[str] = None,
         cookies_str: Optional[str] = None,
+        task_id: Optional[int] = None,
     ) -> Optional[Dict[str, Any]]:
         logger.info("开始调度采集，共 %d 个采集器: %s", len(self.crawlers), [c.name for c in self.crawlers])
 
@@ -93,6 +111,7 @@ class CrawlerDispatcher:
                     user_id=user_id,
                     proxy=proxy,
                     cookies_str=cookies_str,
+                    task_id=task_id,
                 )
                 if result and result.get("title"):
                     logger.info("采集器 %s 成功: %s", crawler.name, result.get("title", "")[:50])
@@ -118,12 +137,14 @@ class V2Crawler(BaseCrawler):
         user_id: Optional[int] = None,
         proxy: Optional[str] = None,
         cookies_str: Optional[str] = None,
+        task_id: Optional[int] = None,
     ) -> Optional[Dict[str, Any]]:
         settings = get_settings()
         proxy_cfg = proxy or settings.TIKTOK_PROXY
         cookies = self._parse_cookies(cookies_str) if cookies_str else []
 
         if not cookies and user_id:
+            _update_task_status(task_id, "正在读取用户 Cookie 配置...")
             db = SessionLocal()
             try:
                 user_config = db.query(UserCrawlConfig).filter(
@@ -140,7 +161,9 @@ class V2Crawler(BaseCrawler):
             url = f"{url}&locale=zh-CN" if "?" in url else f"{url}?locale=zh-CN"
 
         intercepted_data = None
+        data_ready = asyncio.Event()
 
+        _update_task_status(task_id, "正在启动浏览器...")
         async with async_playwright() as pw:
             headless = settings.TIKTOK_HEADLESS
             launch_opts = {
@@ -163,6 +186,7 @@ class V2Crawler(BaseCrawler):
             if cookies:
                 await context.add_cookies(cookies)
                 logger.info("已注入 %d 条 Cookie", len(cookies))
+                _update_task_status(task_id, "已注入 Cookie，正在打开商品页面...")
 
             page = await context.new_page()
             await Stealth().apply_stealth_async(page)
@@ -182,12 +206,16 @@ class V2Crawler(BaseCrawler):
                                 if isinstance(json_data, dict):
                                     intercepted_data = json_data
                                     logger.info("成功解析 JSON 响应, keys: %s", list(intercepted_data.keys())[:10])
+                                    _update_task_status(task_id, "成功拦截到商品数据")
+                                    data_ready.set()
                                     return
                             except json.JSONDecodeError:
                                 pass
                             intercepted_data = self._extract_remix_context(body_str)
                             if intercepted_data:
                                 logger.info("从 HTML 中提取 remixContext, keys: %s", list(intercepted_data.keys())[:10])
+                                _update_task_status(task_id, "从页面中提取到商品数据")
+                                data_ready.set()
                             else:
                                 logger.warning("未能提取任何数据")
                     except Exception as e:
@@ -195,72 +223,90 @@ class V2Crawler(BaseCrawler):
 
             page.on("request", on_request)
 
+            _update_task_status(task_id, "正在打开 TikTok 商品页面...")
             try:
                 await page.goto(url, wait_until="domcontentloaded", timeout=60000)
-                await page.wait_for_load_state("networkidle", timeout=20000)
             except PwTimeout:
                 logger.warning("页面加载超时")
-                await asyncio.sleep(10)
+                _update_task_status(task_id, "页面加载超时")
             except Exception as e:
                 logger.warning("页面加载异常: %s", e)
-                await asyncio.sleep(10)
-
-            title = await page.title()
-            title_lower = title.lower()
-
-            if "security" in title_lower or "captcha" in title_lower:
-                logger.warning("触发验证码")
-                for attempt in range(3):
-                    logger.info("自动处理验证码 %d/3", attempt + 1)
-                    if await self._solve_captcha(page, context):
-                        logger.info("验证码通过，等待页面重新加载")
-                        try:
-                            await page.wait_for_load_state("networkidle", timeout=30000)
-                        except PwTimeout:
-                            logger.warning("页面重新加载超时")
-                        await asyncio.sleep(3)
-                        if user_id:
-                            await self._persist_cookies(user_id, context)
-                        break
-                    if attempt < 2:
-                        try:
-                            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
-                            await page.wait_for_load_state("networkidle", timeout=20000)
-                        except Exception:
-                            await asyncio.sleep(5)
-                else:
-                    if not headless:
-                        logger.warning("等待手动完成验证码（120s）")
-                        try:
-                            await page.wait_for_function(
-                                """() => {
-                                    const t = document.title.toLowerCase();
-                                    return !t.includes('security') && !t.includes('captcha') && t.length > 0;
-                                }""",
-                                timeout=120000,
-                            )
-                        except PwTimeout:
-                            await browser.close()
-                            raise RuntimeError("验证码超时")
+                _update_task_status(task_id, "页面加载异常")
+            
+            if intercepted_data:
+                logger.info("数据已在页面加载时拦截成功，直接退出")
+                _update_task_status(task_id, "商品数据已获取")
+                await browser.close()
+            else:
+                _update_task_status(task_id, "页面已加载，等待数据请求...")
+                try:
+                    await asyncio.wait_for(data_ready.wait(), timeout=15)
+                    logger.info("数据拦截成功，提前退出")
+                    _update_task_status(task_id, "商品数据已获取")
+                except asyncio.TimeoutError:
+                    logger.warning("等待数据超时，检查页面状态")
+                    
+                    title = await page.title()
+                    title_lower = title.lower()
+                    
+                    if "security" in title_lower or "captcha" in title_lower:
+                        logger.warning("触发验证码")
+                        _update_task_status(task_id, "触发验证码，正在处理...")
+                        for attempt in range(2):
+                            logger.info("自动处理验证码 %d/2", attempt + 1)
+                            _update_task_status(task_id, f"正在处理验证码 ({attempt + 1}/2)...")
+                            if await self._solve_captcha(page, context):
+                                logger.info("验证码通过，等待数据...")
+                                _update_task_status(task_id, "验证码通过，等待数据...")
+                                try:
+                                    await asyncio.wait_for(data_ready.wait(), timeout=15)
+                                    _update_task_status(task_id, "商品数据已获取")
+                                    break
+                                except asyncio.TimeoutError:
+                                    logger.warning("验证码后等待数据超时")
+                            if attempt < 1:
+                                try:
+                                    await page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                                except Exception:
+                                    await asyncio.sleep(2)
+                        else:
+                            if not headless:
+                                logger.warning("等待手动完成验证码（60s）")
+                                _update_task_status(task_id, "等待手动完成验证码（60秒）...")
+                                try:
+                                    await page.wait_for_function(
+                                        """() => {
+                                            const t = document.title.toLowerCase();
+                                            return !t.includes('security') && !t.includes('captcha') && t.length > 0;
+                                        }""",
+                                        timeout=60000,
+                                    )
+                                except PwTimeout:
+                                    await browser.close()
+                                    raise RuntimeError("验证码超时")
+                            else:
+                                await browser.close()
+                                raise RuntimeError("验证码未通过")
                     else:
-                        await browser.close()
-                        raise RuntimeError("验证码未通过")
-
-            await asyncio.sleep(3)
-            final_title = await page.title()
-            logger.info("最终页面标题: %s", final_title)
-            await browser.close()
+                        logger.info("页面标题: %s，未检测到验证码", title)
+                        await asyncio.sleep(2)
+                
+                await browser.close()
 
         if intercepted_data:
+            _update_task_status(task_id, "正在解析商品数据...")
             logger.info("开始解析商品数据")
             product_data = self._parse_product_data(intercepted_data)
             if product_data:
                 logger.info("解析成功: %s", product_data.get("title", "")[:50])
+                _update_task_status(task_id, "商品数据解析成功")
                 return product_data
             else:
                 logger.warning("解析失败: remixContext 中未找到商品信息")
+                _update_task_status(task_id, "解析失败：未找到商品信息")
         else:
             logger.warning("未拦截到任何数据")
+            _update_task_status(task_id, "未拦截到任何数据")
         
         return None
 
@@ -307,6 +353,7 @@ class V2Crawler(BaseCrawler):
 
     def _parse_product_data(self, remix_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if not remix_data or not isinstance(remix_data, dict):
+            logger.warning("remix_data 为空或不是字典")
             return None
 
         page_config = remix_data.get("page_config")
@@ -317,11 +364,15 @@ class V2Crawler(BaseCrawler):
                     break
 
         if not page_config or not isinstance(page_config, dict):
+            logger.warning("未找到 page_config, remix_data keys: %s", list(remix_data.keys())[:10])
             return None
 
         components = page_config.get("components_map", [])
         if not isinstance(components, list):
+            logger.warning("components_map 不是列表")
             return None
+
+        logger.info("components_map 共 %d 个组件", len(components))
 
         product_component = None
         for comp in components:
@@ -330,6 +381,7 @@ class V2Crawler(BaseCrawler):
                 break
 
         if not product_component:
+            logger.warning("未找到 product_info 组件, 组件类型: %s", [c.get("component_type") for c in components if isinstance(c, dict)][:10])
             return None
 
         cd = product_component.get("component_data") or {}
@@ -337,7 +389,10 @@ class V2Crawler(BaseCrawler):
         pm = pi.get("product_model") or {}
 
         if not pm.get("product_id"):
+            logger.warning("未找到 product_id, pm keys: %s", list(pm.keys())[:10] if pm else "pm为空")
             return None
+
+        logger.info("找到商品: product_id=%s, name=%s", pm.get("product_id"), pm.get("name", "")[:50])
 
         images_raw = pm.get("images") or []
         image_urls = []
@@ -349,6 +404,8 @@ class V2Crawler(BaseCrawler):
         promo = pi.get("promotion_model") or {}
         promo_price = self._dig(promo, "promotion_product_price", "min_price") or {}
 
+        logger.info("promo_price keys: %s", list(promo_price.keys())[:10] if promo_price else "promo_price为空")
+
         price_val = (
             promo_price.get("sale_price_decimal")
             or promo_price.get("single_product_price_decimal")
@@ -359,6 +416,8 @@ class V2Crawler(BaseCrawler):
             or promo_price.get("origin_price_format")
         )
         currency = promo_price.get("currency_name")
+
+        logger.info("解析价格: price=%s, currency=%s, sold_count=%s", price_val, currency, pm.get("sold_count"))
 
         logistics_list = promo.get("promotion_logistic_list") or []
         logistics = logistics_list[0] if logistics_list else {}
@@ -373,7 +432,7 @@ class V2Crawler(BaseCrawler):
 
         real_region = remix_data.get("region_info", {}).get("real_region")
 
-        return {
+        result = {
             "product_id": pm.get("product_id"),
             "title": pm.get("name"),
             "description": pm.get("description"),
@@ -393,6 +452,7 @@ class V2Crawler(BaseCrawler):
             "category": category_name,
             "region": real_region,
         }
+        return result
 
     def _dig(self, data: Any, *keys: str) -> Any:
         for key in keys:
@@ -592,7 +652,9 @@ def _save_to_database(
     db = SessionLocal()
     try:
         existing = db.query(Product).filter(
-            Product.tiktok_product_id == product_data.get("product_id")
+            Product.user_id == user_id,
+            Product.is_deleted == 0,
+            Product.tiktok_product_id == product_data.get("product_id"),
         ).first()
 
         if existing:
@@ -674,15 +736,18 @@ async def crawl_tiktok_product(
     """
     try:
         logger.info("开始采集: %s", url[:80])
+        _update_task_status(crawl_task_id, "开始采集任务...")
         
         product_data = await dispatcher.dispatch(
             url=url,
             user_id=user_id,
             proxy=proxy,
             cookies_str=cookies_str,
+            task_id=crawl_task_id,
         )
 
         if not product_data or not product_data.get("title"):
+            _update_task_status(crawl_task_id, "采集失败：未获取到商品数据")
             return {
                 "success": False,
                 "product_id": None,
@@ -690,6 +755,7 @@ async def crawl_tiktok_product(
                 "message": "所有采集器均未采集到商品数据",
             }
 
+        _update_task_status(crawl_task_id, "正在保存商品数据到数据库...")
         product = _save_to_database(
             product_data=product_data,
             url=url,
@@ -697,6 +763,7 @@ async def crawl_tiktok_product(
             crawl_task_id=crawl_task_id,
         )
 
+        _update_task_status(crawl_task_id, "采集完成")
         return {
             "success": True,
             "product_id": product.id,

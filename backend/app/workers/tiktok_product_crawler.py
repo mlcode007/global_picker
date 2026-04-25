@@ -576,7 +576,9 @@ def _save_to_database(
     db = SessionLocal()
     try:
         existing = db.query(Product).filter(
-            Product.tiktok_product_id == product_data.get("product_id")
+            Product.user_id == user_id,
+            Product.is_deleted == 0,
+            Product.tiktok_product_id == product_data.get("product_id"),
         ).first()
 
         if existing:
