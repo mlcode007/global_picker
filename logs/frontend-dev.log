@@ -1644,3 +1644,198 @@ AggregateError [ECONNREFUSED]:
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 517 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 372 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:24:46 [vite] (client) hmr update /src/views/ProductList.vue
+01:26:00 [vite] (client) hmr update /src/views/ProductList.vue
+01:26:12 [vite] (client) hmr update /src/views/ProductList.vue
+01:26:57 [vite] (client) hmr update /src/views/ProductList.vue
+01:27:18 [vite] (client) hmr update /src/views/ProductList.vue
+01:27:53 [vite] (client) hmr update /src/views/ProductList.vue
+01:28:01 [vite] (client) hmr update /src/views/ProductList.vue
+01:32:30 [vite] (client) hmr update /src/views/ProductList.vue
+01:35:16 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 362 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+01:57:37 [vite] http proxy error: /api/v1/tasks/5694
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 407 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:00:43 [vite] (client) hmr update /src/views/ProductList.vue, /src/views/Dashboard.vue, /src/views/BatchImport.vue
+02:01:22 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 417 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:05:24 [vite] (client) hmr update /src/views/Dashboard.vue, /src/views/ProductList.vue
+02:05:24 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 977 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 424 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 472 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+02:27:43 [vite] http proxy error: /api/v1/tasks/5694
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 426 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 978 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 438 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 341 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+15:48:08 [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+15:48:10 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+15:48:17 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+15:48:24 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 368 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+15:49:47 [vite] http proxy error: /api/v1/dashboard/stats
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+15:49:48 [vite] http proxy error: /api/v1/products?page=1&page_size=1000&order_by=created_at&order_dir=desc
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 420 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+15:55:59 [vite] http proxy error: /api/v1/tasks/5642
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 702 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+16:25:12 [vite] (client) hmr update /src/views/ProductList.vue
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.0  ready in 600 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+16:28:04 [vite] (client) hmr update /src/views/ProductList.vue
