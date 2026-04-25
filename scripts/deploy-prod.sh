@@ -80,6 +80,8 @@ if grep -q "TIKTOK_HEADLESS" .env; then
 else
   echo "TIKTOK_HEADLESS=True" >> .env
 fi
+echo "==> start adb service"
+adb devices
 echo "==> restart services"
 systemctl restart global_picker_backend
 systemctl reload nginx

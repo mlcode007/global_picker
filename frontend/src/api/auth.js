@@ -18,4 +18,7 @@ export const authApi = {
 
   updateProfile: (data) =>
     http.put('/auth/me', data),
+
+  refreshToken: () =>
+    http.post('/auth/refresh'),
 }

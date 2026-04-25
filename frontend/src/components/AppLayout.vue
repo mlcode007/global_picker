@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   DashboardOutlined,
@@ -94,6 +94,16 @@ const collapsed = ref(false)
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+
+onMounted(() => {
+  if (authStore.isLoggedIn) {
+    authStore.startAutoRefresh()
+  }
+})
+
+onUnmounted(() => {
+  authStore.stopAutoRefresh()
+})
 
 const avatarText = computed(() => {
   const name = authStore.displayName

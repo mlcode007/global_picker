@@ -150,3 +150,12 @@ def verify_auth(
         "user": UserOut.model_validate(current_user),
         "points": user_points.points,
     })
+
+
+@router.post("/refresh", response_model=Response[TokenOut], summary="刷新 Token（自动续期）")
+def refresh_token(
+    current_user: User = Depends(get_current_user),
+):
+    """刷新 Token，延长有效期，用户无感续期"""
+    new_token = create_access_token({"sub": str(current_user.id)})
+    return Response(data=TokenOut(access_token=new_token))
