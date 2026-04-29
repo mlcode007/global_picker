@@ -74,7 +74,7 @@ async function syncLoginStatus() {
       showMessage('登录状态同步成功', 'success');
       loadStatus();
     } else {
-      const errorMsg = response?.error?.message || '网页未登录，请先在 <a href="http://localhost:5173" target="_blank" style="color:inherit;text-decoration:underline;">Global Picker</a> 平台登录';
+      const errorMsg = response?.error?.message || '网页未登录，请先在 <a href="http://47.238.72.198" target="_blank" style="color:inherit;text-decoration:underline;">Global Picker</a> 平台登录';
       showMessage(errorMsg, 'error');
     }
 

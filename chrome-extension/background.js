@@ -4,7 +4,7 @@
  */
 
 const CONFIG = {
-  apiBaseUrl: 'http://localhost:8000/api/v1',
+  apiBaseUrl: 'http://47.238.72.198/api/v1',
   dailyCollectionLimit: 10000,
   authCheckInterval: 5 * 60 * 1000,
   requestTimeout: 10000,
@@ -277,7 +277,7 @@ const BackgroundService = {
 
   async syncFromWebPage() {
     try {
-      const tabs = await chrome.tabs.query({ url: ['http://localhost:5173/*', 'http://localhost:8000/*'] });
+      const tabs = await chrome.tabs.query({ url: ['http://localhost:5173/*', 'http://localhost:8000/*', 'http://47.238.72.198/*'] });
       if (tabs.length === 0) {
         Logger.debug('未找到 Global Picker 页面');
         return false;
@@ -392,7 +392,7 @@ const BackgroundService = {
   setupTabUpdateListener() {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (changeInfo.status === 'complete' && tab.url &&
-          (tab.url.startsWith('http://localhost:5173') || tab.url.startsWith('http://localhost:8000'))) {
+          (tab.url.startsWith('http://localhost:5173') || tab.url.startsWith('http://localhost:8000') || tab.url.startsWith('http://47.238.72.198'))) {
         Logger.info('检测到 Global Picker 页面加载完成，尝试同步登录状态');
         setTimeout(() => this.syncFromWebPage(), 2000);
       }
