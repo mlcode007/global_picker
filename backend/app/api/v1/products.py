@@ -75,6 +75,9 @@ def list_products(
     pdd_matched: Optional[bool] = Query(None, description="是否已匹配拼多多(True=已匹配/False=未匹配)"),
     created_at_start: Optional[str] = Query(None, description="导入时间起始(ISO格式,如2026-01-01)"),
     created_at_end: Optional[str] = Query(None, description="导入时间截止(ISO格式,如2026-12-31)"),
+    category1_id: Optional[str] = Query(None, description="一级类目ID"),
+    category2_id: Optional[str] = Query(None, description="二级类目ID"),
+    category3_id: Optional[str] = Query(None, description="三级类目ID"),
     order_by: str = Query("created_at"),
     order_dir: str = Query("desc", pattern="^(asc|desc)$"),
     current_user: User = Depends(get_current_user),
@@ -89,6 +92,7 @@ def list_products(
         pdd_matched=pdd_matched,
         created_at_start=created_at_start, created_at_end=created_at_end,
         crawl_status=crawl_status,
+        category1_id=category1_id, category2_id=category2_id, category3_id=category3_id,
     )
     return Response(
         data=PagedResponse(

@@ -97,6 +97,23 @@
                 预计 {{ product.delivery_days_min }}-{{ product.delivery_days_max }} 天送达
               </span>
             </a-descriptions-item>
+            <a-descriptions-item label="类目">
+              <div class="category-detail">
+                <template v-if="product.category1_name">
+                  <a-tag color="blue">{{ product.category1_name }}</a-tag>
+                  <span v-if="product.category1_name_en" class="category-en">({{ product.category1_name_en }})</span>
+                </template>
+                <template v-if="product.category2_name">
+                  <a-tag color="green">{{ product.category2_name }}</a-tag>
+                  <span v-if="product.category2_name_en" class="category-en">({{ product.category2_name_en }})</span>
+                </template>
+                <template v-if="product.category3_name">
+                  <a-tag color="orange">{{ product.category3_name }}</a-tag>
+                  <span v-if="product.category3_name_en" class="category-en">({{ product.category3_name_en }})</span>
+                </template>
+                <span v-if="!product.category1_name">—</span>
+              </div>
+            </a-descriptions-item>
           </a-descriptions>
           <a-divider />
           <a-form layout="vertical" @finish="saveRemark">
@@ -742,4 +759,6 @@ onMounted(async () => {
 .profit-rate-bar { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .profit-rate-bar > span { flex-shrink: 0; color: #666; font-size: 13px; }
 .photo-task-bar { margin-bottom: 4px; }
+.category-detail { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.category-en { font-size: 12px; color: #999; margin-left: -2px; }
 </style>

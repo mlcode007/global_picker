@@ -430,6 +430,8 @@ class V2Crawler(BaseCrawler):
         categories = category_info.get("recommended_categories") or []
         category_name = categories[0].get("category_name") if categories else None
 
+        category_levels = self._parse_category_from_recommended_categories(categories)
+
         real_region = remix_data.get("region_info", {}).get("real_region")
 
         result = {
@@ -450,6 +452,15 @@ class V2Crawler(BaseCrawler):
             "shipping_currency": ship_fee_obj.get("currency"),
             "free_shipping": logistics.get("freeShipping"),
             "category": category_name,
+            "category1_id": category_levels.get("category1_id"),
+            "category1_name": category_levels.get("category1_name"),
+            "category1_name_en": category_levels.get("category1_name_en"),
+            "category2_id": category_levels.get("category2_id"),
+            "category2_name": category_levels.get("category2_name"),
+            "category2_name_en": category_levels.get("category2_name_en"),
+            "category3_id": category_levels.get("category3_id"),
+            "category3_name": category_levels.get("category3_name"),
+            "category3_name_en": category_levels.get("category3_name_en"),
             "region": real_region,
         }
         return result
@@ -460,6 +471,22 @@ class V2Crawler(BaseCrawler):
                 return None
             data = data.get(key)
         return data
+
+    def _parse_category_from_recommended_categories(self, categories: list) -> Dict[str, Any]:
+        """从推荐类目解析三级类目信息"""
+        result = {}
+        if not categories or not isinstance(categories, list):
+            return result
+
+        for idx, cat in enumerate(categories[:3]):
+            if not isinstance(cat, dict):
+                continue
+            level = idx + 1
+            result[f"category{level}_id"] = cat.get("category_id")
+            result[f"category{level}_name"] = cat.get("category_name")
+            result[f"category{level}_name_en"] = cat.get("category_name_en")
+
+        return result
 
     async def _solve_captcha(self, page, context) -> bool:
         try:
@@ -685,6 +712,15 @@ def _save_to_database(
         product.shipping_fee = _safe_decimal(product_data.get("shipping_fee"))
         product.free_shipping = 1 if product_data.get("free_shipping") else 0
         product.category = (product_data.get("category") or "")[:128]
+        product.category1_id = (product_data.get("category1_id") or "")[:64] or None
+        product.category1_name = (product_data.get("category1_name") or "")[:128] or None
+        product.category1_name_en = (product_data.get("category1_name_en") or "")[:128] or None
+        product.category2_id = (product_data.get("category2_id") or "")[:64] or None
+        product.category2_name = (product_data.get("category2_name") or "")[:128] or None
+        product.category2_name_en = (product_data.get("category2_name_en") or "")[:128] or None
+        product.category3_id = (product_data.get("category3_id") or "")[:64] or None
+        product.category3_name = (product_data.get("category3_name") or "")[:128] or None
+        product.category3_name_en = (product_data.get("category3_name_en") or "")[:128] or None
 
         images = product_data.get("images") or []
         if images:

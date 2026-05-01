@@ -38,6 +38,15 @@ class Product(Base):
     main_image_url = Column(String(1024), nullable=True)
     image_urls = Column(JSON, nullable=True)
     category = Column(String(128), nullable=True)
+    category1_id = Column(String(64), nullable=True, comment="一级类目ID")
+    category1_name = Column(String(128), nullable=True, comment="一级类目名称")
+    category1_name_en = Column(String(128), nullable=True, comment="一级类目英文名")
+    category2_id = Column(String(64), nullable=True, comment="二级类目ID")
+    category2_name = Column(String(128), nullable=True, comment="二级类目名称")
+    category2_name_en = Column(String(128), nullable=True, comment="二级类目英文名")
+    category3_id = Column(String(64), nullable=True, comment="三级类目ID")
+    category3_name = Column(String(128), nullable=True, comment="三级类目名称")
+    category3_name_en = Column(String(128), nullable=True, comment="三级类目英文名")
     status = Column(
         Enum("pending", "selected", "abandoned", "erp_synced"),
         nullable=False,

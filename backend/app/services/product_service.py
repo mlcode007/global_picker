@@ -26,6 +26,9 @@ def _copy_crawl_data(source: Product, target: Product) -> None:
         "seller_location", "shipping_fee", "free_shipping",
         "delivery_days_min", "delivery_days_max",
         "main_image_url", "image_urls", "category",
+        "category1_id", "category1_name", "category1_name_en",
+        "category2_id", "category2_name", "category2_name_en",
+        "category3_id", "category3_name", "category3_name_en",
     ]
     for f in fields:
         val = getattr(source, f, None)
@@ -277,6 +280,9 @@ def get_products(
     created_at_start: Optional[str] = None,
     created_at_end: Optional[str] = None,
     crawl_status: Optional[str] = None,
+    category1_id: Optional[str] = None,
+    category2_id: Optional[str] = None,
+    category3_id: Optional[str] = None,
 ) -> Tuple[int, List[Product]]:
     """商品列表（按用户隔离，分页、过滤、排序）"""
     from app.models.pdd_match import PddMatch
@@ -322,6 +328,12 @@ def get_products(
             query = query.filter(Product.id.in_(matched_ids))
         else:
             query = query.filter(~Product.id.in_(matched_ids))
+    if category1_id:
+        query = query.filter(Product.category1_id == category1_id)
+    if category2_id:
+        query = query.filter(Product.category2_id == category2_id)
+    if category3_id:
+        query = query.filter(Product.category3_id == category3_id)
     if created_at_start:
         try:
             start_dt = datetime.fromisoformat(created_at_start)

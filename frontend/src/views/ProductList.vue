@@ -132,6 +132,47 @@
             <a-select-option :value="false">未匹配</a-select-option>
           </a-select>
         </a-col>
+        <a-col :span="3">
+          <a-select
+            v-model:value="store.filters.category1_id"
+            placeholder="一级类目"
+            allow-clear
+            style="width: 100%"
+            @change="onCategory1Change"
+          >
+            <a-select-option v-for="opt in store.category1Options" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="3">
+          <a-select
+            v-model:value="store.filters.category2_id"
+            placeholder="二级类目"
+            allow-clear
+            style="width: 100%"
+            :disabled="!store.filters.category1_id"
+            @change="onCategory2Change"
+          >
+            <a-select-option v-for="opt in store.category2Options" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="3">
+          <a-select
+            v-model:value="store.filters.category3_id"
+            placeholder="三级类目"
+            allow-clear
+            style="width: 100%"
+            :disabled="!store.filters.category2_id"
+            @change="onSearch"
+          >
+            <a-select-option v-for="opt in store.category3Options" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </a-select-option>
+          </a-select>
+        </a-col>
         <a-col :span="10">
           <div class="date-range-filter">
             <span class="range-label">导入时间</span>
@@ -453,6 +494,16 @@
               </template>
               {{ pddMatchesMap[record.id]?.length || 0 }} 个匹配
             </a-button>
+          </template>
+
+          <!-- 类目列 -->
+          <template v-else-if="column.key === 'category'">
+            <div class="category-cell">
+              <a-tag v-if="record.category1_name" color="blue" size="small">{{ record.category1_name }}</a-tag>
+              <a-tag v-if="record.category2_name" color="green" size="small">{{ record.category2_name }}</a-tag>
+              <a-tag v-if="record.category3_name" color="orange" size="small">{{ record.category3_name }}</a-tag>
+              <span v-if="!record.category1_name" class="no-data">—</span>
+            </div>
           </template>
 
           <!-- 预估利润列 -->
@@ -1844,6 +1895,7 @@ const columns = [
   { title: 'TikTok 价格', key: 'price', width: 140 },
   { title: '销量', key: 'sales_volume', width: 90, sorter: true, dataIndex: 'sales_volume' },
   { title: '评分', dataIndex: 'rating', width: 70 },
+  { title: '类目', key: 'category', width: 200 },
   { title: '拼多多匹配', key: 'pdd_toggle', width: 110 },
   { title: '预估利润', key: 'profit', width: 100, sorter: true, dataIndex: 'estimated_profit' },
   { title: '预估利润率', key: 'profit_rate', width: 100, sorter: true, dataIndex: 'profit_rate' },
@@ -1875,6 +1927,16 @@ function onTableChange(pag, _, sorter) {
     store.filters.order_dir = sorter.order === 'ascend' ? 'asc' : 'desc'
   }
   store.fetchList()
+}
+
+function onCategory1Change(val) {
+  store.onCategory1Change(val)
+  onSearch()
+}
+
+function onCategory2Change(val) {
+  store.onCategory2Change(val)
+  onSearch()
 }
 
 /** 与后端 export_service.EXPORT_COLUMNS 的 key、顺序保持一致 */
@@ -2130,6 +2192,7 @@ onBeforeUnmount(() => {
 .range-sep { color: #ccc; }
 
 .product-cell { display: flex; align-items: center; gap: 12px; }
+.category-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .img-placeholder {
   width: 80px; height: 80px; background: #f5f5f5; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;

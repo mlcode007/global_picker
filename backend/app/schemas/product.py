@@ -61,6 +61,15 @@ class ProductOut(BaseModel):
     main_image_url: Optional[str]
     image_urls: Optional[list]
     category: Optional[str]
+    category1_id: Optional[str] = None
+    category1_name: Optional[str] = None
+    category1_name_en: Optional[str] = None
+    category2_id: Optional[str] = None
+    category2_name: Optional[str] = None
+    category2_name_en: Optional[str] = None
+    category3_id: Optional[str] = None
+    category3_name: Optional[str] = None
+    category3_name_en: Optional[str] = None
     status: str
     remark: Optional[str]
     estimated_profit: Optional[Decimal] = None

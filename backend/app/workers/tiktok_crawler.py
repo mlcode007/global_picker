@@ -454,6 +454,23 @@ def _parse_remix_loader_data(raw: dict) -> dict:
     return _parse_remix_initial_data(raw)
 
 
+def _parse_category_from_recommended_categories(categories: list) -> dict:
+    """从推荐类目解析三级类目信息"""
+    result = {}
+    if not categories or not isinstance(categories, list):
+        return result
+
+    for idx, cat in enumerate(categories[:3]):
+        if not isinstance(cat, dict):
+            continue
+        level = idx + 1
+        result[f"category{level}_id"] = cat.get("category_id")
+        result[f"category{level}_name"] = cat.get("category_name")
+        result[f"category{level}_name_en"] = cat.get("category_name_en")
+
+    return result
+
+
 def _parse_remix_component_data(raw: dict) -> dict:
     """新版结构：page_config.components_map[].component_data.product_info"""
     for key, val in raw.items():
@@ -515,6 +532,8 @@ def _parse_remix_component_data(raw: dict) -> dict:
         categories = category_info.get("recommended_categories") or []
         category_name = categories[0].get("category_name") if categories else None
 
+        category_levels = _parse_category_from_recommended_categories(categories)
+
         result = {
             "title": pm.get("name"),
             "images": image_urls,
@@ -532,6 +551,15 @@ def _parse_remix_component_data(raw: dict) -> dict:
             "shippingCurrency": ship_fee_obj.get("currency"),
             "freeShipping": logistics.get("freeShipping"),
             "category": category_name,
+            "category1_id": category_levels.get("category1_id"),
+            "category1_name": category_levels.get("category1_name"),
+            "category1_name_en": category_levels.get("category1_name_en"),
+            "category2_id": category_levels.get("category2_id"),
+            "category2_name": category_levels.get("category2_name"),
+            "category2_name_en": category_levels.get("category2_name_en"),
+            "category3_id": category_levels.get("category3_id"),
+            "category3_name": category_levels.get("category3_name"),
+            "category3_name_en": category_levels.get("category3_name_en"),
             "region": real_region,
             "_source": "remix_component_data",
         }
@@ -816,6 +844,20 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
     if category and not product.category:
         product.category = str(category)[:128]
         updated = True
+
+    for level in range(1, 4):
+        id_key = f"category{level}_id"
+        name_key = f"category{level}_name"
+        name_en_key = f"category{level}_name_en"
+        if data.get(id_key) and not getattr(product, id_key):
+            setattr(product, id_key, str(data[id_key])[:64])
+            updated = True
+        if data.get(name_key) and not getattr(product, name_key):
+            setattr(product, name_key, str(data[name_key])[:128])
+            updated = True
+        if data.get(name_en_key) and not getattr(product, name_en_key):
+            setattr(product, name_en_key, str(data[name_en_key])[:128])
+            updated = True
 
     if cur := data.get("currency"):
         if cur != product.currency:

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import { productApi, profitApi } from '@/api/products'
 import { message } from 'ant-design-vue'
 
@@ -42,6 +42,9 @@ export const useProductStore = defineStore('product', () => {
     created_at_start: undefined,
     created_at_end: undefined,
     crawl_status: undefined,
+    category1_id: undefined,
+    category2_id: undefined,
+    category3_id: undefined,
     order_by: 'created_at',
     order_dir: 'desc',
   })
@@ -100,5 +103,55 @@ export const useProductStore = defineStore('product', () => {
     exchangeRates.value = await profitApi.exchangeRates()
   }
 
-  return { list, total, loading, filters, fetchList, updateStatus, deleteProduct, batchDeleteProducts, fetchExchangeRates, exchangeRates }
+  const category1Options = computed(() => {
+    const seen = new Map()
+    list.value.forEach(p => {
+      if (p.category1_id && !seen.has(p.category1_id)) {
+        seen.set(p.category1_id, { value: p.category1_id, label: p.category1_name || p.category1_id })
+      }
+    })
+    return Array.from(seen.values())
+  })
+
+  const category2Options = computed(() => {
+    const seen = new Map()
+    list.value.forEach(p => {
+      if (p.category2_id && (!filters.category1_id || p.category1_id === filters.category1_id)) {
+        if (!seen.has(p.category2_id)) {
+          seen.set(p.category2_id, { value: p.category2_id, label: p.category2_name || p.category2_id })
+        }
+      }
+    })
+    return Array.from(seen.values())
+  })
+
+  const category3Options = computed(() => {
+    const seen = new Map()
+    list.value.forEach(p => {
+      if (p.category3_id && (!filters.category2_id || p.category2_id === filters.category2_id)) {
+        if (!seen.has(p.category3_id)) {
+          seen.set(p.category3_id, { value: p.category3_id, label: p.category3_name || p.category3_id })
+        }
+      }
+    })
+    return Array.from(seen.values())
+  })
+
+  function onCategory1Change(val) {
+    filters.category1_id = val
+    filters.category2_id = undefined
+    filters.category3_id = undefined
+  }
+
+  function onCategory2Change(val) {
+    filters.category2_id = val
+    filters.category3_id = undefined
+  }
+
+  return {
+    list, total, loading, filters, fetchList, updateStatus, deleteProduct,
+    batchDeleteProducts, fetchExchangeRates, exchangeRates,
+    category1Options, category2Options, category3Options,
+    onCategory1Change, onCategory2Change,
+  }
 })
