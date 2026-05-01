@@ -301,6 +301,9 @@
 
     <!-- 数据表格 -->
     <a-card :bordered="false" style="margin-top: 12px">
+      <div style="margin-bottom: 12px;">
+        <a-tag color="blue">已选 {{ selectedRowKeys.length }} 个</a-tag>
+      </div>
       <a-table
         :columns="columns"
         :data-source="store.list"
@@ -642,7 +645,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount, ref, reactive, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, reactive, watch, h } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import {
