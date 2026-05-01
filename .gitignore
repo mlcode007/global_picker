@@ -20,5 +20,12 @@ __pycache__/
 artifacts/
 .logs/
 dev/
+./chrome-extension/dist/
+./chrome-extension/node_modules/
+./chrome-extension/*.zip
+
+node_modules/
+dist/
+*.zip
 
 .cursor/
