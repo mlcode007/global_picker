@@ -81,6 +81,8 @@ else
   echo "TIKTOK_HEADLESS=True" >> .env
 fi
 echo "==> start adb service"
+adb kill-server
+adb start-server
 adb devices
 echo "==> restart services"
 systemctl restart global_picker_backend
