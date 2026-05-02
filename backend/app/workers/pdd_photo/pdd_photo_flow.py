@@ -226,7 +226,7 @@ class PddPhotoFlow:
                 self.adb.press_back()
                 continue
 
-            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=5)
+            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=4)
             if not xml:
                 logger.debug("wait_result %d: dump failed, retrying", i)
                 self.adb.kill_uiautomator()
@@ -292,7 +292,7 @@ class PddPhotoFlow:
 
         # 只采集首屏，拿前 4 个商品即可
         tag = "result_page_0"
-        xml_path = self.adb.dump_ui_xml(tag=tag, timeout=6)
+        xml_path = self.adb.dump_ui_xml(tag=tag, timeout=4)
         shot = self.adb.screenshot(tag=tag)
 
         if xml_path:

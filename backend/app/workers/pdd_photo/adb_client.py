@@ -87,10 +87,10 @@ class AdbClient:
         return self._run(["shell", cmd], timeout=timeout)
 
     def push(self, local_path: str, remote_path: str) -> AdbResult:
-        return self._run(["push", local_path, remote_path], timeout=60)
+        return self._run(["push", local_path, remote_path], timeout=30)
 
-    def pull(self, remote_path: str, local_path: str) -> AdbResult:
-        return self._run(["pull", remote_path, local_path], timeout=60)
+    def pull(self, remote_path: str, local_path: str, timeout: int = 15) -> AdbResult:
+        return self._run(["pull", remote_path, local_path], timeout=timeout)
 
     def get_state(self) -> str:
         r = self._run(["get-state"], timeout=5)
@@ -164,13 +164,13 @@ class AdbClient:
         remote = f"/sdcard/gp_screen_{ts}.png"
         local = str(ARTIFACTS_DIR / f"screen_{tag}_{ts}.png")
 
-        r1 = self.shell(f"screencap -p {remote}", timeout=10)
+        r1 = self.shell(f"screencap -p {remote}", timeout=8)
         if not r1.ok:
             logger.error("screencap failed: %s", r1.stderr)
             return None
 
-        r2 = self.pull(remote, local)
-        self.shell(f"rm {remote}")
+        r2 = self.pull(remote, local, timeout=15)
+        self.shell(f"rm {remote}", timeout=3)
 
         if r2.ok and os.path.exists(local):
             return local
@@ -179,9 +179,9 @@ class AdbClient:
     def kill_uiautomator(self):
         """强制结束设备上残留的 uiautomator 进程，防止后续 dump 卡死。"""
         self.shell("kill $(pidof uiautomator) 2>/dev/null", timeout=3)
-        time.sleep(0.3)
+        time.sleep(0.1)
 
-    def dump_ui_xml(self, tag: str = "", timeout: int = 8) -> Optional[str]:
+    def dump_ui_xml(self, tag: str = "", timeout: int = 5) -> Optional[str]:
         """dump 当前界面 XML，返回本地路径。超时后自动清理孤儿进程。"""
         ts = int(time.time() * 1000)
         remote = "/sdcard/gp_ui_dump.xml"
