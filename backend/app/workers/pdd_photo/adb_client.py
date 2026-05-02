@@ -87,10 +87,10 @@ class AdbClient:
         return self._run(["shell", cmd], timeout=timeout)
 
     def push(self, local_path: str, remote_path: str) -> AdbResult:
-        return self._run(["push", local_path, remote_path], timeout=60)
+        return self._run(["push", local_path, remote_path], timeout=30)
 
-    def pull(self, remote_path: str, local_path: str) -> AdbResult:
-        return self._run(["pull", remote_path, local_path], timeout=60)
+    def pull(self, remote_path: str, local_path: str, timeout: int = 15) -> AdbResult:
+        return self._run(["pull", remote_path, local_path], timeout=timeout)
 
     def get_state(self) -> str:
         r = self._run(["get-state"], timeout=5)
@@ -164,13 +164,13 @@ class AdbClient:
         remote = f"/sdcard/gp_screen_{ts}.png"
         local = str(ARTIFACTS_DIR / f"screen_{tag}_{ts}.png")
 
-        r1 = self.shell(f"screencap -p {remote}", timeout=10)
+        r1 = self.shell(f"screencap -p {remote}", timeout=8)
         if not r1.ok:
             logger.error("screencap failed: %s", r1.stderr)
             return None
 
-        r2 = self.pull(remote, local)
-        self.shell(f"rm {remote}")
+        r2 = self.pull(remote, local, timeout=15)
+        self.shell(f"rm {remote}", timeout=3)
 
         if r2.ok and os.path.exists(local):
             return local
@@ -181,7 +181,7 @@ class AdbClient:
         self.shell("kill $(pidof uiautomator) 2>/dev/null", timeout=3)
         time.sleep(0.3)
 
-    def dump_ui_xml(self, tag: str = "", timeout: int = 8) -> Optional[str]:
+    def dump_ui_xml(self, tag: str = "", timeout: int = 5) -> Optional[str]:
         """dump 当前界面 XML，返回本地路径。超时后自动清理孤儿进程。"""
         ts = int(time.time() * 1000)
         remote = "/sdcard/gp_ui_dump.xml"
@@ -249,23 +249,26 @@ class AdbClient:
         return self.shell(f"rm -f {remote_path}")
 
     def get_media_content_id(self, remote_path: str) -> Optional[str]:
-        """查询 MediaStore 获取指定文件的 content ID，用于构造 content:// URI"""
+        """查询 MediaStore 获取指定文件的 content ID，用于构造 content:// URI。
+        
+        优化：先用文件名精确匹配，避免全表扫描。
+        """
+        filename = remote_path.rsplit("/", 1)[-1] if "/" in remote_path else remote_path
         storage_path = remote_path.replace("/sdcard/", "/storage/emulated/0/")
+        
         r = self.shell(
             f"content query --uri content://media/external/images/media "
-            f"--projection _id --sort '_id DESC'"
+            f"--projection _id,_data --sort '_id DESC'"
         )
+        
         for line in r.stdout.splitlines():
-            if "_id=" in line:
+            if "_id=" in line and filename in line:
                 m = re.search(r"_id=(\d+)", line)
                 if m:
                     cid = m.group(1)
-                    detail = self.shell(
-                        f"content query --uri content://media/external/images/media/{cid} "
-                        f"--projection _data"
-                    )
-                    if storage_path in detail.stdout:
+                    if storage_path in line or remote_path in line:
                         return cid
+        
         return None
 
     # ── 设备信息 ───────────────────────────────────────────────

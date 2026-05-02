@@ -183,7 +183,7 @@ class PddPhotoFlow:
                 f"am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE "
                 f"-d file://{remote_path}"
             )
-            time.sleep(2)
+            time.sleep(1)
             content_id = self.adb.get_media_content_id(remote_path)
 
         if not content_id:
@@ -200,14 +200,14 @@ class PddPhotoFlow:
         result = self.adb.shell(send_cmd)
         logger.info("Sent image to PDD via Intent SEND: %s (content_id=%s)",
                      result.stdout.strip(), content_id)
-        time.sleep(3)
+        time.sleep(1)
 
-        for attempt in range(5):
+        for attempt in range(6):
             pkg, act = self.adb.current_activity()
             if pkg == PDD_PACKAGE:
                 logger.info("PDD is in foreground: %s", act)
                 return
-            time.sleep(2)
+            time.sleep(0.5)
 
         raise FlowError(FlowStep.SEND_IMAGE_TO_PDD, "PDD_NOT_FOREGROUND",
                         "分享图片后 PDD 未进入前台")
@@ -216,8 +216,8 @@ class PddPhotoFlow:
         """等待拍照购结果页加载完成。"""
         self.adb.kill_uiautomator()
 
-        for i in range(20):
-            time.sleep(1.5)
+        for i in range(25):
+            time.sleep(0.8)
 
             pkg, act = self.adb.current_activity()
             if pkg != PDD_PACKAGE:
@@ -226,7 +226,7 @@ class PddPhotoFlow:
                 self.adb.press_back()
                 continue
 
-            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=5)
+            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=4)
             if not xml:
                 logger.debug("wait_result %d: dump failed, retrying", i)
                 self.adb.kill_uiautomator()
@@ -284,15 +284,14 @@ class PddPhotoFlow:
                 logger.debug("wait_result %d: PDD is processing...", i)
                 continue
 
-        raise FlowError(FlowStep.WAIT_RESULT, "RESULT_TIMEOUT", "等待结果页超时 30s")
+        raise FlowError(FlowStep.WAIT_RESULT, "RESULT_TIMEOUT", "等待结果页超时 20s")
 
     def _collect_result(self):
         """采集结果页内容：仅截取当前屏幕（前几个商品），不滚动。"""
         self.adb.kill_uiautomator()
 
-        # 只采集首屏，拿前 4 个商品即可
         tag = "result_page_0"
-        xml_path = self.adb.dump_ui_xml(tag=tag, timeout=6)
+        xml_path = self.adb.dump_ui_xml(tag=tag, timeout=4)
         shot = self.adb.screenshot(tag=tag)
 
         if xml_path:
