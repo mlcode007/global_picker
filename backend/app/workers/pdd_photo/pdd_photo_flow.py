@@ -245,6 +245,11 @@ class PddPhotoFlow:
                 raise FlowError(FlowStep.WAIT_RESULT, "PDD_RISK_CONTROL",
                                 "图片上传失败，PDD 遇到风控，请在设备上手动处理后重试")
 
+            if "再试一次" in joined:
+                logger.warning("PDD retry dialog detected: risk control")
+                raise FlowError(FlowStep.WAIT_RESULT, "PDD_RISK_CONTROL",
+                                "图片上传失败，PDD 遇到风控，请在设备上手动处理后重试")
+
             blocker = self.detector.classify_pdd_blocking_state(texts)
             if blocker:
                 bcode, bmsg = blocker
