@@ -163,7 +163,7 @@ class PddPhotoFlow:
         self.ctx.remote_image_path = self.adb.push_image_to_gallery(
             self.ctx.local_image_path, filename
         )
-        time.sleep(1)
+        time.sleep(2)
 
     def _send_image_to_pdd(self):
         """通过 Intent SEND 将图片直接分享给 PDD 的 AppLinkActivity。
@@ -182,6 +182,16 @@ class PddPhotoFlow:
             self.adb.shell(
                 f"am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE "
                 f"-d file://{remote_path}"
+            )
+            time.sleep(2)
+            content_id = self.adb.get_media_content_id(remote_path)
+
+        if not content_id:
+            logger.warning("MediaStore ID still not found after rescan, trying insert")
+            self.adb.shell(
+                f"content insert --uri content://media/external/images/media "
+                f"--bind _data:s:{remote_path} "
+                f"--bind title:s:{remote_path.rsplit('/', 1)[-1]}"
             )
             time.sleep(1)
             content_id = self.adb.get_media_content_id(remote_path)
