@@ -437,23 +437,29 @@ class CloudPhoneManager:
                     continue
                 
                 # 添加到资源池
-                phone = self.add_to_pool(
-                    phone_id=phone_id,
-                    phone_name=phone_name,
-                    instance_type="ci.g5.large",
-                    created_by=user_id
-                )
-                
-                # 如果提供了用户ID，直接绑定到该用户
-                if user_id:
-                    binding = self.bind_to_user(user_id, phone_id)
-                    if binding:
-                        logger.info("Cloud phone %s bound to user %d", phone_id, user_id)
+                try:
+                    phone = self.add_to_pool(
+                        phone_id=phone_id,
+                        phone_name=phone_name,
+                        instance_type="ci.g5.large",
+                        created_by=user_id
+                    )
+                    
+                    created.append(phone)
+                    logger.info("Successfully created cloud phone: %s", phone_id)
+                except Exception as db_error:
+                    # 检查是否是唯一性约束错误（phone_id已存在）
+                    if "unique" in str(db_error).lower() or "duplicate" in str(db_error).lower():
+                        logger.warning("Cloud phone %s already exists in pool, skipping", phone_id)
+                        # 查询已存在的记录
+                        existing_phone = self.db.query(CloudPhonePool).filter(
+                            CloudPhonePool.phone_id == phone_id
+                        ).first()
+                        if existing_phone:
+                            created.append(existing_phone)
+                            logger.info("Using existing cloud phone: %s", phone_id)
                     else:
-                        logger.warning("Failed to bind cloud phone %s to user %d", phone_id, user_id)
-                
-                created.append(phone)
-                logger.info("Successfully created cloud phone: %s", phone_id)
+                        raise db_error
                 
                 # 防止批量创建导致费用过高，每创建一台延迟1秒
                 time.sleep(1)
@@ -618,6 +624,9 @@ class CloudPhoneManager:
     
     def manual_scale(self, count: int = 1, user_id: int = None) -> List[CloudPhonePool]:
         """手动扩容云手机"""
+        points_manager = None
+        required_points = 0
+        
         # 检查用户积分是否足够
         if user_id:
             points_manager = PointsManager(self.db)
@@ -628,11 +637,10 @@ class CloudPhoneManager:
         
         new_phones = self._auto_scale(count, user_id)
         
-        if not new_phones and user_id:
+        if not new_phones and user_id and points_manager:
             # 扩容失败，退还积分
-            points_manager = PointsManager(self.db)
-            required_points = 100 * count
             points_manager.add_points(user_id, required_points, f"手动扩容{count}台云手机失败，退还积分")
+            logger.info("Refunded %d points to user %d due to scale failure", required_points, user_id)
         
         return new_phones
     
