@@ -75,7 +75,7 @@ _RISK_VERIFY_KEYWORDS = [
     "滑块验证",
     "图片上传失败",
     "上传失败",
-    "请重试",
+    "再试一次"
 ]
 _PRIVACY_LOGIN_KEYWORDS = [
     "隐私政策",

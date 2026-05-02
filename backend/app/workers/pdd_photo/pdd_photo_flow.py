@@ -240,6 +240,11 @@ class PddPhotoFlow:
                 raise FlowError(FlowStep.WAIT_RESULT, "IMAGE_TOO_SMALL",
                                 "PDD 提示图片尺寸过小，请使用更大分辨率的图片")
 
+            if "图片上传失败" in joined or "上传失败" in joined:
+                logger.warning("PDD upload failed: risk control detected")
+                raise FlowError(FlowStep.WAIT_RESULT, "PDD_RISK_CONTROL",
+                                "图片上传失败，PDD 遇到风控，请在设备上手动处理后重试")
+
             blocker = self.detector.classify_pdd_blocking_state(texts)
             if blocker:
                 bcode, bmsg = blocker
