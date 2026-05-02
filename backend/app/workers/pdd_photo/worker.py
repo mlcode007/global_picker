@@ -29,6 +29,7 @@ from .adb_client import AdbClient
 from .link_extractor import fill_product_links_from_detail_taps
 from .artifact_manager import ArtifactManager
 from .device_manager import DeviceManager
+from .device_lock import DeviceLock
 from .pdd_photo_flow import FlowContext, FlowError, PddPhotoFlow
 from .result_parser import ResultParser
 
@@ -57,6 +58,10 @@ def execute_photo_search_task(task_id: int):
     local_image = None
     ctx = None
     artifacts = ArtifactManager(task_id)
+    device_lock = None
+    _stop_heartbeat = None
+    heartbeat_thread = None
+    _redis_lock_acquired = False
 
     try:
         task = photo_search_service.get_task(db, task_id)
@@ -91,6 +96,35 @@ def execute_photo_search_task(task_id: int):
             return
 
         device_serial = device.device_id
+
+        # ── 1a. Redis 分布式锁（防止多 worker 同时操作同一设备）──
+        device_lock = DeviceLock(device_serial)
+        if not device_lock.acquire(timeout=30):
+            # Redis 锁获取失败，释放 DB 设备状态
+            mgr.release_device(device_serial, success=False)
+            photo_search_service.update_task_status(
+                db, task_id, "failed",
+                error_code="DEVICE_LOCKED", error_message="设备被其他任务占用，请稍后重试",
+            )
+            return
+        _redis_lock_acquired = True
+
+        # 启动心跳续期线程
+        import threading
+        _stop_heartbeat = threading.Event()
+
+        def _heartbeat_loop():
+            while not _stop_heartbeat.is_set():
+                _stop_heartbeat.wait(30)
+                if not _stop_heartbeat.is_set():
+                    try:
+                        device_lock.heartbeat()
+                    except Exception:
+                        logger.warning("Device %s heartbeat failed", device_serial)
+
+        heartbeat_thread = threading.Thread(target=_heartbeat_loop, daemon=True)
+        heartbeat_thread.start()
+
         photo_search_service.update_task_status(
             db, task_id, "running", device_id=device_serial,
         )
@@ -256,7 +290,21 @@ def execute_photo_search_task(task_id: int):
             logger.exception("Failed to update task status")
 
     finally:
-        if device_serial:
+        # 停止心跳续期
+        if _stop_heartbeat is not None:
+            _stop_heartbeat.set()
+        if heartbeat_thread is not None:
+            heartbeat_thread.join(timeout=2)
+
+        # 释放 Redis 设备锁
+        if device_lock is not None and _redis_lock_acquired:
+            try:
+                device_lock.release()
+            except Exception:
+                logger.exception("Failed to release device lock for %s", device_serial)
+
+        # 释放 DB 设备状态（仅当 Redis 锁成功获取时才释放，避免重复释放）
+        if device_serial and _redis_lock_acquired:
             try:
                 mgr = DeviceManager(db)
                 task_obj = photo_search_service.get_task(db, task_id)
