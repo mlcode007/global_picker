@@ -123,7 +123,7 @@ class PddPhotoFlow:
                     if retries > self.ctx.max_retries_per_step:
                         raise FlowError(step_enum, "STEP_FAILED", str(e))
                     logger.warning("Step %s retry %d: %s", step_enum.value, retries, e)
-                    time.sleep(1)
+                    time.sleep(0.1)
 
         self.ctx.current_step = FlowStep.DONE
         return self.ctx.step_logs
@@ -163,7 +163,7 @@ class PddPhotoFlow:
         self.ctx.remote_image_path = self.adb.push_image_to_gallery(
             self.ctx.local_image_path, filename
         )
-        time.sleep(1)
+        time.sleep(0.1)
 
     def _send_image_to_pdd(self):
         """通过 Intent SEND 将图片直接分享给 PDD 的 AppLinkActivity。
@@ -200,7 +200,7 @@ class PddPhotoFlow:
         result = self.adb.shell(send_cmd)
         logger.info("Sent image to PDD via Intent SEND: %s (content_id=%s)",
                      result.stdout.strip(), content_id)
-        time.sleep(1)
+        time.sleep(0.1)
 
         for attempt in range(6):
             pkg, act = self.adb.current_activity()
@@ -266,18 +266,18 @@ class PddPhotoFlow:
 
             if page.page_type == PageType.PDD_PHOTO_RESULT:
                 logger.info("Result page detected after %d iterations", i + 1)
-                time.sleep(1)
+                time.sleep(0.1)
                 return
 
             price_nodes = self.detector.find_nodes_by_text(xml, ["¥"])
             if len(price_nodes) >= 2:
                 logger.info("Price nodes detected (%d), treating as result page", len(price_nodes))
-                time.sleep(1)
+                time.sleep(0.1)
                 return
 
             if "搜图片同款" in joined:
                 logger.info("Found '搜图片同款' title, result page loaded")
-                time.sleep(1)
+                time.sleep(0.1)
                 return
 
             if "正在识别" in joined or "正在搜索" in joined:
@@ -352,12 +352,12 @@ class PddPhotoFlow:
             )
             if allow_btn:
                 self.adb.tap(*allow_btn["center"])
-                time.sleep(1)
+                time.sleep(0.1)
                 return True
 
         w, h = self.ctx.screen_w, self.ctx.screen_h
         self.adb.tap(w // 2, h * 70 // 100)
-        time.sleep(1)
+        time.sleep(0.1)
         return True
 
     def _quick_classify_xml(self, xml_path: str, pkg: str, act: str) -> PageInfo:
