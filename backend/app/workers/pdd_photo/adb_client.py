@@ -250,21 +250,22 @@ class AdbClient:
 
     def get_media_content_id(self, remote_path: str) -> Optional[str]:
         """查询 MediaStore 获取指定文件的 content ID，用于构造 content:// URI"""
-        filename = remote_path.rsplit("/", 1)[-1] if "/" in remote_path else remote_path
         storage_path = remote_path.replace("/sdcard/", "/storage/emulated/0/")
         r = self.shell(
             f"content query --uri content://media/external/images/media "
-            f"--projection _id,_data --sort '_id DESC'"
+            f"--projection _id --sort '_id DESC'"
         )
         for line in r.stdout.splitlines():
-            if "_id=" not in line:
-                continue
-            m = re.search(r"_id=(\d+)", line)
-            if not m:
-                continue
-            cid = m.group(1)
-            if filename in line or storage_path in line or remote_path in line:
-                return cid
+            if "_id=" in line:
+                m = re.search(r"_id=(\d+)", line)
+                if m:
+                    cid = m.group(1)
+                    detail = self.shell(
+                        f"content query --uri content://media/external/images/media/{cid} "
+                        f"--projection _data"
+                    )
+                    if storage_path in detail.stdout:
+                        return cid
         return None
 
     # ── 设备信息 ───────────────────────────────────────────────
