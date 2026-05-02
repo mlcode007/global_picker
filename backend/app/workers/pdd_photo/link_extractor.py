@@ -54,8 +54,8 @@ def fill_product_links_from_detail_taps(
     adb: "AdbClient",
     candidates: list["CandidateItem"],
     max_items: int = 4,
-    tap_wait_s: float = 2.8,
-    back_wait_s: float = 1.6,
+    tap_wait_s: float = 1.5,
+    back_wait_s: float = 0.8,
 ) -> int:
     """
     依次点击候选卡片的中心进入详情，读取 goods_id，按返回键回到列表。
