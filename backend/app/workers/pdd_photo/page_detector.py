@@ -73,6 +73,9 @@ _RISK_VERIFY_KEYWORDS = [
     "拖动滑块",
     "向右滑动",
     "滑块验证",
+    "图片上传失败",
+    "上传失败",
+    "请重试",
 ]
 _PRIVACY_LOGIN_KEYWORDS = [
     "隐私政策",
