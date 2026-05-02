@@ -200,14 +200,14 @@ class PddPhotoFlow:
         result = self.adb.shell(send_cmd)
         logger.info("Sent image to PDD via Intent SEND: %s (content_id=%s)",
                      result.stdout.strip(), content_id)
-        time.sleep(3)
+        time.sleep(1)
 
-        for attempt in range(5):
+        for attempt in range(6):
             pkg, act = self.adb.current_activity()
             if pkg == PDD_PACKAGE:
                 logger.info("PDD is in foreground: %s", act)
                 return
-            time.sleep(2)
+            time.sleep(0.5)
 
         raise FlowError(FlowStep.SEND_IMAGE_TO_PDD, "PDD_NOT_FOREGROUND",
                         "分享图片后 PDD 未进入前台")
