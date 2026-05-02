@@ -216,8 +216,8 @@ class PddPhotoFlow:
         """等待拍照购结果页加载完成。"""
         self.adb.kill_uiautomator()
 
-        for i in range(20):
-            time.sleep(1.5)
+        for i in range(25):
+            time.sleep(0.8)
 
             pkg, act = self.adb.current_activity()
             if pkg != PDD_PACKAGE:
@@ -284,7 +284,7 @@ class PddPhotoFlow:
                 logger.debug("wait_result %d: PDD is processing...", i)
                 continue
 
-        raise FlowError(FlowStep.WAIT_RESULT, "RESULT_TIMEOUT", "等待结果页超时 30s")
+        raise FlowError(FlowStep.WAIT_RESULT, "RESULT_TIMEOUT", "等待结果页超时 20s")
 
     def _collect_result(self):
         """采集结果页内容：仅截取当前屏幕（前几个商品），不滚动。"""
