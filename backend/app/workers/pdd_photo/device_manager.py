@@ -218,17 +218,8 @@ class DeviceManager:
 
     # ── 设备预热 ──────────────────────────────────────────────
 
-    def warm_up(self, serial: str, skip_if_ready: bool = False) -> bool:
-        """确保设备处于可用状态：屏幕亮、拼多多已装、回到桌面。
-        
-        Args:
-            serial: 设备序列号
-            skip_if_ready: 为 True 时跳过预热（用于批量处理时复用设备状态）
-        """
-        if skip_if_ready:
-            logger.info("Device %s warm-up skipped (reusing ready state)", serial)
-            return True
-
+    def warm_up(self, serial: str) -> bool:
+        """确保设备处于可用状态：屏幕亮、拼多多已装、回到桌面。"""
         adb = AdbClient(serial=serial)
         adb.ensure_connected()
 
@@ -245,7 +236,7 @@ class DeviceManager:
             return False
 
         adb.press_home()
-        time.sleep(0.3)
+        time.sleep(0.5)
 
         logger.info("Device %s warmed up", serial)
         return True
