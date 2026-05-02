@@ -37,6 +37,8 @@ logger = logging.getLogger(__name__)
 DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
 
+_warmed_devices: set[str] = set()
+
 
 def _task_max_candidates(task) -> int:
     """任务配置的入库上限；缺省或异常时回退为 MAX_CANDIDATES。"""
@@ -96,11 +98,13 @@ def execute_photo_search_task(task_id: int):
         )
 
         # ── 2. 设备预热 ────────────────────────────────────────
-        if not mgr.warm_up(device_serial):
+        skip_warmup = device_serial in _warmed_devices
+        if not mgr.warm_up(device_serial, skip_if_ready=skip_warmup):
             raise RuntimeError("设备预热失败")
+        _warmed_devices.add(device_serial)
 
         photo_search_service.save_action_log(
-            db, task_id, device_serial, "PRECHECK", "设备预热完成",
+            db, task_id, device_serial, "PRECHECK", "设备预热完成" if not skip_warmup else "设备预热已跳过（复用）",
         )
 
         # ── 3. 下载商品图片 ────────────────────────────────────
@@ -269,6 +273,8 @@ def execute_photo_search_task(task_id: int):
                 adb.press_home()
             except Exception:
                 logger.exception("Cleanup error for device %s", device_serial)
+            finally:
+                _warmed_devices.discard(device_serial)
 
         try:
             db.close()
