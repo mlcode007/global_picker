@@ -852,12 +852,10 @@ watch(photoBatchFetchPddLinks, (v) => {
 /** 最近一次健康检查通过的云手机 phone_id，减少重复拉列表 */
 const photoHealthPhoneCache = ref(null)
 
-// --- 列表页批量采集 TikTok（并发执行，后端信号量控制）---
+// --- 列表页批量采集 TikTok（串行提交 + 后端并发控制 + 可取消）---
 const crawlBatchRunning = ref(false)
 const crawlBatchCancel = ref(false)
 const crawlRowProgress = reactive({})
-
-const CRAWL_BATCH_CONCURRENCY = 3
 
 async function startBatchCrawl() {
   if (crawlBatchRunning.value) return
@@ -904,36 +902,39 @@ async function startBatchCrawl() {
   let fail = 0
 
   try {
-    const batchTaskIds = valid.map(r => r.crawl_task_id)
-    const batchResult = await taskApi.batchRetry(batchTaskIds)
-    const { submitted = 0, skipped = 0, concurrency_limit = 3 } = batchResult
-
-    valid.forEach(r => {
-      crawlRowProgress[r.id] = {
-        ...crawlRowProgress[r.id],
-        phase: 'running',
-        stepText: `排队等待中…（并发上限 ${concurrency_limit}）`,
-        task: { status: 'pending', status_detail: '排队等待中...' },
+    for (let i = 0; i < valid.length; i++) {
+      if (crawlBatchCancel.value) {
+        message.info(`批量采集已取消，已完成 ${ok} 条，剩余 ${valid.length - i} 条未提交`)
+        for (let j = i; j < valid.length; j++) {
+          const pid = valid[j].id
+          if (crawlRowProgress[pid] && crawlRowProgress[pid].phase === 'queued') {
+            crawlRowProgress[pid].phase = 'queued'
+            crawlRowProgress[pid].stepText = '已取消'
+          }
+        }
+        break
       }
-    })
 
-    if (skipped > 0) {
-      message.info({
-        content: `已提交 ${submitted} 个任务，${skipped} 个任务正在运行中已跳过`,
-        duration: 5,
-      })
-    }
-
-    const pollPromises = valid.map(async (r) => {
+      const r = valid[i]
       const pid = r.id
+
+      crawlRowProgress[pid] = {
+        ...crawlRowProgress[pid],
+        phase: 'running',
+        stepText: '提交采集任务…',
+        task: null,
+      }
+
       try {
+        const submitted = await taskApi.retry(r.crawl_task_id)
+        crawlRowProgress[pid].task = submitted
+        crawlRowProgress[pid].stepText = formatCrawlTaskLine(submitted)
+
         const finalTask = await pollCrawlTaskUntilDone(
           r.crawl_task_id,
           (t) => {
-            if (crawlRowProgress[pid]) {
-              crawlRowProgress[pid].task = t
-              crawlRowProgress[pid].stepText = formatCrawlTaskLine(t)
-            }
+            crawlRowProgress[pid].task = t
+            crawlRowProgress[pid].stepText = formatCrawlTaskLine(t)
           },
           { maxWaitMs: 20 * 60 * 1000, shouldCancel: () => crawlBatchCancel.value },
         )
@@ -962,19 +963,23 @@ async function startBatchCrawl() {
         if (e.message?.includes('取消')) {
           crawlRowProgress[pid].phase = 'queued'
           crawlRowProgress[pid].stepText = '已取消'
+          message.info(`批量采集已取消，已完成 ${ok} 条`)
+          for (let j = i + 1; j < valid.length; j++) {
+            const nextPid = valid[j].id
+            if (crawlRowProgress[nextPid] && crawlRowProgress[nextPid].phase === 'queued') {
+              crawlRowProgress[nextPid].stepText = '已取消'
+            }
+          }
+          break
         } else {
           fail += 1
           crawlRowProgress[pid].phase = 'failed'
           crawlRowProgress[pid].stepText = e?.message || '等待任务失败'
         }
       }
-    })
+    }
 
-    await Promise.all(pollPromises)
-
-    if (crawlBatchCancel.value) {
-      message.info('批量采集已取消')
-    } else {
+    if (!crawlBatchCancel.value) {
       message.success(`批量采集已结束：成功 ${ok} 条，失败 ${fail} 条`)
       if (fail > 0) {
         message.warning({
@@ -993,7 +998,7 @@ async function startBatchCrawl() {
 
 function cancelBatchCrawl() {
   crawlBatchCancel.value = true
-  message.info('正在取消批量采集，等待中的任务将停止轮询…')
+  message.info('正在取消批量采集，当前任务完成后将停止…')
 }
 
 // --- 同步 ERP：新标签页打开 TikTok（供妙手/其它扩展自动化），间隔可配，状态落盘 ---
