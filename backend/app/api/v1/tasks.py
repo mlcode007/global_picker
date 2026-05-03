@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -12,13 +11,9 @@ from app.models.product import Product
 from app.schemas.common import Response
 from app.schemas.crawl_task import CrawlTaskOut
 from app.schemas.product import ProductOut
-from app.workers.tiktok_crawler_v2 import run_crawl_task, CRAWL_CONCURRENCY_LIMIT
+from app.workers.tiktok_crawler_v2 import run_crawl_task
 
 router = APIRouter(prefix="/tasks", tags=["抓取任务"])
-
-
-class BatchRetryRequest(BaseModel):
-    task_ids: List[int]
 
 
 @router.get("", response_model=Response[List[CrawlTaskOut]], summary="批量查询任务状态")
@@ -77,47 +72,3 @@ def retry_task(
     db.refresh(task)
     background_tasks.add_task(run_crawl_task, task_id)
     return Response(data=CrawlTaskOut.model_validate(task))
-
-
-@router.post("/batch-retry", summary="批量重新采集")
-def batch_retry_tasks(
-    data: BatchRetryRequest,
-    background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    tasks = db.query(CrawlTask).filter(
-        CrawlTask.id.in_(data.task_ids),
-        CrawlTask.status != "running",
-    ).all()
-
-    found_ids = {t.id for t in tasks}
-    results = []
-
-    for task in tasks:
-        task.status = "pending"
-        task.error_msg = None
-        task.status_detail = "排队等待中..."
-        background_tasks.add_task(run_crawl_task, task.id)
-        results.append({
-            "task_id": task.id,
-            "status": "pending",
-            "message": "已加入队列",
-        })
-
-    db.commit()
-
-    skipped_ids = set(data.task_ids) - found_ids
-    for tid in skipped_ids:
-        results.append({
-            "task_id": tid,
-            "status": "skipped",
-            "message": "任务正在运行或不存在",
-        })
-
-    return Response(data={
-        "submitted": len(results) - len(skipped_ids),
-        "skipped": len(skipped_ids),
-        "concurrency_limit": CRAWL_CONCURRENCY_LIMIT,
-        "results": results,
-    })

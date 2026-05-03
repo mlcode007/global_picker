@@ -852,12 +852,9 @@ watch(photoBatchFetchPddLinks, (v) => {
 /** 最近一次健康检查通过的云手机 phone_id，减少重复拉列表 */
 const photoHealthPhoneCache = ref(null)
 
-// --- 列表页批量采集 TikTok（并发执行，后端信号量控制）---
+// --- 列表页批量采集 TikTok（串行执行，逐个提交并等待完成）---
 const crawlBatchRunning = ref(false)
-const crawlBatchCancel = ref(false)
 const crawlRowProgress = reactive({})
-
-const CRAWL_BATCH_CONCURRENCY = 3
 
 async function startBatchCrawl() {
   if (crawlBatchRunning.value) return
@@ -899,43 +896,44 @@ async function startBatchCrawl() {
   }
 
   crawlBatchRunning.value = true
-  crawlBatchCancel.value = false
   let ok = 0
   let fail = 0
 
   try {
-    const batchTaskIds = valid.map(r => r.crawl_task_id)
-    const batchResult = await taskApi.batchRetry(batchTaskIds)
-    const { submitted = 0, skipped = 0, concurrency_limit = 3 } = batchResult
-
-    valid.forEach(r => {
-      crawlRowProgress[r.id] = {
-        ...crawlRowProgress[r.id],
-        phase: 'running',
-        stepText: `排队等待中…（并发上限 ${concurrency_limit}）`,
-        task: { status: 'pending', status_detail: '排队等待中...' },
-      }
-    })
-
-    if (skipped > 0) {
-      message.info({
-        content: `已提交 ${submitted} 个任务，${skipped} 个任务正在运行中已跳过`,
-        duration: 5,
-      })
-    }
-
-    const pollPromises = valid.map(async (r) => {
+    for (let i = 0; i < valid.length; i++) {
+      const r = valid[i]
       const pid = r.id
+
+      if (i > 0) {
+        await crawlSleep(randomCrawlGap())
+      }
+
+      crawlRowProgress[pid] = {
+        ...crawlRowProgress[pid],
+        phase: 'running',
+        stepText: '提交采集任务…',
+        task: null,
+      }
+
       try {
+        const submitted = await taskApi.retry(r.crawl_task_id)
+        crawlRowProgress[pid].task = submitted
+        crawlRowProgress[pid].stepText = formatCrawlTaskLine(submitted)
+        console.info(
+          `[批量采集] 商品 id=${pid} 已提交 任务 #${submitted.id} 状态=${submitted.status}`,
+        )
+
         const finalTask = await pollCrawlTaskUntilDone(
           r.crawl_task_id,
           (t) => {
-            if (crawlRowProgress[pid]) {
-              crawlRowProgress[pid].task = t
-              crawlRowProgress[pid].stepText = formatCrawlTaskLine(t)
+            crawlRowProgress[pid].task = t
+            crawlRowProgress[pid].stepText = formatCrawlTaskLine(t)
+            if (t.status === 'running' || t.status === 'pending') {
+              console.info(
+                `[批量采集] 商品 id=${pid} 任务 #${t.id} 轮询 → ${t.status}`,
+              )
             }
           },
-          { maxWaitMs: 20 * 60 * 1000, shouldCancel: () => crawlBatchCancel.value },
         )
 
         if (finalTask.status === 'done') {
@@ -943,6 +941,7 @@ async function startBatchCrawl() {
           crawlRowProgress[pid].phase = 'done'
           crawlRowProgress[pid].task = finalTask
           crawlRowProgress[pid].stepText = formatCrawlTaskLine(finalTask)
+          console.info(`[批量采集] 商品 id=${pid} 采集成功`)
           try {
             const updated = finalTask.product ?? await productApi.get(pid)
             const index = store.list.findIndex(p => p.id === pid)
@@ -957,43 +956,30 @@ async function startBatchCrawl() {
           crawlRowProgress[pid].phase = 'failed'
           crawlRowProgress[pid].task = finalTask
           crawlRowProgress[pid].stepText = formatCrawlTaskLine(finalTask)
+          console.warn(
+            `[批量采集] 商品 id=${pid} 采集失败`,
+            finalTask.error_msg || finalTask.status,
+          )
         }
       } catch (e) {
-        if (e.message?.includes('取消')) {
-          crawlRowProgress[pid].phase = 'queued'
-          crawlRowProgress[pid].stepText = '已取消'
-        } else {
-          fail += 1
-          crawlRowProgress[pid].phase = 'failed'
-          crawlRowProgress[pid].stepText = e?.message || '等待任务失败'
-        }
-      }
-    })
-
-    await Promise.all(pollPromises)
-
-    if (crawlBatchCancel.value) {
-      message.info('批量采集已取消')
-    } else {
-      message.success(`批量采集已结束：成功 ${ok} 条，失败 ${fail} 条`)
-      if (fail > 0) {
-        message.warning({
-          content: `有 ${fail} 条未成功，请查看各行说明或稍后单独点击「采集」重试`,
-          duration: 7,
-        })
+        fail += 1
+        crawlRowProgress[pid].phase = 'failed'
+        const msg = e?.message || '提交或等待任务失败'
+        crawlRowProgress[pid].stepText = msg
+        console.error('[批量采集] 异常', { productId: pid, err: e })
       }
     }
-  } catch (e) {
-    message.error(`批量采集异常：${e?.message || '未知错误'}`)
+
+    message.success(`批量采集已结束：成功 ${ok} 条，失败 ${fail} 条`)
+    if (fail > 0) {
+      message.warning({
+        content: `有 ${fail} 条未成功，请查看各行说明或稍后单独点击「采集」重试`,
+        duration: 7,
+      })
+    }
   } finally {
     crawlBatchRunning.value = false
-    crawlBatchCancel.value = false
   }
-}
-
-function cancelBatchCrawl() {
-  crawlBatchCancel.value = true
-  message.info('正在取消批量采集，等待中的任务将停止轮询…')
 }
 
 // --- 同步 ERP：新标签页打开 TikTok（供妙手/其它扩展自动化），间隔可配，状态落盘 ---
