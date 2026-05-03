@@ -255,14 +255,6 @@
                 <SyncOutlined /> 批量采集
               </a-button>
             </a-tooltip>
-            <a-button
-              v-if="crawlBatchRunning"
-              danger
-              ghost
-              @click="cancelBatchCrawl"
-            >
-              <StopOutlined /> 取消采集
-            </a-button>
             <a-tooltip title="逐个打开：第一件在您点击时新开标签页；若该标签未被关闭，下一件会在同一标签内切换；若标签已关且自动打开被拦截，会提示您手动点「打开下一件」。两件之间按下方随机间隔。">
               <a-button
                 type="primary"
@@ -711,7 +703,7 @@ import {
   ReloadOutlined, DownloadOutlined, ImportOutlined, PictureOutlined,
   SyncOutlined, DownOutlined, UpOutlined, LinkOutlined,
   CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined,
-  ExportOutlined, StopOutlined,
+  ExportOutlined,
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
 import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
@@ -852,9 +844,17 @@ watch(photoBatchFetchPddLinks, (v) => {
 /** 最近一次健康检查通过的云手机 phone_id，减少重复拉列表 */
 const photoHealthPhoneCache = ref(null)
 
-// --- 列表页批量采集 TikTok（串行执行，逐个提交并等待完成）---
+// --- 列表页批量采集 TikTok（串行，与拍照购一致：间隔 + 行内进度）---
 const crawlBatchRunning = ref(false)
 const crawlRowProgress = reactive({})
+
+/** 两条商品采集之间的间隔（ms），避免连续打满后端/浏览器 */
+const CRAWL_BATCH_GAP_MS = { min: 720, max: 1100 }
+
+function randomCrawlGap() {
+  const { min, max } = CRAWL_BATCH_GAP_MS
+  return min + Math.floor(Math.random() * (max - min + 1))
+}
 
 async function startBatchCrawl() {
   if (crawlBatchRunning.value) return

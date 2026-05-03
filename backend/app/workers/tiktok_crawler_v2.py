@@ -49,9 +49,6 @@ _UA_DESKTOP = (
     "Chrome/120.0.0.0 Safari/537.36"
 )
 
-CRAWL_CONCURRENCY_LIMIT = 3
-_crawl_semaphore = asyncio.Semaphore(CRAWL_CONCURRENCY_LIMIT)
-
 
 def _update_task_status(task_id: Optional[int], status_detail: str) -> None:
     if not task_id:
@@ -842,7 +839,6 @@ async def run_crawl_task(task_id: int) -> None:
             return
 
         task.status = "running"
-        task.status_detail = "排队等待中..."
         db.commit()
 
         product: Optional[Product] = (
@@ -856,7 +852,7 @@ async def run_crawl_task(task_id: int) -> None:
 
         product_id_match = re.search(r"/product/(\d+)", task.url)
         region_match = re.search(r"[?&]region=([A-Z]{2,3})", task.url)
-        
+
         product_id = product_id_match.group(1) if product_id_match else None
         region = region_match.group(1) if region_match else "PH"
 
@@ -872,35 +868,32 @@ async def run_crawl_task(task_id: int) -> None:
         old_price = product.price
         old_price_cny = product.price_cny
 
-        async with _crawl_semaphore:
-            task.status_detail = "正在启动采集任务..."
-            db.commit()
-            try:
-                result = await crawl_tiktok_product(
-                    url=task.url,
-                    user_id=product.user_id,
-                    crawl_task_id=task.id,
-                )
+        try:
+            result = await crawl_tiktok_product(
+                url=task.url,
+                user_id=product.user_id,
+                crawl_task_id=task.id,
+            )
 
-                if result["success"]:
-                    task.status = "done"
-                    task.error_msg = None
-                    logger.info("crawl task %d done (product_id=%s, user_id=%s)", 
-                               task_id, product_id, product.user_id)
-                else:
-                    task.status = "failed"
-                    task.error_msg = result.get("message", "采集失败")
-                    task.retry_count += 1
+            if result["success"]:
+                task.status = "done"
+                task.error_msg = None
+                logger.info("crawl task %d done (product_id=%s, user_id=%s)", 
+                           task_id, product_id, product.user_id)
+            else:
+                task.status = "failed"
+                task.error_msg = result.get("message", "采集失败")
+                task.retry_count += 1
 
-            except RuntimeError as e:
-                task.status = "failed"
-                task.error_msg = str(e)
-                task.retry_count += 1
-            except Exception as e:
-                task.status = "failed"
-                task.error_msg = str(e)[:500]
-                task.retry_count += 1
-                logger.exception("crawl task %d unexpected error", task_id)
+        except RuntimeError as e:
+            task.status = "failed"
+            task.error_msg = str(e)
+            task.retry_count += 1
+        except Exception as e:
+            task.status = "failed"
+            task.error_msg = str(e)[:500]
+            task.retry_count += 1
+            logger.exception("crawl task %d unexpected error", task_id)
 
         task.status_detail = None
         db.commit()
