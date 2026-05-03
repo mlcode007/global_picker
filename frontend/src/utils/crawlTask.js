@@ -55,6 +55,9 @@ export async function pollCrawlTaskUntilDone(taskId, onTick, opts = {}) {
     if (t.status === 'done' || t.status === 'failed') {
       return t
     }
+    if (opts.shouldCancel?.()) {
+      throw new Error('任务已取消')
+    }
     await sleep(interval)
   }
 

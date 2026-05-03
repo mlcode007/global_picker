@@ -128,6 +128,7 @@ export const taskApi = {
   queryBatch: (ids) => http.get('/tasks', { params: { ids: ids.join(',') } }),
   get: (id) => http.get(`/tasks/${id}`),
   retry: (id) => http.post(`/tasks/${id}/retry`),
+  batchRetry: (taskIds) => http.post('/tasks/batch-retry', { task_ids: taskIds }),
 }
 
 export const settingsApi = {
