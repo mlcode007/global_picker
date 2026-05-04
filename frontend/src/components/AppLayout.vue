@@ -27,6 +27,10 @@
           <template #icon><PhoneOutlined /></template>
           云手机管理
         </a-menu-item>
+        <a-menu-item key="ExchangeRate">
+          <template #icon><DollarOutlined /></template>
+          汇率管理
+        </a-menu-item>
         <a-menu-item key="Profile">
           <template #icon><UserOutlined /></template>
           个人主页
@@ -84,6 +88,7 @@ import {
   UnorderedListOutlined,
   ImportOutlined,
   PhoneOutlined,
+  DollarOutlined,
   UserOutlined,
   DownOutlined,
   LogoutOutlined,
@@ -120,6 +125,8 @@ function handleMenuClick({ key }) {
   console.log('Menu clicked:', key)
   if (key === 'CloudPhone') {
     router.push('/cloud-phone')
+  } else if (key === 'ExchangeRate') {
+    router.push('/exchange-rate')
   } else if (key === 'Profile') {
     router.push('/profile')
   } else {

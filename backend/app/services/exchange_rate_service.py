@@ -63,3 +63,10 @@ def convert_to_cny(db: Session, amount: Decimal, currency: str) -> Optional[Deci
 def currency_for_region(region: str) -> Optional[str]:
     """根据 region code 返回对应币种。"""
     return REGION_CURRENCY_MAP.get(region.upper())
+
+
+def clear_cache() -> None:
+    """清空汇率缓存，使更新立即生效。"""
+    with _cache_lock:
+        _cache.clear()
+        _cache_ts = 0

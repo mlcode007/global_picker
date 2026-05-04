@@ -1,5 +1,7 @@
 from typing import List
+from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -10,6 +12,14 @@ from app.schemas.profit import ProfitCalcRequest, ProfitOut
 from app.services import profit_service, product_service
 
 router = APIRouter(prefix="/profit", tags=["利润计算"])
+
+
+class ExchangeRateUpdate(BaseModel):
+    rate_to_cny: Decimal = Field(..., gt=0, description="兑换人民币汇率")
+
+
+class ExchangeRateBatchUpdate(BaseModel):
+    rates: dict[str, Decimal] = Field(..., description="币种代码到汇率的映射")
 
 
 @router.post("/calculate", response_model=Response[ProfitOut], summary="计算并保存利润")
@@ -40,7 +50,50 @@ def exchange_rates(
 ):
     from app.models.exchange_rate import ExchangeRate
     rates = db.query(ExchangeRate).all()
-    return Response(data=[{"currency": r.currency, "rate_to_cny": float(r.rate_to_cny)} for r in rates])
+    return Response(data=[{
+        "currency": r.currency,
+        "rate_to_cny": float(r.rate_to_cny),
+        "updated_at": r.updated_at.isoformat() if r.updated_at else None,
+    } for r in rates])
+
+
+@router.put("/exchange-rates/{currency}", summary="更新单个汇率")
+def update_exchange_rate(
+    currency: str,
+    req: ExchangeRateUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    from app.models.exchange_rate import ExchangeRate
+    from app.services.exchange_rate_service import clear_cache
+    rate = db.query(ExchangeRate).filter(ExchangeRate.currency == currency.upper()).first()
+    if not rate:
+        raise HTTPException(status_code=404, detail=f"币种 {currency} 不存在")
+    rate.rate_to_cny = req.rate_to_cny
+    db.commit()
+    db.refresh(rate)
+    clear_cache()
+    return Response(data={"currency": rate.currency, "rate_to_cny": float(rate.rate_to_cny)})
+
+
+@router.put("/exchange-rates", summary="批量更新汇率")
+def batch_update_exchange_rates(
+    req: ExchangeRateBatchUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    from app.models.exchange_rate import ExchangeRate
+    from app.services.exchange_rate_service import clear_cache
+    updated = []
+    for currency, new_rate in req.rates.items():
+        rate = db.query(ExchangeRate).filter(ExchangeRate.currency == currency.upper()).first()
+        if rate:
+            rate.rate_to_cny = new_rate
+            updated.append({"currency": rate.currency, "rate_to_cny": float(rate.rate_to_cny)})
+    db.commit()
+    if updated:
+        clear_cache()
+    return Response(data={"updated": updated, "count": len(updated)})
 
 
 @router.post("/refresh-price-cny", summary="根据当前汇率重算所有商品的 price_cny")
