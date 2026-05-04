@@ -79,7 +79,7 @@ const originalRates = ref([])
 const dirtyCurrencies = ref(new Set())
 
 const columns = [
-  { title: '币种', dataIndex: 'currency', key: 'currency', width: 120 },
+  { title: '币种', dataIndex: 'label', key: 'label', width: 160 },
   { title: '汇率（1 单位外币 = ? 人民币）', key: 'rate_to_cny', width: 280 },
   { title: '更新时间', key: 'updated_at', width: 200 },
   { title: '操作', key: 'action', width: 100 },
@@ -113,7 +113,7 @@ async function fetchRates() {
     const res = await profitApi.exchangeRates()
     rates.value = (res || []).map(r => ({
       ...r,
-      label: CURRENCY_LABELS[r.currency] || r.currency,
+      label: `${CURRENCY_LABELS[r.currency] || r.currency} (${r.currency})`,
     }))
     originalRates.value = JSON.parse(JSON.stringify(rates.value))
     dirtyCurrencies.value.clear()
