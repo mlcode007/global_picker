@@ -45,6 +45,29 @@ else
   echo "==> 跳过: 本机无 $ENV_LOCAL（不覆盖服务器现有 .env）"
 fi
 
+# 同步支付宝相关环境变量（这些值以本机 .env 为准）
+ALIPAY_KEYS=("ALIPAY_APP_ID" "ALIPAY_PRIVATE_KEY" "ALIPAY_PUBLIC_KEY" "ALIPAY_SANDBOX")
+if [[ -f "$ENV_LOCAL" ]]; then
+  echo "==> 同步支付宝相关环境变量到服务器"
+  for key in "${ALIPAY_KEYS[@]}"; do
+    value=$(grep "^${key}=" "$ENV_LOCAL" | head -1 | cut -d'=' -f2-)
+    if [[ -n "$value" ]]; then
+      # 通过 SSH 更新服务器上的 .env 文件
+      ssh "${SSH_OPTS[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" bash <<INNER_EOF
+cd '$REMOTE_DIR/backend'
+if grep -q "^${key}=" .env; then
+  sed -i "s|^${key}=.*|${key}=${value}|" .env
+else
+  echo "${key}=${value}" >> .env
+fi
+INNER_EOF
+      echo "    synced ${key}"
+    else
+      echo "    skip ${key} (not found in local .env)"
+    fi
+  done
+fi
+
 echo "==> SSH ${DEPLOY_USER}@${DEPLOY_HOST} ${REMOTE_DIR}"
 
 # heredoc 未加引号：注入本机 REMOTE_DIR / GIT_BRANCH；远程 shell 中的 \$ 已转义
