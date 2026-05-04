@@ -61,6 +61,13 @@ class Settings(BaseSettings):
     # 拼多多拍照购：在结果页依次点进详情，从 dumpsys 解析 goods_id（约多 4s/条）
     PDD_EXTRACT_PRODUCT_LINKS: bool = True
 
+    # 支付宝支付
+    ALIPAY_APP_ID: str = ""
+    ALIPAY_PRIVATE_KEY: str = ""
+    ALIPAY_PUBLIC_KEY: str = ""
+    ALIPAY_NOTIFY_URL: str = "http://your-domain.com/api/v1/payment/alipay/notify"
+    ALIPAY_SANDBOX: bool = True
+
     @property
     def database_url(self) -> str:
         # quote_plus 对密码中的特殊字符（如 @）进行 URL 编码

@@ -11,6 +11,7 @@ from app.models.user_crawl_config import UserCrawlConfig
 from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 from app.models.points import UserPoints, PointsTransaction
 from app.models.quota import UserQuota, CollectionHistory
+from app.models.payment import PaymentOrder
 
 __all__ = [
     "CrawlTask",
@@ -30,4 +31,5 @@ __all__ = [
     "PointsTransaction",
     "UserQuota",
     "CollectionHistory",
+    "PaymentOrder",
 ]

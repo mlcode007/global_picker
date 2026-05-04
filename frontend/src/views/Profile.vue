@@ -136,6 +136,54 @@
       </a-table>
     </a-card>
     
+    <!-- 支付记录 -->
+    <a-card class="payment-orders-card" style="margin-top: 16px">
+      <template #title>
+        <div class="card-title">
+          <span>支付记录</span>
+        </div>
+      </template>
+      <a-table
+        :data-source="paymentOrders"
+        :columns="paymentOrderColumns"
+        :pagination="paymentOrderPagination"
+        :loading="loading.paymentOrders"
+        row-key="id"
+        @change="handlePaymentOrderPageChange"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'status'">
+            <a-tag :color="paymentStatusColorMap[record.status]">
+              {{ paymentStatusMap[record.status] }}
+            </a-tag>
+          </template>
+          <template v-if="column.key === 'amount'">
+            ¥{{ record.amount }}
+          </template>
+          <template v-if="column.key === 'points'">
+            +{{ record.points }} 分
+          </template>
+          <template v-if="column.key === 'created_at'">
+            {{ formatTime(record.created_at) }}
+          </template>
+          <template v-if="column.key === 'paid_at'">
+            {{ record.paid_at ? formatTime(record.paid_at) : '-' }}
+          </template>
+          <template v-if="column.key === 'action'">
+            <a-button 
+              v-if="record.status === 'pending'" 
+              type="link" 
+              size="small" 
+              @click="confirmOrderPayment(record.out_trade_no)"
+            >
+              确认支付
+            </a-button>
+            <span v-else style="color: #999">-</span>
+          </template>
+        </template>
+      </a-table>
+    </a-card>
+    
     <!-- 编辑资料对话框 -->
     <a-modal
       v-model:open="showEditDialog"
@@ -193,26 +241,83 @@
     <a-modal
       v-model:open="showRechargeDialog"
       title="积分充值"
-      @ok="confirmRecharge"
-      @cancel="showRechargeDialog = false"
-      :confirm-loading="loading.recharge"
+      @cancel="cancelRecharge"
+      :footer="null"
+      width="600px"
     >
-      <a-form :model="rechargeForm" layout="vertical">
-        <a-form-item label="充值金额">
-          <a-input-number v-model:value="rechargeForm.amount" :min="100" :step="100" placeholder="请输入充值金额" />
-          <div style="margin-top: 8px; color: #999; font-size: 12px">
-            1元 = 100积分
+      <div v-if="!qrCodeUrl" class="recharge-form">
+        <a-form :model="rechargeForm" layout="vertical">
+          <a-form-item label="充值金额（元）">
+            <a-input-number 
+              v-model:value="rechargeForm.amount" 
+              :min="1" 
+              :max="10000" 
+              :step="1" 
+              placeholder="请输入充值金额"
+              style="width: 100%"
+            />
+            <div style="margin-top: 8px; color: #999; font-size: 12px">
+              1元 = 1积分，最低充值1元
+            </div>
+          </a-form-item>
+          
+          <a-form-item label="快捷金额">
+            <a-space wrap>
+              <a-button @click="rechargeForm.amount = 10">10元</a-button>
+              <a-button @click="rechargeForm.amount = 50">50元</a-button>
+              <a-button @click="rechargeForm.amount = 100">100元</a-button>
+              <a-button @click="rechargeForm.amount = 500">500元</a-button>
+            </a-space>
+          </a-form-item>
+          
+          <a-form-item>
+            <a-button 
+              type="primary" 
+              @click="generateQRCode" 
+              :loading="loading.recharge"
+              block
+              size="large"
+            >
+              充值
+            </a-button>
+          </a-form-item>
+        </a-form>
+      </div>
+      
+      <div v-else class="qr-code-container">
+        <div class="qr-code-header">
+          <h3>请使用支付宝扫码支付</h3>
+          <div class="payment-info">
+            <span class="payment-amount">¥{{ paymentInfo.amount }}</span>
+            <span class="payment-points">可获得 {{ paymentInfo.points }} 积分</span>
           </div>
-        </a-form-item>
-      </a-form>
+        </div>
+        
+        <div class="qr-code-wrapper">
+          <qrcode-vue :value="qrCodeUrl" :size="280" level="H" />
+        </div>
+        
+        <div class="qr-code-footer">
+          <a-alert 
+            :message="paymentStatusText" 
+            :type="paymentStatusType"
+            show-icon
+            style="margin-bottom: 16px"
+          />
+          <a-button @click="cancelRecharge" block>
+            取消支付
+          </a-button>
+        </div>
+      </div>
     </a-modal>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { UserOutlined, UploadOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import QrcodeVue from 'qrcode.vue'
 import { userApi } from '@/api/user'
 import { pointsApi } from '@/api/points'
 import { cloudPhoneApi } from '@/api/cloudPhone'
@@ -225,11 +330,13 @@ const pointsDetail = ref({ total_earned: 0, total_consumed: 0 })
 const myCloudPhone = ref(null)
 const cloudPhoneCount = ref(0)
 const transactions = ref([])
+const paymentOrders = ref([])
 const loading = ref({
   userInfo: false,
   points: false,
   cloudPhone: false,
   transactions: false,
+  paymentOrders: false,
   saveProfile: false,
   recharge: false
 })
@@ -239,13 +346,49 @@ const showRechargeDialog = ref(false)
 const showPointsDetail = ref(false)
 
 const editForm = ref({})
-const rechargeForm = ref({ amount: 100 })
+const rechargeForm = ref({ amount: 10 })
+
+const qrCodeUrl = ref('')
+const paymentInfo = ref({ amount: 0, points: 0, out_trade_no: '' })
+const paymentStatus = ref('pending')
+let queryTimer = null
+let paymentRefreshTimer = null
 
 const transactionPagination = ref({
   current: 1,
   pageSize: 10,
   total: 0
 })
+
+const paymentOrderPagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const paymentStatusMap = {
+  pending: '待支付',
+  paid: '已支付',
+  closed: '已关闭',
+  failed: '支付失败'
+}
+
+const paymentStatusColorMap = {
+  pending: 'default',
+  paid: 'success',
+  closed: 'warning',
+  failed: 'error'
+}
+
+const paymentOrderColumns = [
+  { title: '订单号', dataIndex: 'out_trade_no', key: 'out_trade_no', width: 180 },
+  { title: '支付金额', dataIndex: 'amount', key: 'amount', width: 100 },
+  { title: '获得积分', dataIndex: 'points', key: 'points', width: 100 },
+  { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
+  { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 160 },
+  { title: '支付时间', dataIndex: 'paid_at', key: 'paid_at', width: 160 },
+  { title: '操作', key: 'action', width: 120 },
+]
 
 const businessTypeMap = {
   cross_border: '跨境电商',
@@ -267,6 +410,26 @@ const transactionColumns = [
   { title: '关联ID', dataIndex: 'related_id', key: 'related_id' },
   { title: '交易时间', dataIndex: 'created_at', key: 'created_at' }
 ]
+
+const paymentStatusText = computed(() => {
+  const statusMap = {
+    pending: '等待支付中...',
+    paid: '支付成功！',
+    closed: '订单已关闭',
+    failed: '支付失败'
+  }
+  return statusMap[paymentStatus.value] || '等待支付中...'
+})
+
+const paymentStatusType = computed(() => {
+  const typeMap = {
+    pending: 'info',
+    paid: 'success',
+    closed: 'warning',
+    failed: 'error'
+  }
+  return typeMap[paymentStatus.value] || 'info'
+})
 
 function formatTime(iso) {
   if (!iso) return '-'  
@@ -333,13 +496,47 @@ async function fetchTransactions() {
     }
     const response = await pointsApi.getTransactions(params)
     transactions.value = response
-    // 假设后端返回 total，这里简化处理
-    // transactionPagination.value.total = response.total
   } catch (e) {
     console.error('获取交易记录失败:', e)
     message.error('获取交易记录失败')
   } finally {
     loading.value.transactions = false
+  }
+}
+
+async function fetchPaymentOrders() {
+  loading.value.paymentOrders = true
+  try {
+    const params = {
+      page: paymentOrderPagination.value.current,
+      page_size: paymentOrderPagination.value.pageSize
+    }
+    const response = await pointsApi.getPaymentOrders(params)
+    paymentOrders.value = response.orders
+    paymentOrderPagination.value.total = response.total
+  } catch (e) {
+    console.error('获取支付记录失败:', e)
+    message.error('获取支付记录失败')
+  } finally {
+    loading.value.paymentOrders = false
+  }
+}
+
+function handlePaymentOrderPageChange(pagination) {
+  paymentOrderPagination.value.current = pagination.current
+  paymentOrderPagination.value.pageSize = pagination.pageSize
+  fetchPaymentOrders()
+}
+
+async function confirmOrderPayment(outTradeNo) {
+  try {
+    const response = await pointsApi.confirmPayment(outTradeNo)
+    message.success(response.msg)
+    fetchPaymentOrders()
+    fetchPointsInfo()
+  } catch (e) {
+    console.error('确认支付失败:', e)
+    message.error('确认支付失败')
   }
 }
 
@@ -355,7 +552,6 @@ async function saveProfile() {
     message.success('资料更新成功')
     showEditDialog.value = false
     await fetchUserInfo()
-    // 更新 authStore 中的用户信息
     authStore.user = userInfo.value
     localStorage.setItem('gp_user', JSON.stringify(userInfo.value))
   } catch (e) {
@@ -367,37 +563,88 @@ async function saveProfile() {
 }
 
 function rechargePoints() {
+  qrCodeUrl.value = ''
+  paymentStatus.value = 'pending'
+  rechargeForm.value = { amount: 10 }
   showRechargeDialog.value = true
 }
 
-async function confirmRecharge() {
-  if (!rechargeForm.value.amount || rechargeForm.value.amount <= 0) {
-    message.warning('请输入有效的充值金额')
+async function generateQRCode() {
+  if (!rechargeForm.value.amount || rechargeForm.value.amount < 1) {
+    message.warning('请输入有效的充值金额（最低1元）')
     return
   }
   
   loading.value.recharge = true
   try {
-    const response = await pointsApi.recharge(rechargeForm.value.amount)
-    message.success('充值成功')
-    showRechargeDialog.value = false
-    await fetchPointsInfo()
-    await fetchTransactions()
+    const points = rechargeForm.value.amount
+    const response = await pointsApi.createPayment(points)
+    
+    qrCodeUrl.value = response.qr_code
+    paymentInfo.value = {
+      amount: response.amount,
+      points: response.points,
+      out_trade_no: response.out_trade_no
+    }
+    
+    startPaymentQuery(response.out_trade_no)
   } catch (e) {
-    console.error('充值失败:', e)
-    message.error('充值失败')
+    console.error('生成二维码失败:', e)
+    message.error('生成二维码失败')
   } finally {
     loading.value.recharge = false
   }
 }
 
+function startPaymentQuery(outTradeNo) {
+  stopPaymentQuery()
+  
+  queryTimer = setInterval(async () => {
+    try {
+      const response = await pointsApi.queryPayment(outTradeNo)
+      
+      const status = response.status
+      
+      if (status === 'paid') {
+        paymentStatus.value = 'paid'
+        stopPaymentQuery()
+        message.success('支付成功！')
+        
+        setTimeout(() => {
+          cancelRecharge()
+          fetchPointsInfo()
+          fetchTransactions()
+          fetchPaymentOrders()
+        }, 1500)
+      } else if (status === 'TRADE_CLOSED') {
+        paymentStatus.value = 'closed'
+        stopPaymentQuery()
+      }
+    } catch (e) {
+      console.error('查询支付状态失败:', e)
+    }
+  }, 3000)
+}
+
+function stopPaymentQuery() {
+  if (queryTimer) {
+    clearInterval(queryTimer)
+    queryTimer = null
+  }
+}
+
+function cancelRecharge() {
+  stopPaymentQuery()
+  qrCodeUrl.value = ''
+  paymentStatus.value = 'pending'
+  showRechargeDialog.value = false
+}
+
 function exportTransactions() {
-  // 导出交易记录的逻辑
   message.info('导出功能开发中')
 }
 
 function handleAvatarUpload(file) {
-  // 验证文件类型和大小
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   const isLt2M = file.size / 1024 / 1024 < 2
   
@@ -410,12 +657,10 @@ function handleAvatarUpload(file) {
     return false
   }
   
-  return false // 阻止默认上传，使用 custom-request
+  return false
 }
 
 async function uploadAvatar(options) {
-  // 这里应该实现图片上传逻辑
-  // 简化处理，直接设置一个示例头像
   editForm.value.avatar = 'https://randomuser.me/api/portraits/men/32.jpg'
   options.onSuccess()
   message.success('头像上传成功')
@@ -426,6 +671,19 @@ onMounted(async () => {
   await fetchPointsInfo()
   await fetchCloudPhoneInfo()
   await fetchTransactions()
+  await fetchPaymentOrders()
+  
+  paymentRefreshTimer = setInterval(() => {
+    fetchPaymentOrders()
+  }, 10000)
+})
+
+onUnmounted(() => {
+  stopPaymentQuery()
+  if (paymentRefreshTimer) {
+    clearInterval(paymentRefreshTimer)
+    paymentRefreshTimer = null
+  }
 })
 </script>
 
@@ -543,5 +801,53 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.recharge-form {
+  padding: 16px 0;
+}
+
+.qr-code-container {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.qr-code-header {
+  margin-bottom: 24px;
+}
+
+.qr-code-header h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+}
+
+.payment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.payment-amount {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ff4d4f;
+}
+
+.payment-points {
+  font-size: 14px;
+  color: #666;
+}
+
+.qr-code-wrapper {
+  display: inline-block;
+  padding: 16px;
+  background: #fff;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.qr-code-footer {
+  margin-top: 16px;
 }
 </style>

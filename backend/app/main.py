@@ -49,8 +49,9 @@ def _startup_recover():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Global Picker API 启动 (env=%s)", settings.APP_ENV)
-    # 在后台线程中执行恢复操作，不阻塞服务启动
     threading.Thread(target=_startup_recover, daemon=True).start()
+    from app.services.payment_compensation import start_compensation_scheduler
+    start_compensation_scheduler()
     yield
     logger.info("Global Picker API 关闭")
 

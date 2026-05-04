@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import products, pdd, profit, export, auth, tasks, settings, photo_search, dashboard, cloud_phone, points, user, quota
+from app.api.v1 import products, pdd, profit, export, auth, tasks, settings, photo_search, dashboard, cloud_phone, points, user, quota, payment
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(auth.router)
@@ -15,3 +15,4 @@ router.include_router(dashboard.router)
 router.include_router(cloud_phone.router)
 router.include_router(points.router)
 router.include_router(quota.router)
+router.include_router(payment.router)
