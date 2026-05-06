@@ -10,11 +10,58 @@ const exportHttp = axios.create({
   timeout: 300000,
 })
 
+/** 批量导入链接较多时延长超时 */
+const importHttp = axios.create({
+  baseURL: '/api/v1',
+  timeout: 120000,
+})
+
+importHttp.interceptors.request.use(config => {
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+importHttp.interceptors.response.use(
+  res => {
+    const data = res.data
+    if (data.code !== 0 && data.code !== -1) {
+      message.error(data.message || '请求失败')
+      return Promise.reject(new Error(data.message))
+    }
+    return data.data
+  },
+  err => {
+    const status = err.response?.status
+    const rawDetail = err.response?.data?.detail
+    const serverMsg = err.response?.data?.message
+      || (typeof rawDetail === 'string' ? rawDetail : undefined)
+    if (status === 401) {
+      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem('gp_user')
+      const currentPath = window.location.pathname
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        message.warning('登录已过期，请重新登录')
+        window.location.href = '/login'
+      }
+      return Promise.reject(err)
+    }
+    if (status === 502 || status === 503 || status === 504) {
+      message.error('无法连接后端服务（网关 ' + status + '）。请检查服务是否正常运行。')
+      return Promise.reject(err)
+    }
+    message.error(serverMsg || err.message || '网络错误')
+    return Promise.reject(err)
+  }
+)
+
 export const productApi = {
   list: (params) => http.get('/products', { params }),
   get: (id) => http.get(`/products/${id}`),
   create: (data) => http.post('/products', data),
-  batchImport: (urls) => http.post('/products/batch', { urls }),
+  batchImport: (urls) => importHttp.post('/products/batch', { urls }),
   update: (id, data) => http.patch(`/products/${id}`, data),
   remove: (id) => http.delete(`/products/${id}`),
   batchRemove: (ids) => http.post('/products/batch-delete', { product_ids: ids }),

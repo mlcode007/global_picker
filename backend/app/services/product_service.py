@@ -154,58 +154,110 @@ def batch_create_products(db: Session, urls: List[str], user_id: int, batch_size
     """批量导入商品链接，支持分批导入（默认每批最多50条），导入时不触发Playwright采集"""
     created, duplicates, task_ids = [], [], []
     seen_pids: set[str] = set()
-    
-    for idx, url in enumerate(urls):
+
+    pids = []
+    pure_urls = []
+    for url in urls:
         url = url.strip()
         if not url:
             continue
-
         pid = _extract_tiktok_product_id(url)
+        pids.append(pid)
+        pure_urls.append(url)
+
+    pid_set = {p for p in pids if p}
+    url_set = set(pure_urls)
+
+    existing_map = {}
+    if pid_set:
+        rows = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 0,
+                Product.tiktok_product_id.in_(pid_set),
+            )
+            .all()
+        )
+        for r in rows:
+            existing_map[r.tiktok_product_id] = r
+            existing_map[r.tiktok_url] = r
+    existing_url_keys = {k for k in existing_map.keys() if k in url_set}
+    remaining_urls = url_set - existing_url_keys
+    if remaining_urls:
+        rows2 = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 0,
+                Product.tiktok_url.in_(remaining_urls),
+            )
+            .all()
+        )
+        for r in rows2:
+            existing_map[r.tiktok_url] = r
+
+    deleted_map = {}
+    if pid_set:
+        rows = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 1,
+                Product.tiktok_product_id.in_(pid_set),
+            )
+            .all()
+        )
+        for r in rows:
+            deleted_map[r.tiktok_product_id] = r
+            deleted_map[r.tiktok_url] = r
+    deleted_url_keys = {k for k in deleted_map.keys() if k in url_set}
+    remaining_deleted_urls = url_set - deleted_url_keys
+    if remaining_deleted_urls:
+        rows2 = (
+            db.query(Product)
+            .filter(
+                Product.user_id == user_id,
+                Product.is_deleted == 1,
+                Product.tiktok_url.in_(remaining_deleted_urls),
+            )
+            .all()
+        )
+        for r in rows2:
+            deleted_map[r.tiktok_url] = r
+
+    shared_cache = {}
+    if pid_set:
+        shared_rows = (
+            db.query(Product)
+            .join(CrawlTask, Product.crawl_task_id == CrawlTask.id)
+            .filter(
+                Product.is_deleted == 0,
+                Product.user_id != user_id,
+                CrawlTask.status == "done",
+                Product.tiktok_product_id.in_(pid_set),
+            )
+            .all()
+        )
+        for r in shared_rows:
+            shared_cache[r.tiktok_product_id] = r
+
+    for idx, url in enumerate(pure_urls):
+        pid = pids[idx]
         if pid and pid in seen_pids:
             duplicates.append(url)
             continue
 
-        if pid:
-            existing = (
-                db.query(Product)
-                .filter(
-                    Product.user_id == user_id,
-                    Product.is_deleted == 0,
-                    or_(Product.tiktok_product_id == pid, Product.tiktok_url == url),
-                )
-                .first()
-            )
-        else:
-            existing = db.query(Product).filter(
-                Product.tiktok_url == url,
-                Product.user_id == user_id,
-                Product.is_deleted == 0,
-            ).first()
+        existing = existing_map.get(pid) or existing_map.get(url)
         if existing:
             duplicates.append(url)
             if pid:
                 seen_pids.add(pid)
             continue
 
-        shared = _find_shared_product(db, url, user_id, pid)
+        shared = shared_cache.get(pid)
 
-        # 已存在但软删除 → 恢复记录
-        if pid:
-            deleted = (
-                db.query(Product)
-                .filter(
-                    Product.user_id == user_id,
-                    Product.is_deleted == 1,
-                    or_(Product.tiktok_product_id == pid, Product.tiktok_url == url),
-                )
-                .first()
-            )
-        else:
-            deleted = db.query(Product).filter(
-                Product.tiktok_url == url,
-                Product.user_id == user_id,
-                Product.is_deleted == 1,
-            ).first()
+        deleted = deleted_map.get(pid) or deleted_map.get(url)
         if deleted:
             task = CrawlTask(url=url, status="pending")
             db.add(task)
@@ -245,15 +297,15 @@ def batch_create_products(db: Session, urls: List[str], user_id: int, batch_size
         created.append(url)
         if pid:
             seen_pids.add(pid)
-        
+
         if (idx + 1) % batch_size == 0:
             db.commit()
 
     db.commit()
     total = len(urls)
     return {
-        "created": len(created), 
-        "duplicates": len(duplicates), 
+        "created": len(created),
+        "duplicates": len(duplicates),
         "task_ids": task_ids,
         "total": total,
         "batches": (total + batch_size - 1) // batch_size,
