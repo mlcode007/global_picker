@@ -107,6 +107,8 @@ echo "==> start adb service"
 adb kill-server
 adb start-server
 adb devices
+echo "==> cleanup old artifacts (remove files older than 4 days)"
+find artifacts/pdd_photo/ -type d -mtime +7 -exec rm -rf {} +
 echo "==> restart services"
 systemctl restart global_picker_backend
 systemctl reload nginx
