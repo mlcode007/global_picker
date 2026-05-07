@@ -317,7 +317,7 @@ def save_candidates_to_matches(
     candidates: list,
 ) -> int:
     """把解析出的候选写入 pdd_matches；同步 OSS 图、拼多多商品链接与 goods_id。
-    若该商品尚无主参照，自动将第一个新入库的候选设为主参照。"""
+    若该商品尚无主参照，自动将价格最低的候选设为主参照。"""
     has_primary = db.query(PddMatch).filter(
         PddMatch.product_id == product_id,
         PddMatch.is_primary == 1,
@@ -325,7 +325,8 @@ def save_candidates_to_matches(
 
     saved = 0
     updated_existing = 0
-    first_new_match = None
+    cheapest_new_match = None
+    cheapest_price = None
     for item in candidates:
         if not item.is_valid:
             continue
@@ -369,14 +370,16 @@ def save_candidates_to_matches(
         )
         db.add(match)
         saved += 1
-        if first_new_match is None:
-            first_new_match = match
+        # 记录价格最低的候选
+        if cheapest_new_match is None or (item.price is not None and (cheapest_price is None or item.price < cheapest_price)):
+            cheapest_new_match = match
+            cheapest_price = item.price
 
-    if not has_primary and first_new_match is not None:
-        first_new_match.is_primary = 1
+    if not has_primary and cheapest_new_match is not None:
+        cheapest_new_match.is_primary = 1
         # 更新商品利润信息
         from app.services.pdd_service import _update_product_profit
-        _update_product_profit(db, product_id, first_new_match.pdd_price)
+        _update_product_profit(db, product_id, cheapest_new_match.pdd_price)
 
     if saved or updated_existing:
         db.commit()
