@@ -49,21 +49,6 @@
           <a-button size="small" @click="refreshLiveUrls" :loading="liveUrlLoading">
             <ReloadOutlined /> 刷新画面
           </a-button>
-          <a-dropdown>
-            <a-button size="small">
-              <QuestionCircleOutlined /> 帮助
-            </a-button>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item>
-                  <a href="https://www.chinac.com/docs/help/anc/content/open/WebSDK" target="_blank">Web SDK 文档</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a href="https://console.chinac.com/front/JsSdk/index.html" target="_blank">官方示例</a>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
         </a-space>
       </template>
 
