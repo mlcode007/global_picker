@@ -4,7 +4,7 @@
  */
 
 const CONFIG = {
-  apiBaseUrl: 'http://47.238.72.198/api/v1',
+  apiBaseUrl: 'https://www.globalpicker.com/api/v1',
   dailyCollectionLimit: 10000,
   authCheckInterval: 5 * 60 * 1000,
   requestTimeout: 10000,
@@ -277,7 +277,7 @@ const BackgroundService = {
 
   async syncFromWebPage() {
     try {
-      const tabs = await chrome.tabs.query({ url: ['http://localhost:5173/*', 'http://localhost:8000/*', 'http://47.238.72.198/*'] });
+      const tabs = await chrome.tabs.query({ url: ['http://localhost:5173/*', 'http://localhost:8000/*', 'http://www.globalpicker.com/*', 'https://www.globalpicker.com/*', 'http://47.238.72.198/*'] });
       if (tabs.length === 0) {
         Logger.debug('未找到 Global Picker 页面');
         return false;
@@ -392,7 +392,7 @@ const BackgroundService = {
   setupTabUpdateListener() {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (changeInfo.status === 'complete' && tab.url &&
-          (tab.url.startsWith('http://localhost:5173') || tab.url.startsWith('http://localhost:8000') || tab.url.startsWith('http://47.238.72.198'))) {
+          (tab.url.startsWith('http://localhost:5173') || tab.url.startsWith('http://localhost:8000') || tab.url.startsWith('http://www.globalpicker.com') || tab.url.startsWith('https://www.globalpicker.com') || tab.url.startsWith('http://47.238.72.198'))) {
         Logger.info('检测到 Global Picker 页面加载完成，尝试同步登录状态');
         setTimeout(() => this.syncFromWebPage(), 2000);
       }
@@ -450,7 +450,7 @@ const BackgroundService = {
       if (success) {
         sendResponse({ success: true });
       } else {
-        sendResponse({ success: false, error: { code: 'NOT_LOGGED_IN', message: '网页未登录，请先在 <a href="http://localhost:5173" target="_blank" style="color:inherit;text-decoration:underline;">Global Picker</a> 平台登录' } });
+        sendResponse({ success: false, error: { code: 'NOT_LOGGED_IN', message: '网页未登录，请先在 <a href="https://www.globalpicker.com" target="_blank" style="color:inherit;text-decoration:underline;">Global Picker</a> 平台登录' } });
       }
     } catch (e) {
       Logger.error('同步登录状态失败:', e);
