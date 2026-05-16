@@ -808,13 +808,13 @@ function readStoredPhotoBatchMax() {
 }
 
 function readStoredPhotoBatchFetchPddLinks() {
-  if (typeof localStorage === 'undefined') return true
+  if (typeof localStorage === 'undefined') return false
   try {
     const raw = localStorage.getItem(LS_PHOTO_BATCH_FETCH_LINKS)
-    if (raw == null) return true
+    if (raw == null) return false
     return raw === '1' || raw === 'true'
   } catch {
-    return true
+    return false
   }
 }
 

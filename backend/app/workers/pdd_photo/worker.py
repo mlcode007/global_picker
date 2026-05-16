@@ -39,6 +39,24 @@ DOWNLOAD_TIMEOUT = 30
 MAX_CANDIDATES = 4
 
 
+def _resolve_flow_modules():
+    """根据配置返回对应的 FlowContext / FlowError / PddPhotoFlow 和 link_extractor。"""
+    engine = get_settings().PDD_PHOTO_ENGINE
+    if engine == "u2":
+        from app.workers.pdd_photo_u2.pdd_photo_flow_u2 import (
+            FlowContext, FlowError, PddPhotoFlow,
+        )
+        from app.workers.pdd_photo_u2.link_extractor_u2 import fill_product_links_from_detail_taps
+        from app.workers.pdd_photo_u2.u2_client import U2Client as AdbClient
+    else:
+        from app.workers.pdd_photo.pdd_photo_flow import (
+            FlowContext, FlowError, PddPhotoFlow,
+        )
+        from app.workers.pdd_photo.link_extractor import fill_product_links_from_detail_taps
+        from app.workers.pdd_photo.adb_client import AdbClient
+    return FlowContext, FlowError, PddPhotoFlow, fill_product_links_from_detail_taps, AdbClient
+
+
 def _task_max_candidates(task) -> int:
     """任务配置的入库上限；缺省或异常时回退为 MAX_CANDIDATES。"""
     raw = getattr(task, "max_candidates", None)
@@ -53,6 +71,8 @@ def _task_max_candidates(task) -> int:
 
 def execute_photo_search_task(task_id: int):
     """后台执行一个拍照购任务（线程安全，使用独立 DB session）。"""
+    FlowContext, FlowError, PddPhotoFlow, fill_product_links_from_detail_taps, AdbClient = _resolve_flow_modules()
+
     db = SessionLocal()
     device_serial = None
     local_image = None

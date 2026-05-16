@@ -97,7 +97,9 @@ class PddPhotoFlow:
                 try:
                     step_fn()
                     elapsed = int((time.monotonic() - t0) * 1000)
-                    shot = self.adb.screenshot(tag=step_enum.value)
+                    shot = None
+                    # if step_enum == FlowStep.COLLECT_RESULT:
+                    #     shot = self.adb.screenshot(tag=step_enum.value)
                     self.ctx.step_logs.append(StepLog(
                         step=step_enum.value,
                         action=f"{step_enum.value} completed",
@@ -217,7 +219,7 @@ class PddPhotoFlow:
         self.adb.kill_uiautomator()
 
         for i in range(25):
-            time.sleep(0.8)
+            time.sleep(0.1)
 
             pkg, act = self.adb.current_activity()
             if pkg != PDD_PACKAGE:
@@ -226,7 +228,7 @@ class PddPhotoFlow:
                 self.adb.press_back()
                 continue
 
-            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=4)
+            xml = self.adb.dump_ui_xml(tag=f"wait_result_{i}", timeout=2)
             if not xml:
                 logger.debug("wait_result %d: dump failed, retrying", i)
                 self.adb.kill_uiautomator()

@@ -40,3 +40,6 @@ opencv-python>=4.8.0
 
 # 支付宝支付
 python-alipay-sdk>=3.3.0
+
+# uiautomator2（拍照购 u2 版本）
+uiautomator2>=3.2.0

@@ -59,7 +59,10 @@ class Settings(BaseSettings):
     SMS_SEND_INTERVAL_SECONDS: int = 60
 
     # 拼多多拍照购：在结果页依次点进详情，从 dumpsys 解析 goods_id（约多 4s/条）
-    PDD_EXTRACT_PRODUCT_LINKS: bool = True
+    PDD_EXTRACT_PRODUCT_LINKS: bool = False
+
+    # 拍照购执行引擎版本：adb（原版）或 u2（uiautomator2 版本）
+    PDD_PHOTO_ENGINE: str = "adb"
 
     # 支付宝支付
     ALIPAY_APP_ID: str = ""
