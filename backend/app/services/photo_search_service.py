@@ -449,3 +449,180 @@ def sync_match_images_from_task_result(db: Session, task_id: int) -> dict:
         db.commit()
     logger.info("sync_match_images_from_task_result task=#%d updated=%d", task_id, updated)
     return {"task_id": task_id, "updated": updated}
+
+
+# ── 批量任务与队列管理 ────────────────────────────────────────
+
+
+def create_batch_tasks(
+    db: Session,
+    product_ids: List[int],
+    user_id: int,
+    image_index: int = 0,
+    fetch_pdd_links: bool = True,
+    max_candidates: int = 4,
+) -> dict:
+    """批量创建拍照购任务"""
+    from app.workers.pdd_photo.task_scheduler import batch_manager
+
+    batch_id = batch_manager.create_batch(product_ids, user_id)
+    task_ids = []
+    skipped_products = []
+    failed_products = []
+
+    for product_id in product_ids:
+        try:
+            task = create_task(
+                db,
+                product_id,
+                image_index=image_index,
+                fetch_pdd_links=fetch_pdd_links,
+                max_candidates=max_candidates,
+            )
+            task_ids.append(task.id)
+            batch_manager.add_task_to_batch(batch_id, task.id)
+        except DuplicateTaskError:
+            skipped_products.append(product_id)
+        except Exception as e:
+            failed_products.append(product_id)
+            logger.error("Failed to create task for product #%d: %s", product_id, e)
+
+    return {
+        'batch_id': batch_id,
+        'total_count': len(product_ids),
+        'created_count': len(task_ids),
+        'skipped_count': len(skipped_products),
+        'failed_count': len(failed_products),
+        'task_ids': task_ids,
+        'skipped_products': skipped_products,
+        'failed_products': failed_products,
+    }
+
+
+def get_batch_task_status(db: Session, batch_id: str) -> dict:
+    """获取批量任务状态汇总"""
+    from app.workers.pdd_photo.task_scheduler import batch_manager
+
+    batch_info = batch_manager.get_batch_info(batch_id)
+    if not batch_info:
+        raise ValueError(f"批次 {batch_id} 不存在")
+
+    task_ids = batch_info['task_ids']
+    if not task_ids:
+        return {
+            'batch_id': batch_id,
+            'total_count': len(batch_info['product_ids']),
+            'pending_count': 0,
+            'running_count': 0,
+            'success_count': 0,
+            'failed_count': 0,
+            'cancelled_count': 0,
+            'progress': 1.0,
+            'started_at': None,
+            'completed_at': None,
+        }
+
+    tasks = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.id.in_(task_ids)
+    ).all()
+
+    pending = 0
+    running = 0
+    success = 0
+    failed = 0
+    cancelled = 0
+    started_at = None
+    completed_at = None
+
+    for task in tasks:
+        if task.status == 'queued':
+            pending += 1
+        elif task.status in ('dispatching', 'running', 'collecting', 'parsing', 'saving'):
+            running += 1
+            if not started_at or (task.started_at and (not started_at or task.started_at < started_at)):
+                started_at = task.started_at
+        elif task.status == 'success':
+            success += 1
+            if task.finished_at:
+                if not completed_at or task.finished_at > completed_at:
+                    completed_at = task.finished_at
+        elif task.status == 'failed':
+            failed += 1
+            if task.finished_at:
+                if not completed_at or task.finished_at > completed_at:
+                    completed_at = task.finished_at
+        elif task.status == 'cancelled':
+            cancelled += 1
+            if task.finished_at:
+                if not completed_at or task.finished_at > completed_at:
+                    completed_at = task.finished_at
+
+    total = len(task_ids)
+    progress = (success + failed + cancelled) / total if total > 0 else 0.0
+
+    return {
+        'batch_id': batch_id,
+        'total_count': total,
+        'pending_count': pending,
+        'running_count': running,
+        'success_count': success,
+        'failed_count': failed,
+        'cancelled_count': cancelled,
+        'progress': progress,
+        'started_at': started_at,
+        'completed_at': completed_at if progress == 1.0 else None,
+    }
+
+
+def get_task_queue_status(db: Session) -> dict:
+    """获取任务队列状态"""
+    from app.workers.pdd_photo.task_scheduler import scheduler
+
+    queued_count = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.status == 'queued'
+    ).count()
+
+    running_count = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.status.in_(['dispatching', 'running', 'collecting', 'parsing', 'saving'])
+    ).count()
+
+    success_count = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.status == 'success'
+    ).count()
+
+    failed_count = db.query(PhotoSearchTask).filter(
+        PhotoSearchTask.status == 'failed'
+    ).count()
+
+    available_devices = db.query(Device).filter(Device.status == 'idle').count()
+    busy_devices = db.query(Device).filter(Device.status == 'busy').count()
+
+    queue_status = scheduler.get_queue_status()
+
+    return {
+        'queued_count': queued_count,
+        'running_count': running_count,
+        'success_count': success_count,
+        'failed_count': failed_count,
+        'available_devices': available_devices,
+        'busy_devices': busy_devices,
+        'active_tasks': queue_status.get('active_tasks', 0),
+        'pending_tasks': queue_status.get('pending_tasks', 0),
+    }
+
+
+def schedule_queued_tasks(db: Session, limit: Optional[int] = None) -> int:
+    """调度所有 queued 状态的任务"""
+    from app.workers.pdd_photo.task_scheduler import scheduler
+
+    query = db.query(PhotoSearchTask).filter(PhotoSearchTask.status == 'queued')
+    if limit:
+        query = query.limit(limit)
+
+    tasks = query.all()
+    task_ids = [t.id for t in tasks]
+
+    if task_ids:
+        scheduler.add_tasks(task_ids)
+
+    return len(task_ids)

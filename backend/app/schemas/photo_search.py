@@ -99,3 +99,60 @@ class DeviceActionLogOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class BatchPhotoSearchTaskCreate(BaseModel):
+    """批量创建拍照购任务请求"""
+    product_ids: List[int]
+    image_index: int = 0
+    fetch_pdd_links: bool = True
+    max_candidates: int = 4
+    # 并发度限制（默认使用所有可用设备）
+    concurrency: Optional[int] = None
+
+    @field_validator("max_candidates", mode="before")
+    @classmethod
+    def _clamp_batch_max_candidates(cls, v):
+        if v is None:
+            return 4
+        try:
+            n = int(v)
+        except (TypeError, ValueError):
+            return 4
+        return max(1, min(n, 50))
+
+
+class BatchTaskResult(BaseModel):
+    """批量任务创建结果"""
+    batch_id: str
+    total_count: int
+    created_count: int
+    skipped_count: int
+    failed_count: int
+    task_ids: List[int]
+    skipped_products: List[int] = []
+    failed_products: List[int] = []
+
+
+class BatchTaskStatusOut(BaseModel):
+    """批量任务状态汇总"""
+    batch_id: str
+    total_count: int
+    pending_count: int
+    running_count: int
+    success_count: int
+    failed_count: int
+    cancelled_count: int
+    progress: float
+    started_at: Optional[datetime]
+    completed_at: Optional[datetime]
+
+
+class TaskQueueStatus(BaseModel):
+    """任务队列状态"""
+    queued_count: int
+    running_count: int
+    success_count: int
+    failed_count: int
+    available_devices: int
+    busy_devices: int

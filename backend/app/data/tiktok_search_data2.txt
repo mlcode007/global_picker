@@ -1,0 +1,2246 @@
+{
+  "success": true,
+  "credits_remaining": 86,
+  "query": "shoe",
+  "total_products": 30,
+  "products": [
+    {
+      "product_id": "1731236548888725307",
+      "title": "Sneakers untuk Lelaki, Bernafas, Atasan Tinggi Jaringan, Kasut Sukan, Ringan, Kasut Lari Rata Kasual",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1731236548888725307",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/03b1b715adfa4baa809c372fd75acef7",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/03b1b715adfa4baa809c372fd75acef7~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/03b1b715adfa4baa809c372fd75acef7~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "26.37",
+        "sale_price_format": "26.37",
+        "single_product_price_format": "26.37",
+        "single_product_price_decimal": "26.37",
+        "sale_price_integer_part_format": "26",
+        "sale_price_decimal_part_format": "37",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "29.90",
+        "origin_price_format": "29.90",
+        "discount_decimal": "0.12",
+        "discount_format": "12%",
+        "reduce_price_format": "Saving RM3.53",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "3.53",
+          "seller_subtotal_deduction_decimal": "3"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 9246
+      },
+      "seller_info": {
+        "seller_id": "7495918911833082683",
+        "shop_name": "Aidouy",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668371",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1731236548888725307",
+        "slug": "sneakers-untuk-lelaki-bernafas-atasan-tinggi-jaringan-kasut-sukan-ringan-kasut-lari-rata-kasual",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734207121132782891",
+      "title": "MAKERZ PEOPLE LAMO TAPIR (ASAS T2)",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734207121132782891",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/ce7ce2381de848d7898883f89e3ac41b",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/ce7ce2381de848d7898883f89e3ac41b~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/ce7ce2381de848d7898883f89e3ac41b~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "281.91",
+        "sale_price_format": "281.91",
+        "single_product_price_format": "281.91",
+        "single_product_price_decimal": "281.91",
+        "sale_price_integer_part_format": "281",
+        "sale_price_decimal_part_format": "91",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "565.00",
+        "origin_price_format": "565.00",
+        "discount_decimal": "0.50",
+        "discount_format": "50%",
+        "reduce_price_format": "Saving RM283.09",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "283.09",
+          "seller_subtotal_deduction_decimal": "283"
+        }
+      },
+      "rate_info": null,
+      "sold_info": null,
+      "seller_info": {
+        "seller_id": "7494336985944524075",
+        "shop_name": "Nusa Style",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668371",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734207121132782891",
+        "slug": "makerz-people-lamo-tapir-asas-t2",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734266785256867178",
+      "title": "Sneakers Bola Keranjang,UntukLelaki dan Wanita,Bernafas,Deodoran, BahanJaringan,Tahan Lama,TapakLembut,Sesuai untuk Pelajar,Kasut Sukan danLarian,Elegan dan Serba guna, Bergaya kasutmarathon Outdoor Shoes，Sports Sepatu",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734266785256867178",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "73.90",
+        "sale_price_format": "73.90",
+        "single_product_price_format": "73.90",
+        "single_product_price_decimal": "73.90",
+        "sale_price_integer_part_format": "73",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "149.80",
+        "origin_price_format": "149.80",
+        "discount_decimal": "0.51",
+        "discount_format": "51%",
+        "reduce_price_format": "Saving RM75.90",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "75.90",
+          "seller_subtotal_deduction_decimal": "75"
+        }
+      },
+      "rate_info": {
+        "score": 5,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 317
+      },
+      "seller_info": {
+        "seller_id": "7494379207943226730",
+        "shop_name": "VEDUK",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668372",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734266785256867178",
+        "slug": "sneakers-bola-keranjang-untuklelaki-dan-wanita-bernafas-deodoran-bahanjaringan-tahan-lama-tapaklembut-sesuai-untuk-pelajar-kasut-sukan-danlarian-elegan-dan-serba-guna-bergaya-kasutmarathon-outdoor-shoes-sports-sepatu",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1733360949125875210",
+      "title": "[FREE SOCKS & BIG SALE] Kasut Keselamatan, Kaki Keluli + Bahagian Bawah, Kasut Anti-hempas dan Anti-pisau, Kasut Kerja, Kasut Berjalan, Sesuai untuk Lelaki dan Wanita, Kasut Anti-perlanggaran, Kasut, Kasut Kerja",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "label_type": 34,
+          "text": "Giao nhanh 24h"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1733360949125875210",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/0e70396d9c8545e29bcdd2b6ef21df8c",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/0e70396d9c8545e29bcdd2b6ef21df8c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/0e70396d9c8545e29bcdd2b6ef21df8c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "29.90",
+        "sale_price_format": "29.90",
+        "single_product_price_format": "29.90",
+        "single_product_price_decimal": "29.90",
+        "sale_price_integer_part_format": "29",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "99.00",
+        "origin_price_format": "99.00",
+        "discount_decimal": "0.70",
+        "discount_format": "70%",
+        "reduce_price_format": "Saving RM69.10",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "69.10",
+          "seller_subtotal_deduction_decimal": "69"
+        }
+      },
+      "rate_info": {
+        "score": 4.8,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 8058
+      },
+      "seller_info": {
+        "seller_id": "7495857253963434506",
+        "shop_name": "ABU BAKARada",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668372",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1733360949125875210",
+        "slug": "free-socks-big-sale-kasut-keselamatan-kaki-keluli-bahagian-bawah-kasut-anti-hempas-dan-anti-pisau-kasut-kerja-kasut-berjalan-sesuai-untuk-lelaki-dan-wanita-kasut-anti-perlanggaran-kasut-kasut-kerja",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734093917275784266",
+      "title": "Kasut Lelaki 2026 Kasut Kulit Kasual Lelaki Sukan Sneakers Putih Lelaki Selesa",
+      "product_description": null,
+      "ship_from": "Trung Hoa",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734093917275784266",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/7590e5101220468e8531215869dca76c",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7590e5101220468e8531215869dca76c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7590e5101220468e8531215869dca76c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "26.50",
+        "sale_price_format": "26.50",
+        "single_product_price_format": "26.50",
+        "single_product_price_decimal": "26.50",
+        "sale_price_integer_part_format": "26",
+        "sale_price_decimal_part_format": "50",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "30.99",
+        "origin_price_format": "30.99",
+        "discount_decimal": "0.14",
+        "discount_format": "14%",
+        "reduce_price_format": "Saving RM4.49",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "4.49",
+          "seller_subtotal_deduction_decimal": "4"
+        }
+      },
+      "rate_info": null,
+      "sold_info": {
+        "sold_count": 1
+      },
+      "seller_info": {
+        "seller_id": "7494371091530024010",
+        "shop_name": "FJZ shop",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668372",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734093917275784266",
+        "slug": "kasut-lelaki-2026-kasut-kulit-kasual-lelaki-sukan-sneakers-putih-lelaki-selesa",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729509964425234186",
+      "title": "[Online Exclusive] NORTH STAR Luke Men White/Blue Sneaker 8201122/8209122 Kasut Lelaki Casual",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1729509964425234186",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/39a5160535ab449a8d5e97132b2fe790",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/39a5160535ab449a8d5e97132b2fe790~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/39a5160535ab449a8d5e97132b2fe790~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "79.99",
+        "sale_price_format": "79.99",
+        "single_product_price_format": "79.99",
+        "single_product_price_decimal": "79.99",
+        "sale_price_integer_part_format": "79",
+        "sale_price_decimal_part_format": "99",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "159.00",
+        "origin_price_format": "159.00",
+        "discount_decimal": "0.50",
+        "discount_format": "50%",
+        "reduce_price_format": "Saving RM79.01",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "79.01",
+          "seller_subtotal_deduction_decimal": "79"
+        }
+      },
+      "rate_info": {
+        "score": 4.9,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 5231
+      },
+      "seller_info": {
+        "seller_id": "7494831249052896010",
+        "shop_name": "Official Bata Store 24104-P",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668372",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729509964425234186",
+        "slug": "online-exclusive-north-star-luke-men-white-blue-sneaker-8201122-8209122-kasut-lelaki-casual",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1733982176993249214",
+      "title": "Musim Bunga dan Musim Gugur Kasut Gaya Sukan Kasual Baharu Kasut Bernafas Lelaki dan Wanita Bujang Bertali Kasut Kembara Kasut Kembara Selipar getah sarung selipar dalaman",
+      "product_description": null,
+      "ship_from": "Trung Hoa",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1733982176993249214",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/43437d72bb5f4298bdedfa15c73d6958",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/43437d72bb5f4298bdedfa15c73d6958~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/43437d72bb5f4298bdedfa15c73d6958~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "11.01",
+        "sale_price_format": "11.01",
+        "single_product_price_format": "11.01",
+        "single_product_price_decimal": "11.01",
+        "sale_price_integer_part_format": "11",
+        "sale_price_decimal_part_format": "01",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "12.23",
+        "origin_price_format": "12.23",
+        "discount_decimal": "0.10",
+        "discount_format": "10%",
+        "reduce_price_format": "Saving RM1.22",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "1.22",
+          "seller_subtotal_deduction_decimal": "1"
+        }
+      },
+      "rate_info": null,
+      "sold_info": null,
+      "seller_info": {
+        "seller_id": "8655238189784795070",
+        "shop_name": "Display shoes and boots002",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668372",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1733982176993249214",
+        "slug": "musim-bunga-dan-musim-gugur-kasut-gaya-sukan-kasual-baharu-kasut-bernafas-lelaki-dan-wanita-bujang-bertali-kasut-kembara-kasut-kembara-selipar-getah-sarung-selipar-dalaman",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729759783397459104",
+      "title": "Penghantaran Cepat 2024 Kasut Papan Kasual Baharu untuk Lelaki, Kecil dan Serbaguna, Kasut Lelaki Baharu, Kasut Sukan Rendah Atas dan Kasual untuk Lelaki",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "7615233962037873938",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_video_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/b02c2908c9e1428b89020257b610c32c",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b02c2908c9e1428b89020257b610c32c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b02c2908c9e1428b89020257b610c32c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": {
+        "url_list": [
+          "https://v45-eu.tiktokcdn.com/4d4f290ae5d917717596239485a686f2/6a024e8f/video/tos/alisg/tos-alisg-pve-0037c001/okr9PQuB0AvzWxqiiBD1kAIACAzuf1xwoIEvug/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=716&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=NjQ0ZmkzNTM3aGk4OTRpPEBpanBoZG05cmplOTMzODczNEA0MmNfLTQyXmIxYDZiYDAzYSNpaDMtMmRjcWthLS1kMWBzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000bd000",
+          "https://v15m.tiktokcdn.com/ebfa5f394cf7241811a19b32252c071a/6a024e8f/video/tos/alisg/tos-alisg-pve-0037c001/okr9PQuB0AvzWxqiiBD1kAIACAzuf1xwoIEvug/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=716&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=NjQ0ZmkzNTM3aGk4OTRpPEBpanBoZG05cmplOTMzODczNEA0MmNfLTQyXmIxYDZiYDAzYSNpaDMtMmRjcWthLS1kMWBzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000b8000",
+          "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=693fc1e695cf4ee4a052700fbcf15173&is_play_url=1&item_id=7615233962037873938&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLmFiZTRkM2JlNWM5ZTA2Nzg2YTRmNmNiMjQyODYzZTNl&source=SEARCH&video_id=v1c044g50000d6nbtgfog65j0a6ekmlg"
+        ],
+        "img_urls": [],
+        "aweme_id": "7615233962037873938",
+        "desc": "#affiliate #tiktokshop ",
+        "create_time": 1773059831,
+        "share_url": "https://www.tiktok.com/@putry_amira0/video/7615233962037873938?_r=1&u_code=f026i8fk5ehah8&region=NL&mid=7488612324162897921&preview_pb=0&sharer_language=vi&_d=f034lefgmckl2k&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227615233962037873938%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-sign-sg.tiktokcdn.com%252Ftos-alisg-p-0037%252FowiwoWvgAA9C1zu0IRrAAqzTviIhIAiu2Wy1fB~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253Df1baad52%2526x-expires%253D1809982800%2526x-signature%253DSoQAD2G%25252FEJmyCbMvaSWiPsi6WdM%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy2%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221729759783397459104%22%2C%22placeholder_video_id%22%3A%227615233962037873938%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7615233962037873938&source=h5_t",
+        "duration_ms": 12098,
+        "author": {
+          "uid": "7543245705345008647",
+          "nickname": "Putry_Amira",
+          "unique_id": "putry_amira0",
+          "sec_uid": "MS4wLjABAAAAmhUyOkrEA4KfmrFW3Nh7Ajd-gw0VaOv_HQaUCj1bZj3dRLNyOy96v4dXKa6WnRS7",
+          "follower_count": 1254
+        },
+        "music": {
+          "id": 7488612324162898000,
+          "id_str": "7488612324162897921",
+          "title": "TABOLA BALE",
+          "author": "SILET OPEN UP & Jacson Seran & Juan Reza & Diva Aurel"
+        },
+        "statistics": {
+          "comment_count": 1,
+          "digg_count": 272,
+          "play_count": 33367,
+          "share_count": 19,
+          "collect_count": 51
+        },
+        "cha_list": [
+          {
+            "cid": "29289204",
+            "cha_name": "affiliate",
+            "desc": ""
+          }
+        ]
+      },
+      "category_breadcrumb": [
+        {
+          "category_id": 601352,
+          "category_name": "Kasut",
+          "level": 1
+        },
+        {
+          "category_id": 900616,
+          "category_name": "Kasut Lelaki",
+          "level": 2
+        },
+        {
+          "category_id": 601357,
+          "category_name": "Kasut Kasual",
+          "level": 3
+        }
+      ],
+      "product_price_info": {
+        "sale_price_decimal": "29.90",
+        "sale_price_format": "29.90",
+        "single_product_price_format": "29.90",
+        "single_product_price_decimal": "29.90",
+        "sale_price_integer_part_format": "29",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "35.00",
+        "origin_price_format": "35.00",
+        "discount_decimal": "0.15",
+        "discount_format": "15%",
+        "reduce_price_format": "Saving RM5.10",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "5.10",
+          "seller_subtotal_deduction_decimal": "5"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 1910
+      },
+      "seller_info": {
+        "seller_id": "7495869098662529184",
+        "shop_name": "RENNY BIGOH",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668389",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729759783397459104",
+        "slug": "penghantaran-cepat-2024-kasut-papan-kasual-baharu-untuk-lelaki-kecil-dan-serbaguna-kasut-lelaki-baharu-kasut-sukan-rendah-atas-dan-kasual-untuk-lelaki",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734059486225794057",
+      "title": "Kasut sukan baharu 2026 untuk musim panas, serbaguna dan sesuai untuk pelajar; kasut sukan kasual lelaki serta kasut wanita berjaring; sandal sukan panjang.",
+      "product_description": null,
+      "ship_from": "Trung Hoa",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734059486225794057",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/97eabdd7fb914d32ba97c8bfe3bf3d81",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/97eabdd7fb914d32ba97c8bfe3bf3d81~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/97eabdd7fb914d32ba97c8bfe3bf3d81~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "10.17",
+        "sale_price_format": "10.17",
+        "single_product_price_format": "10.17",
+        "single_product_price_decimal": "10.17",
+        "sale_price_integer_part_format": "10",
+        "sale_price_decimal_part_format": "17",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "11.05",
+        "origin_price_format": "11.05",
+        "discount_decimal": "0.08",
+        "discount_format": "8%",
+        "reduce_price_format": "Saving RM0.88",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "0.88",
+          "seller_subtotal_deduction_decimal": "0"
+        }
+      },
+      "rate_info": null,
+      "sold_info": {
+        "sold_count": 1
+      },
+      "seller_info": {
+        "seller_id": "8657926286343701513",
+        "shop_name": "Xin Yuan Huisware",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668389",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734059486225794057",
+        "slug": "kasut-sukan-baharu-2026-untuk-musim-panas-serbaguna-dan-sesuai-untuk-pelajar-kasut-sukan-kasual-lelaki-serta-kasut-wanita-berjaring-sandal-sukan-panjang",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1731874900968768708",
+      "title": "adidas Lifestyle Streetball Shoes Unisex Blue EE4968",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_119-119",
+      "product_label_info": [
+        {
+          "label_type": 119,
+          "text": "Giao hỏa tốc"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "7624414972457831701",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_video_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/af68e198aaa8f8b4184a274e12ec974c",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/af68e198aaa8f8b4184a274e12ec974c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/af68e198aaa8f8b4184a274e12ec974c~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": {
+        "url_list": [
+          "https://v45-eu.tiktokcdn.com/634f779148320212390c9320deabdf53/6a024e8b/video/tos/alisg/tos-alisg-pve-0037/ogAPgBR00i7QBK3E58PfAiX5vBgc76I5dtZc9w/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1275&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=aGQ6N2c2ZGdnZTVoOzg5NEBpM3dreXM5cndvOjMzODgzNUAuM2FeYjE2XzYxYDUzXzIyYSNyZl9xMmRzbTRhLS1kLzZzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000b5000",
+          "https://v15m.tiktokcdn.com/c59f08e21f38446b85fa8c77eec4e512/6a024e8b/video/tos/alisg/tos-alisg-pve-0037/ogAPgBR00i7QBK3E58PfAiX5vBgc76I5dtZc9w/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1275&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=aGQ6N2c2ZGdnZTVoOzg5NEBpM3dreXM5cndvOjMzODgzNUAuM2FeYjE2XzYxYDUzXzIyYSNyZl9xMmRzbTRhLS1kLzZzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000b0000",
+          "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=5156b5688ec24b9dbd9a43eda4d76a1e&is_play_url=1&item_id=7624414972457831701&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLmNiN2E3MGRmMmQ4ODRkZDE1ZThlYWYyYjUwMjZhMWIy&source=SEARCH&video_id=v29025g50000d77lptvog65ptvbhitu0"
+        ],
+        "img_urls": [],
+        "aweme_id": "7624414972457831701",
+        "desc": "#fyp #fyppppppppppppppppppppppp #fypage #viral #tranding",
+        "create_time": 1775199600,
+        "share_url": "https://www.tiktok.com/@kasutjaya/video/7624414972457831701?_r=1&u_code=f026i8fk5ehah8&region=NL&mid=7624415025259694849&preview_pb=0&sharer_language=vi&_d=f034lefgmckl2k&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227624414972457831701%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-common-sign.tiktokcdn.com%252Ftos-alisg-p-0037%252FoccP5097iPo6AisPZB0IawgXX7g5A8B5BIRfKd~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253Ded0b3de1%2526x-expires%253D1809982800%2526x-signature%253DJApmDHvg3smm%25252F3Ox7Vp6Oi3cykk%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy2%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221731874900968768708%22%2C%22placeholder_video_id%22%3A%227624414972457831701%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7624414972457831701&source=h5_t",
+        "duration_ms": 8000,
+        "author": {
+          "uid": "7311509066466165762",
+          "nickname": "KASUT JAYA",
+          "unique_id": "kasutjaya",
+          "sec_uid": "MS4wLjABAAAAe2VjdetbWJfT_mB4Pg6abn_lFfTdjBgwXFGttcXMiqxFVTQ-cfjIS3Hvu5WpQ8SU",
+          "follower_count": 2308
+        },
+        "music": {
+          "id": 7624415025259695000,
+          "id_str": "7624415025259694849",
+          "title": "âm thanh gốc - KASUT JAYA",
+          "author": "KASUT JAYA"
+        },
+        "statistics": {
+          "comment_count": 3,
+          "digg_count": 62,
+          "play_count": 21671,
+          "share_count": 65,
+          "collect_count": 8
+        },
+        "cha_list": [
+          {
+            "cid": "229207",
+            "cha_name": "fyp",
+            "desc": ""
+          }
+        ]
+      },
+      "category_breadcrumb": [
+        {
+          "category_id": 601352,
+          "category_name": "Kasut",
+          "level": 1
+        },
+        {
+          "category_id": 900616,
+          "category_name": "Kasut Lelaki",
+          "level": 2
+        },
+        {
+          "category_id": 601357,
+          "category_name": "Kasut Kasual",
+          "level": 3
+        }
+      ],
+      "product_price_info": {
+        "sale_price_decimal": "20.00",
+        "sale_price_format": "20.00",
+        "single_product_price_format": "20.00",
+        "single_product_price_decimal": "20.00",
+        "sale_price_integer_part_format": "20",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "promotion_deduction_details": null
+      },
+      "rate_info": null,
+      "sold_info": {
+        "sold_count": 665
+      },
+      "seller_info": {
+        "seller_id": "7496204561054664900",
+        "shop_name": "Intrepid UAT",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668391",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1731874900968768708",
+        "slug": "adidas-lifestyle-streetball-shoes-unisex-blue-ee4968",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734219198754752301",
+      "title": "Kasut Latihan Jerman Warna Pepejal Kulit untuk Lelaki 2026 Kasut Kasut Bertapak Tebal Baharu Kasut Kasual Platform Meningkatkan Ketinggian Lelaki",
+      "product_description": null,
+      "ship_from": "Trung Hoa",
+      "trust_label": null,
+      "product_label": "promotion_label_4-7637734630918506248,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734219198754752301",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/7ffeda2ee75546fabd8f5811440aca9b",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7ffeda2ee75546fabd8f5811440aca9b~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7ffeda2ee75546fabd8f5811440aca9b~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "0.01",
+        "sale_price_format": "0.01",
+        "single_product_price_format": "0.01",
+        "single_product_price_decimal": "0.01",
+        "sale_price_integer_part_format": "0",
+        "sale_price_decimal_part_format": "01",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "15.00",
+        "origin_price_format": "15.00",
+        "discount_decimal": "0.99",
+        "discount_format": "99%",
+        "reduce_price_format": "Saving RM14.99",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "14.99",
+          "seller_subtotal_deduction_decimal": "14"
+        }
+      },
+      "rate_info": null,
+      "sold_info": null,
+      "seller_info": {
+        "seller_id": "7495973543491898157",
+        "shop_name": "vgoodde",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668391",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734219198754752301",
+        "slug": "kasut-latihan-jerman-warna-pepejal-kulit-untuk-lelaki-2026-kasut-kasut-bertapak-tebal-baharu-kasut-kasual-platform-meningkatkan-ketinggian-lelaki",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1731939956897252677",
+      "title": "Kasut Larian Sukan dan Riadah, Jaring Musim Panas Bernafas, Selesa, Menyerap Kejutan, Ringan, Untuk Lelaki dan Wanita",
+      "product_description": null,
+      "ship_from": "Melaka",
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1731939956897252677",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/454319b8dcb248daaf2e8b7054e62fa7",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/454319b8dcb248daaf2e8b7054e62fa7~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/454319b8dcb248daaf2e8b7054e62fa7~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "74.97",
+        "sale_price_format": "74.97",
+        "single_product_price_format": "74.97",
+        "single_product_price_decimal": "74.97",
+        "sale_price_integer_part_format": "74",
+        "sale_price_decimal_part_format": "97",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "243.78",
+        "origin_price_format": "243.78",
+        "discount_decimal": "0.69",
+        "discount_format": "69%",
+        "reduce_price_format": "Saving RM168.81",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "168.81",
+          "seller_subtotal_deduction_decimal": "168"
+        }
+      },
+      "rate_info": {
+        "score": 4.7,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 1126
+      },
+      "seller_info": {
+        "seller_id": "8650628970609280325",
+        "shop_name": "Mika33591",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668392",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1731939956897252677",
+        "slug": "kasut-larian-sukan-dan-riadah-jaring-musim-panas-bernafas-selesa-menyerap-kejutan-ringan-untuk-lelaki-dan-wanita",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1730663356741944591",
+      "title": "【Hot】Corolla shoes Couple Kasut Kasual Wanita Casual Sneaker Dua Warna Insole Penyerap Kejutan Antibakteria dan Bern berwarna pelangi Saiz 36-41",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "label_type": 34,
+          "text": "Giao nhanh 24h"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1730663356741944591",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/811ba5c788314a0293a048fcf268b8a3",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/811ba5c788314a0293a048fcf268b8a3~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/811ba5c788314a0293a048fcf268b8a3~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "70.00",
+        "sale_price_format": "70.00",
+        "single_product_price_format": "70.00",
+        "single_product_price_decimal": "70.00",
+        "sale_price_integer_part_format": "70",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "115.00",
+        "origin_price_format": "115.00",
+        "discount_decimal": "0.39",
+        "discount_format": "39%",
+        "reduce_price_format": "Saving RM45.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "45.00",
+          "seller_subtotal_deduction_decimal": "45"
+        }
+      },
+      "rate_info": {
+        "score": 4.9,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 50631
+      },
+      "seller_info": {
+        "seller_id": "7495814304750995727",
+        "shop_name": "Corolla Shoes MY",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668392",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1730663356741944591",
+        "slug": "hot-corolla-shoes-couple-kasut-kasual-wanita-casual-sneaker-dua-warna-insole-penyerap-kejutan-antibakteria-dan-bern-berwarna-pelangi-saiz-36-41",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729614405162666106",
+      "title": "READY STOCK Men's Sport Shoes Sneakers Kasut Sukan Lelaki Fashion Harga Murah Harga Lelong Unisex Fashionable Running",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_119-119",
+      "product_label_info": [
+        {
+          "label_type": 119,
+          "text": "Giao hỏa tốc"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1729614405162666106",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "10.49",
+        "sale_price_format": "10.49",
+        "single_product_price_format": "10.49",
+        "single_product_price_decimal": "10.49",
+        "sale_price_integer_part_format": "10",
+        "sale_price_decimal_part_format": "49",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "29.00",
+        "origin_price_format": "29.00",
+        "discount_decimal": "0.64",
+        "discount_format": "64%",
+        "reduce_price_format": "Saving RM18.51",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "18.51",
+          "seller_subtotal_deduction_decimal": "18"
+        }
+      },
+      "rate_info": {
+        "score": 4.5,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 32170
+      },
+      "seller_info": {
+        "seller_id": "7494682742017329274",
+        "shop_name": "KOREANSFASHIONSHOP",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668408",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729614405162666106",
+        "slug": "ready-stock-men-s-sport-shoes-sneakers-kasut-sukan-lelaki-fashion-harga-murah-harga-lelong-unisex-fashionable-running",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734126818794898954",
+      "title": "【Free Socks】safety boot,safety shoes,kasut lelaki men shoes Kasut keselamatan ultra ringan untuk lelaki dan wanita kasut safety lelaki kasut keluli bernafas dan selesa Work shoes",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "label_type": 34,
+          "text": "Giao nhanh 24h"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1734126818794898954",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/af41f34ac021456ab104f483e397c4ad",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/af41f34ac021456ab104f483e397c4ad~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/af41f34ac021456ab104f483e397c4ad~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "29.90",
+        "sale_price_format": "29.90",
+        "single_product_price_format": "29.90",
+        "single_product_price_decimal": "29.90",
+        "sale_price_integer_part_format": "29",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "99.00",
+        "origin_price_format": "99.00",
+        "discount_decimal": "0.70",
+        "discount_format": "70%",
+        "reduce_price_format": "Saving RM69.10",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "69.10",
+          "seller_subtotal_deduction_decimal": "69"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 4055
+      },
+      "seller_info": {
+        "seller_id": "7495857253963434506",
+        "shop_name": "ABU BAKARada",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668408",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734126818794898954",
+        "slug": "free-socks-safety-boot-safety-shoes-kasut-lelaki-men-shoes-kasut-keselamatan-ultra-ringan-untuk-lelaki-dan-wanita-kasut-safety-lelaki-kasut-keluli-bernafas-dan-selesa-work-shoes",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729464269759744041",
+      "title": "Hustle Shoes Lelaki Sneaker Wanita Women's Sneakers",
+      "product_description": null,
+      "ship_from": "Pahang",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "7608494192964242708",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_video_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/8f9326c31a094107a3d46f003744bbef",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/8f9326c31a094107a3d46f003744bbef~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/8f9326c31a094107a3d46f003744bbef~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": {
+        "url_list": [
+          "https://v45-eu.tiktokcdn.com/d03933c43b9feb6faa0be2a2841abd91/6a024e97/video/tos/alisg/tos-alisg-pve-0037c001/ooLFSEB2QoRUC0Ds4fokWIs2pTezZDZwlgEgAB/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=773&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=PDVnaWU6Zjw0Njo0Omk1ZUBpajhnNm45cmVmOTMzODczNEBgYjAxNmNgNS0xMWItNGIwYSNoajQ2MmQ0bl9hLS1kMTFzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000bd000",
+          "https://v15m.tiktokcdn.com/b4f689f7ce204e5850acb5570dd1ea3f/6a024e97/video/tos/alisg/tos-alisg-pve-0037c001/ooLFSEB2QoRUC0Ds4fokWIs2pTezZDZwlgEgAB/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=773&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=PDVnaWU6Zjw0Njo0Omk1ZUBpajhnNm45cmVmOTMzODczNEBgYjAxNmNgNS0xMWItNGIwYSNoajQ2MmQ0bl9hLS1kMTFzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000b8000",
+          "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=3be27f07e147430189ccf79b4f3de2c9&is_play_url=1&item_id=7608494192964242708&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLjgwMTVmMzBmYzM3OWE3NjZjZmM1ZDcxZTBlYTU5Yzg0&source=SEARCH&video_id=v14044g50000d6bcqb7og65k937dm5kg"
+        ],
+        "img_urls": [],
+        "aweme_id": "7608494192964242708",
+        "desc": "#KasutHitam #StyloMalaysia #FashionLelaki #KasutSelesa #tiktokshopmalaysia ",
+        "create_time": 1771493416,
+        "share_url": "https://www.tiktok.com/@ff.slayer.my/video/7608494192964242708?_r=1&u_code=f026i8fk5ehah8&region=NL&mid=7608494230059223826&preview_pb=0&sharer_language=vi&_d=f034lefgmckl2k&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227608494192964242708%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-common-sign.tiktokcdn.com%252Ftos-alisg-p-0037%252FocEBsQwsWopASqHzZUEwBFlERBTDkg0U2Qfe2L~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253D3b2ce224%2526x-expires%253D1809982800%2526x-signature%253DOah2UbDdP0oyx1JBckDweLjJ%25252FMQ%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy2%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221729464269759744041%22%2C%22placeholder_video_id%22%3A%227608494192964242708%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7608494192964242708&source=h5_t",
+        "duration_ms": 20852,
+        "author": {
+          "uid": "7024666062139819009",
+          "nickname": "🇧 🇦 🇧 🇾",
+          "unique_id": "ff.slayer.my",
+          "sec_uid": "MS4wLjABAAAAt6C5jv_Ljy5sPS0KhkEC2vDaywZoQQJuynHoblT7DuwLpotGhVq25z1ahDHOjtFc",
+          "follower_count": 5820
+        },
+        "music": {
+          "id": 7608494230059224000,
+          "id_str": "7608494230059223826",
+          "title": "âm thanh gốc - 🇧 🇦 🇧 🇾",
+          "author": "🇧 🇦 🇧 🇾"
+        },
+        "statistics": {
+          "comment_count": 2,
+          "digg_count": 200,
+          "play_count": 52262,
+          "share_count": 21,
+          "collect_count": 41
+        },
+        "cha_list": [
+          {
+            "cid": "1696625140629505",
+            "cha_name": "kasuthitam",
+            "desc": ""
+          }
+        ]
+      },
+      "category_breadcrumb": [
+        {
+          "category_id": 601352,
+          "category_name": "Kasut",
+          "level": 1
+        },
+        {
+          "category_id": 900616,
+          "category_name": "Kasut Lelaki",
+          "level": 2
+        },
+        {
+          "category_id": 601357,
+          "category_name": "Kasut Kasual",
+          "level": 3
+        }
+      ],
+      "product_price_info": {
+        "sale_price_decimal": "19.90",
+        "sale_price_format": "19.90",
+        "single_product_price_format": "19.90",
+        "single_product_price_decimal": "19.90",
+        "sale_price_integer_part_format": "19",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "39.90",
+        "origin_price_format": "39.90",
+        "discount_decimal": "0.50",
+        "discount_format": "50%",
+        "reduce_price_format": "Saving RM20.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "20.00",
+          "seller_subtotal_deduction_decimal": "20"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 3801
+      },
+      "seller_info": {
+        "seller_id": "7494706541555583017",
+        "shop_name": "Hustle Mall",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668409",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729464269759744041",
+        "slug": "hustle-shoes-lelaki-sneaker-wanita-women-s-sneakers",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734434757306582018",
+      "title": "Puma Court Ultra Lite Casual Shoe Sneakers 389371-07",
+      "product_description": null,
+      "ship_from": "Kuala Lumpur",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1734434757306582018",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/c7482c485b3149a9bcc74532c4683584",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/c7482c485b3149a9bcc74532c4683584~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/c7482c485b3149a9bcc74532c4683584~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "89.00",
+        "sale_price_format": "89.00",
+        "single_product_price_format": "89.00",
+        "single_product_price_decimal": "89.00",
+        "sale_price_integer_part_format": "89",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "239.00",
+        "origin_price_format": "239.00",
+        "discount_decimal": "0.63",
+        "discount_format": "63%",
+        "reduce_price_format": "Saving RM150.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "150.00",
+          "seller_subtotal_deduction_decimal": "150"
+        }
+      },
+      "rate_info": {
+        "score": 4.8,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 323
+      },
+      "seller_info": {
+        "seller_id": "7494917427054217218",
+        "shop_name": "originalshoe Malaysia",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668409",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734434757306582018",
+        "slug": "puma-court-ultra-lite-casual-shoe-sneakers-389371-07",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729627028940687932",
+      "title": "Sniika - Kasut Taji All Black / Khaki",
+      "product_description": null,
+      "ship_from": "Kelantan",
+      "trust_label": null,
+      "product_label": "promotion_label_4-7637165861002086165,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1729627028940687932",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "69.00",
+        "sale_price_format": "69.00",
+        "single_product_price_format": "69.00",
+        "single_product_price_decimal": "69.00",
+        "sale_price_integer_part_format": "69",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "140.00",
+        "origin_price_format": "140.00",
+        "discount_decimal": "0.51",
+        "discount_format": "51%",
+        "reduce_price_format": "Saving RM71.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "71.00",
+          "seller_subtotal_deduction_decimal": "71"
+        }
+      },
+      "rate_info": {
+        "score": 4.8,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 40018
+      },
+      "seller_info": {
+        "seller_id": "7494735719178930748",
+        "shop_name": "Sniika Hq",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668409",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729627028940687932",
+        "slug": "sniika-kasut-taji-all-black-khaki",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729438591386290380",
+      "title": "Dr Cardin Men Faux Leather  Formal  Lace-up Formal Shoe  YOD-6339 | Wedding |",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1729438591386290380",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "79.00",
+        "sale_price_format": "79.00",
+        "single_product_price_format": "79.00",
+        "single_product_price_decimal": "79.00",
+        "sale_price_integer_part_format": "79",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "199.90",
+        "origin_price_format": "199.90",
+        "discount_decimal": "0.60",
+        "discount_format": "60%",
+        "reduce_price_format": "Saving RM120.90",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "120.90",
+          "seller_subtotal_deduction_decimal": "120"
+        }
+      },
+      "rate_info": {
+        "score": 4.8,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 14208
+      },
+      "seller_info": {
+        "seller_id": "7494638588954577100",
+        "shop_name": "Dr. Cardin",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729438591386290380",
+        "slug": "dr-cardin-men-faux-leather-formal-lace-up-formal-shoe-yod-6339-wedding",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1732147012615701775",
+      "title": "【Stok kembali】COROLLA Jalin Kasut Sukan Bertapak Tebal Lightweight (550g) – Sesuai Joging & Senaman Ringan",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "label_type": 34,
+          "text": "Giao nhanh 24h"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1732147012615701775",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/bd2117e83e844166b051f3e5c57bffde",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/bd2117e83e844166b051f3e5c57bffde~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/bd2117e83e844166b051f3e5c57bffde~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "70.99",
+        "sale_price_format": "70.99",
+        "single_product_price_format": "70.99",
+        "single_product_price_decimal": "70.99",
+        "sale_price_integer_part_format": "70",
+        "sale_price_decimal_part_format": "99",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "138.00",
+        "origin_price_format": "138.00",
+        "discount_decimal": "0.49",
+        "discount_format": "49%",
+        "reduce_price_format": "Saving RM67.01",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "67.01",
+          "seller_subtotal_deduction_decimal": "67"
+        }
+      },
+      "rate_info": {
+        "score": 4.9,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 22327
+      },
+      "seller_info": {
+        "seller_id": "7495814304750995727",
+        "shop_name": "Corolla Shoes MY",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1732147012615701775",
+        "slug": "stok-kembali-corolla-jalin-kasut-sukan-bertapak-tebal-lightweight-550g-sesuai-joging-senaman-ringan",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1730577508563519231",
+      "title": "Kasut sukan baharu untuk lelaki dan wanita yang bernafas, kasut larian elastik, kasut sukan dengan plat karbon, kasut sukan ultra ringan, kasut sukan maraton",
+      "product_description": null,
+      "ship_from": "Johor",
+      "trust_label": null,
+      "product_label": "promotion_label_4-7636314394166773520,promotion_sticker_2",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1730577508563519231",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/5e380cdbb4304d7d9cd1a3afaaafbce1",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/5e380cdbb4304d7d9cd1a3afaaafbce1~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/5e380cdbb4304d7d9cd1a3afaaafbce1~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "59.90",
+        "sale_price_format": "59.90",
+        "single_product_price_format": "59.90",
+        "single_product_price_decimal": "59.90",
+        "sale_price_integer_part_format": "59",
+        "sale_price_decimal_part_format": "90",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "69.00",
+        "origin_price_format": "69.00",
+        "discount_decimal": "0.13",
+        "discount_format": "13%",
+        "reduce_price_format": "Saving RM9.10",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "9.10",
+          "seller_subtotal_deduction_decimal": "9"
+        }
+      },
+      "rate_info": {
+        "score": 4.8,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 30843
+      },
+      "seller_info": {
+        "seller_id": "7495152171062561535",
+        "shop_name": "fashion NX shoes",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1730577508563519231",
+        "slug": "kasut-sukan-baharu-untuk-lelaki-dan-wanita-yang-bernafas-kasut-larian-elastik-kasut-sukan-dengan-plat-karbon-kasut-sukan-ultra-ringan-kasut-sukan-maraton",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1730341455599994107",
+      "title": "Men's high-top work shoes thick-soled Martin boots non-slip wear-resistant trendy sneakers",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1730341455599994107",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/dbfa54568dfc4f58bfc38af1b9307854",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dbfa54568dfc4f58bfc38af1b9307854~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dbfa54568dfc4f58bfc38af1b9307854~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "30.80",
+        "sale_price_format": "30.80",
+        "single_product_price_format": "30.80",
+        "single_product_price_decimal": "30.80",
+        "sale_price_integer_part_format": "30",
+        "sale_price_decimal_part_format": "80",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "65.80",
+        "origin_price_format": "65.80",
+        "discount_decimal": "0.53",
+        "discount_format": "53%",
+        "reduce_price_format": "Saving RM35.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "35.00",
+          "seller_subtotal_deduction_decimal": "35"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 10224
+      },
+      "seller_info": {
+        "seller_id": "7495613730564966651",
+        "shop_name": "Booticimor",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1730341455599994107",
+        "slug": "men-s-high-top-work-shoes-thick-soled-martin-boots-non-slip-wear-resistant-trendy-sneakers",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1732994493342647776",
+      "title": "Kasut Lelaki Atasan Tinggi, Koleksi Musim Luruh Baharu, But Martin Belia, Gaya Kasual Sukan, Warna Putih, Ketinggian Bertambah, Kasut Serba guna Ayah, Selesa, 2024, 2025",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1732994493342647776",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/6f3e12c6ff53443db59d5fd8338faf3a",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/6f3e12c6ff53443db59d5fd8338faf3a~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/6f3e12c6ff53443db59d5fd8338faf3a~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "35.99",
+        "sale_price_format": "35.99",
+        "single_product_price_format": "35.99",
+        "single_product_price_decimal": "35.99",
+        "sale_price_integer_part_format": "35",
+        "sale_price_decimal_part_format": "99",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "123.10",
+        "origin_price_format": "123.10",
+        "discount_decimal": "0.71",
+        "discount_format": "71%",
+        "reduce_price_format": "Saving RM87.11",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "87.11",
+          "seller_subtotal_deduction_decimal": "87"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 1079
+      },
+      "seller_info": {
+        "seller_id": "8654038438115902944",
+        "shop_name": "StrongStride Men's Footwear",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1732994493342647776",
+        "slug": "kasut-lelaki-atasan-tinggi-koleksi-musim-luruh-baharu-but-martin-belia-gaya-kasual-sukan-warna-putih-ketinggian-bertambah-kasut-serba-guna-ayah-selesa-2024-2025",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1732911721714845152",
+      "title": "Kasut Kasual Sukan untuk Lelaki, Ketibaan Baru Musim Panas 2025, Bahan Sutera Ais, Bernafas, Tapak Lembut, Tidak Licin, Ringan, Kasut Lari, Sesuai untuk Pelajar, Selesa, 2024",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1732911721714845152",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/f29dffc01315400a8e45506f236fe623",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/f29dffc01315400a8e45506f236fe623~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/f29dffc01315400a8e45506f236fe623~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "21.98",
+        "sale_price_format": "21.98",
+        "single_product_price_format": "21.98",
+        "single_product_price_decimal": "21.98",
+        "sale_price_integer_part_format": "21",
+        "sale_price_decimal_part_format": "98",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "72.28",
+        "origin_price_format": "72.28",
+        "discount_decimal": "0.70",
+        "discount_format": "70%",
+        "reduce_price_format": "Saving RM50.30",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "50.30",
+          "seller_subtotal_deduction_decimal": "50"
+        }
+      },
+      "rate_info": {
+        "score": 4.3,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 1280
+      },
+      "seller_info": {
+        "seller_id": "8654038438115902944",
+        "shop_name": "StrongStride Men's Footwear",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1732911721714845152",
+        "slug": "kasut-kasual-sukan-untuk-lelaki-ketibaan-baru-musim-panas-2025-bahan-sutera-ais-bernafas-tapak-lembut-tidak-licin-ringan-kasut-lari-sesuai-untuk-pelajar-selesa-2024",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1734073724629517583",
+      "title": "[In Stock] Corolla 1990s Unisex Sneakers Men Women Lace-Up Casual Shoes 4.5cm Height Increase Breathable & Comfortable",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "label_type": 34,
+          "text": "Giao nhanh 24h"
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "1734073724629517583",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/402dd5712ee84d60be5e1e7c78cb4a42",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/402dd5712ee84d60be5e1e7c78cb4a42~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/402dd5712ee84d60be5e1e7c78cb4a42~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "110.00",
+        "sale_price_format": "110.00",
+        "single_product_price_format": "110.00",
+        "single_product_price_decimal": "110.00",
+        "sale_price_integer_part_format": "110",
+        "sale_price_decimal_part_format": "00",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "130.00",
+        "origin_price_format": "130.00",
+        "discount_decimal": "0.15",
+        "discount_format": "15%",
+        "reduce_price_format": "Saving RM20.00",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "20.00",
+          "seller_subtotal_deduction_decimal": "20"
+        }
+      },
+      "rate_info": {
+        "score": 4.9,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 1023
+      },
+      "seller_info": {
+        "seller_id": "7495814304750995727",
+        "shop_name": "Corolla Shoes MY",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1734073724629517583",
+        "slug": "in-stock-corolla-1990s-unisex-sneakers-men-women-lace-up-casual-shoes-4-5cm-height-increase-breathable-comfortable",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729556238640056104",
+      "title": "Men's shoes/Kasut lelaki Lightweight breathable and fashionable Sports shoes size 39-44",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1729556238640056104",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/e5b0fc96bf584954b240b9ea701b541d",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/e5b0fc96bf584954b240b9ea701b541d~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/e5b0fc96bf584954b240b9ea701b541d~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "21.99",
+        "sale_price_format": "21.99",
+        "single_product_price_format": "21.99",
+        "single_product_price_decimal": "21.99",
+        "sale_price_integer_part_format": "21",
+        "sale_price_decimal_part_format": "99",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "51.68",
+        "origin_price_format": "51.68",
+        "discount_decimal": "0.57",
+        "discount_format": "57%",
+        "reduce_price_format": "Saving RM29.69",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "29.69",
+          "seller_subtotal_deduction_decimal": "29"
+        }
+      },
+      "rate_info": {
+        "score": 4.6,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 5605
+      },
+      "seller_info": {
+        "seller_id": "7495339886041991976",
+        "shop_name": "Shoe Lounge",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729556238640056104",
+        "slug": "men-s-shoes-kasut-lelaki-lightweight-breathable-and-fashionable-sports-shoes-size-39-44",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1729840594478990614",
+      "title": "【Venous】2024 New Kasut Putih Lelaki Original 100% Korean White Shoes for Men on Sale Aesthetic Casual Sport Men Shoes  Fashion Casual Sneakers for Men High Quality Stars",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1729840594478990614",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "54.80",
+        "sale_price_format": "54.80",
+        "single_product_price_format": "54.80",
+        "single_product_price_decimal": "54.80",
+        "sale_price_integer_part_format": "54",
+        "sale_price_decimal_part_format": "80",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "150.00",
+        "origin_price_format": "150.00",
+        "discount_decimal": "0.63",
+        "discount_format": "63%",
+        "reduce_price_format": "Saving RM95.20",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "95.20",
+          "seller_subtotal_deduction_decimal": "95"
+        }
+      },
+      "rate_info": {
+        "score": 4.7,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 4009
+      },
+      "seller_info": {
+        "seller_id": "7495294954210560278",
+        "shop_name": "Venous Shoes",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668410",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1729840594478990614",
+        "slug": "venous-2024-new-kasut-putih-lelaki-original-100-korean-white-shoes-for-men-on-sale-aesthetic-casual-sport-men-shoes-fashion-casual-sneakers-for-men-high-quality-stars",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1732924486412633113",
+      "title": "Kasut Martin, untuk Lelaki, Koleksi Musim Luruh, Kasut Kerja Atasan Tinggi, Tapak Tebal, But Buku lali Kasual, But Kulit, Selesa, Ketibaan Baru pada tahun 2025",
+      "product_description": null,
+      "ship_from": "Selangor",
+      "trust_label": null,
+      "product_label": "promotion_label_4-7638257532779595541,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1732924486412633113",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-maliva-i-o3syd03w52-us/2e21097cdb7d4120b67405b2d996f064",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/2e21097cdb7d4120b67405b2d996f064~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/2e21097cdb7d4120b67405b2d996f064~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "28.98",
+        "sale_price_format": "28.98",
+        "single_product_price_format": "28.98",
+        "single_product_price_decimal": "28.98",
+        "sale_price_integer_part_format": "28",
+        "sale_price_decimal_part_format": "98",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "80.30",
+        "origin_price_format": "80.30",
+        "discount_decimal": "0.64",
+        "discount_format": "64%",
+        "reduce_price_format": "Saving RM51.32",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "51.32",
+          "seller_subtotal_deduction_decimal": "51"
+        }
+      },
+      "rate_info": {
+        "score": 4.4,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 993
+      },
+      "seller_info": {
+        "seller_id": "7495153125753915417",
+        "shop_name": "Top fashion shoes",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668411",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1732924486412633113",
+        "slug": "kasut-martin-untuk-lelaki-koleksi-musim-luruh-kasut-kerja-atasan-tinggi-tapak-tebal-but-buku-lali-kasual-but-kulit-selesa-ketibaan-baru-pada-tahun-2025",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1731144360668857510",
+      "title": "Sneakers Gaya Kampus, Pahlawan Hitam, Musim Bunga dan Musim Luruh Ketibaan Baru, Gaya Jalan Amerika, Kasual Sejuk, Serba guna, Kasut platform Chunky Retro",
+      "product_description": null,
+      "ship_from": "Trung Hoa",
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+      "product_label_info": null,
+      "search_meta": {
+        "search_result_id": "1731144360668857510",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_pure_goods_card"
+      },
+      "image": {
+        "height": 600,
+        "width": 450,
+        "uri": "tos-maliva-i-o3syd03w52-us/319b1c3e7e6b0026f16cb344ed2b27f0",
+        "url_list": [
+          "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/319b1c3e7e6b0026f16cb344ed2b27f0~tplv-o3syd03w52-crop-webp:450:600.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/319b1c3e7e6b0026f16cb344ed2b27f0~tplv-o3syd03w52-crop-webp:450:600.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": null,
+      "category_breadcrumb": null,
+      "product_price_info": {
+        "sale_price_decimal": "63.64",
+        "sale_price_format": "63.64",
+        "single_product_price_format": "63.64",
+        "single_product_price_decimal": "63.64",
+        "sale_price_integer_part_format": "63",
+        "sale_price_decimal_part_format": "64",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "118.36",
+        "origin_price_format": "118.36",
+        "discount_decimal": "0.46",
+        "discount_format": "46%",
+        "reduce_price_format": "Saving RM54.72",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "54.72",
+          "seller_subtotal_deduction_decimal": "54"
+        }
+      },
+      "rate_info": {
+        "score": 4.5,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 5055
+      },
+      "seller_info": {
+        "seller_id": "7496138023755679910",
+        "shop_name": "Frenzyhoodx.",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668411",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1731144360668857510",
+        "slug": "sneakers-gaya-kampus-pahlawan-hitam-musim-bunga-dan-musim-luruh-ketibaan-baru-gaya-jalan-amerika-kasual-sejuk-serba-guna-kasut-platform-chunky-retro",
+        "type": 2,
+        "version": 2
+      }
+    },
+    {
+      "product_id": "1732444673466729743",
+      "title": "【Eksklusif Live】Corolla Samba Couple Kasut Kasual Wanita Sneaker Ringan & Selesa",
+      "product_description": null,
+      "ship_from": null,
+      "trust_label": null,
+      "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+      "product_label_info": [
+        {
+          "text": "Giao nhanh 24h",
+          "label_type": 34
+        }
+      ],
+      "search_meta": {
+        "search_result_id": "7559946774799191304",
+        "search_id": "20260511054746D87A1D215AF2F080B4D9",
+        "entrance_form": "search_video_goods_card"
+      },
+      "image": {
+        "height": 400,
+        "width": 400,
+        "uri": "tos-alisg-i-aphluv4xwc-sg/40ba93552dbc4317a0617b3e70e8c2d2",
+        "url_list": [
+          "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/40ba93552dbc4317a0617b3e70e8c2d2~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001",
+          "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/40ba93552dbc4317a0617b3e70e8c2d2~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my2&from=1737278001"
+        ]
+      },
+      "video": {
+        "url_list": [
+          "https://v45-eu.tiktokcdn.com/1196d43fa486e6d65127df5f00ca4c0a/6a024e99/video/tos/alisg/tos-alisg-pve-0037c001/ogoDaBFcELqQEFFARSHAJVKffRtjCfI1qIDPzO/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=528&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=Njc2ZDY6Z2Y2Zjg2Mzg8Z0BpMzo3dnA5cmk4NjMzODczNEBgYV8zY18uNmIxNC8zXy0wYSNhcG1zMmRzMWlhLS1kMTFzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000bd000",
+          "https://v15m.tiktokcdn.com/65e2775097e130ac194c4f14690aacb6/6a024e99/video/tos/alisg/tos-alisg-pve-0037c001/ogoDaBFcELqQEFFARSHAJVKffRtjCfI1qIDPzO/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=528&ft=XsFbYqgwmILPD127zTfI3wUO-~pcMeF~O5&mime_type=video_mp4&rc=Njc2ZDY6Z2Y2Zjg2Mzg8Z0BpMzo3dnA5cmk4NjMzODczNEBgYV8zY18uNmIxNC8zXy0wYSNhcG1zMmRzMWlhLS1kMTFzcw%3D%3D&vvpl=1&l=20260511054746D87A1D215AF2F080B4D9&btag=e000b8000",
+          "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=3d09b56023754ce39c1db7f36ab3d4c3&is_play_url=1&item_id=7559946774799191304&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLjUwMjFiN2Q3NzA0NWU2YWY1MmQ2ZWM1YjM3ZmM4ZjNj&source=SEARCH&video_id=v14044g50000d3l54fvog65mvsp4s7d0"
+        ],
+        "img_urls": [],
+        "aweme_id": "7559946774799191304",
+        "desc": "Corolla Samba Couple Kasut Kasual Wanita Sneaker Ringan & Selesa 🥰#creatorsearchinsights #corolla #samba #shoes #fyp",
+        "create_time": 1760187278,
+        "share_url": "https://www.tiktok.com/@shoestories96/video/7559946774799191304?_r=1&u_code=f026i8fk5ehah8&region=NL&mid=7489072834510326545&preview_pb=0&sharer_language=vi&_d=f034lefgmckl2k&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227559946774799191304%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-common-sign.tiktokcdn.com%252Ftos-alisg-p-0037%252FokeNYgAJBeHGweifAKp37gt5ZURYTM4pvQAjHf~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253Dd5ccfdaa%2526x-expires%253D1809982800%2526x-signature%253DSoBCJ5Ttv%25252FHbEdDQzULKliHecM8%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy2%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221732444673466729743%22%2C%22placeholder_video_id%22%3A%227559946774799191304%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7559946774799191304&source=h5_t",
+        "duration_ms": 22313,
+        "author": {
+          "uid": "7465517819888731144",
+          "nickname": "Shoe Stories",
+          "unique_id": "shoestories96",
+          "sec_uid": "MS4wLjABAAAAv_jMtZ-qcBXLiFQTLNq-bVzkhMDyEjyFM3M5efnA6SwZDPJv-yl5xHeUjuMb6MYE",
+          "follower_count": 8099
+        },
+        "music": {
+          "id": 7489072834510327000,
+          "id_str": "7489072834510326545",
+          "title": "âm thanh gốc - DIVA AURELL",
+          "author": "DIVA AURELL"
+        },
+        "statistics": {
+          "comment_count": 5,
+          "digg_count": 82,
+          "play_count": 39262,
+          "share_count": 20,
+          "collect_count": 19
+        },
+        "cha_list": [
+          {
+            "cid": "7340824418278440993",
+            "cha_name": "creatorsearchinsights",
+            "desc": ""
+          }
+        ]
+      },
+      "category_breadcrumb": [
+        {
+          "category_id": 601352,
+          "category_name": "Kasut",
+          "level": 1
+        },
+        {
+          "category_id": 900488,
+          "category_name": "Kasut Wanita",
+          "level": 2
+        },
+        {
+          "category_id": 900872,
+          "category_name": "Kasut Kasual",
+          "level": 3
+        }
+      ],
+      "product_price_info": {
+        "sale_price_decimal": "70.99",
+        "sale_price_format": "70.99",
+        "single_product_price_format": "70.99",
+        "single_product_price_decimal": "70.99",
+        "sale_price_integer_part_format": "70",
+        "sale_price_decimal_part_format": "99",
+        "decimal_point_symbol": ".",
+        "symbol_position": 1,
+        "show_currency_space": false,
+        "currency_show_mode": 1,
+        "currency_name": "",
+        "currency_symbol": "RM",
+        "origin_price_decimal": "130.00",
+        "origin_price_format": "130.00",
+        "discount_decimal": "0.45",
+        "discount_format": "45%",
+        "reduce_price_format": "Saving RM59.01",
+        "promotion_deduction_details": {
+          "seller_subtotal_deduction": "59.01",
+          "seller_subtotal_deduction_decimal": "59"
+        }
+      },
+      "rate_info": {
+        "score": 4.9,
+        "review_count": null
+      },
+      "sold_info": {
+        "sold_count": 13359
+      },
+      "seller_info": {
+        "seller_id": "7495814304750995727",
+        "shop_name": "Corolla Shoes MY",
+        "shop_logo": null
+      },
+      "seo_url": {
+        "updated_at": "1778449668412",
+        "canonical_url": "https://www.tiktok.com/shop/pdp/1732444673466729743",
+        "slug": "eksklusif-live-corolla-samba-couple-kasut-kasual-wanita-sneaker-ringan-selesa",
+        "type": 2,
+        "version": 2
+      }
+    }
+  ]
+}

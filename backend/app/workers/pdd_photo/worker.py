@@ -303,13 +303,14 @@ def execute_photo_search_task(task_id: int):
             except Exception:
                 logger.exception("Failed to release device lock for %s", device_serial)
 
-        # 释放 DB 设备状态（仅当 Redis 锁成功获取时才释放，避免重复释放）
-        if device_serial and _redis_lock_acquired:
+        # 释放 DB 设备状态（只要设备被获取就需要释放，不仅仅是 Redis 锁成功时）
+        if device_serial:
             try:
                 mgr = DeviceManager(db)
                 task_obj = photo_search_service.get_task(db, task_id)
                 success = task_obj and task_obj.status == "success"
                 mgr.release_device(device_serial, success=success)
+                logger.info("Device %s released (success=%s)", device_serial, success)
 
                 adb = AdbClient(serial=device_serial)
                 if ctx and ctx.remote_image_path:

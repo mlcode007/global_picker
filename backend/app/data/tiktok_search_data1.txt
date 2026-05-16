@@ -1,0 +1,2124 @@
+{
+    "success": true,
+    "credits_remaining": 93,
+    "query": "shoe",
+    "total_products": 30,
+    "products": [
+        {
+            "product_id": "1734801124347839747",
+            "title": "【HOT SALE】VANS OFF THE WALL Old Skool Black/Blue/Cream Retro Street Sneakers for Men and Women, Low-Top（Cutting Besar )",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+            "product_label_info": [
+                {
+                    "label_type": 34,
+                    "text": "Giao nhanh 24h"
+                }
+            ],
+            "search_meta": {
+                "search_result_id": "1734801124347839747",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/2ccbf4b778a74228ba43fd1041149c1c",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2ccbf4b778a74228ba43fd1041149c1c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2ccbf4b778a74228ba43fd1041149c1c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "150.00",
+                "sale_price_format": "150.00",
+                "single_product_price_format": "150.00",
+                "single_product_price_decimal": "150.00",
+                "sale_price_integer_part_format": "150",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "299.00",
+                "origin_price_format": "299.00",
+                "discount_decimal": "0.50",
+                "discount_format": "50%",
+                "reduce_price_format": "Saving RM149.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "149.00",
+                    "seller_subtotal_deduction_decimal": "149"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 510
+            },
+            "seller_info": {
+                "seller_id": "7494395906492433667",
+                "shop_name": "SUPERS shoe",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388337",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734801124347839747",
+                "slug": "hot-sale-vans-off-the-wall-old-skool-black-blue-cream-retro-street-sneakers-for-men-and-women-low-top-cutting-besar",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734266785256867178",
+            "title": "Sneakers Bola Keranjang,UntukLelaki dan Wanita,Bernafas,Deodoran, BahanJaringan,Tahan Lama,TapakLembut,Sesuai untuk Pelajar,Kasut Sukan danLarian,Elegan dan Serba guna, Bergaya kasutmarathon Outdoor Shoes，Sports Sepatu",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734266785256867178",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/4e04594b1279428a8868450fe8ea6920~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "73.90",
+                "sale_price_format": "73.90",
+                "single_product_price_format": "73.90",
+                "single_product_price_decimal": "73.90",
+                "sale_price_integer_part_format": "73",
+                "sale_price_decimal_part_format": "90",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "149.80",
+                "origin_price_format": "149.80",
+                "discount_decimal": "0.51",
+                "discount_format": "51%",
+                "reduce_price_format": "Saving RM75.90",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "75.90",
+                    "seller_subtotal_deduction_decimal": "75"
+                }
+            },
+            "rate_info": {
+                "score": 5,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 317
+            },
+            "seller_info": {
+                "seller_id": "7494379207943226730",
+                "shop_name": "VEDUK",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388338",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734266785256867178",
+                "slug": "sneakers-bola-keranjang-untuklelaki-dan-wanita-bernafas-deodoran-bahanjaringan-tahan-lama-tapaklembut-sesuai-untuk-pelajar-kasut-sukan-danlarian-elegan-dan-serba-guna-bergaya-kasutmarathon-outdoor-shoes-sports-sepatu",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1731786881245348911",
+            "title": "【Bintang Hujan】Kasut Wanita CAMEL CROWN Musim Panas 2025 Kasut Perak Tinggi 7cm Tapak Tebal Gaya Chunky Kasut Sukan Kasual Lari Pasangan Lelaki dan Wanita Model L25A202025/L25A202025M",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1731786881245348911",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/e15ac6f696884b18b6d9b0ad7863310c",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/e15ac6f696884b18b6d9b0ad7863310c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/e15ac6f696884b18b6d9b0ad7863310c~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "270.00",
+                "sale_price_format": "270.00",
+                "single_product_price_format": "270.00",
+                "single_product_price_decimal": "270.00",
+                "sale_price_integer_part_format": "270",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "540.00",
+                "origin_price_format": "540.00",
+                "discount_decimal": "0.50",
+                "discount_format": "50%",
+                "reduce_price_format": "Saving RM270.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "270.00",
+                    "seller_subtotal_deduction_decimal": "270"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 51
+            },
+            "seller_info": {
+                "seller_id": "8646925877544912943",
+                "shop_name": "CAMEL CROWN Outdoor MY",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388338",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1731786881245348911",
+                "slug": "bintang-hujan-kasut-wanita-camel-crown-musim-panas-2025-kasut-perak-tinggi-7cm-tapak-tebal-gaya-chunky-kasut-sukan-kasual-lari-pasangan-lelaki-dan-wanita-model-l25a202025-l25a202025m",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734020203423368759",
+            "title": "6710【BARU】 【DUSAMEYA】 Kasut lelaki kulit asli baharu yang bernafas dengan tapak lembut, gaya kasual bergaya mewah ringan, mudah dipadankan, slip on putih casual flat shoes",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734020203423368759",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/099dd5b650264d04992299ca1085af44",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/099dd5b650264d04992299ca1085af44~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/099dd5b650264d04992299ca1085af44~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "204.90",
+                "sale_price_format": "204.90",
+                "single_product_price_format": "204.90",
+                "single_product_price_decimal": "204.90",
+                "sale_price_integer_part_format": "204",
+                "sale_price_decimal_part_format": "90",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2080.00",
+                "origin_price_format": "2080.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM1875.10",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "1875.10",
+                    "seller_subtotal_deduction_decimal": "1875"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 157
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388338",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734020203423368759",
+                "slug": "6710-baru-dusameya-kasut-lelaki-kulit-asli-baharu-yang-bernafas-dengan-tapak-lembut-gaya-kasual-bergaya-mewah-ringan-mudah-dipadankan-slip-on-putih-casual-flat-shoes",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734043863828432439",
+            "title": "【NEW】6700 DUSAMEYA 2026 kasut kasual lelaki musim bunga dan luruh bergaya mewah ringan dengan tapak tebal yang menambah ketinggian, sesuai untuk pasangan, kasut fesyen premium",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637510328401725185,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734043863828432439",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/14b6f798a11d480bb32914c9eb67b4a8",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/14b6f798a11d480bb32914c9eb67b4a8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/14b6f798a11d480bb32914c9eb67b4a8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "246.00",
+                "sale_price_format": "246.00",
+                "single_product_price_format": "246.00",
+                "single_product_price_decimal": "246.00",
+                "sale_price_integer_part_format": "246",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2490.00",
+                "origin_price_format": "2490.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM2244.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2244.00",
+                    "seller_subtotal_deduction_decimal": "2244"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 6
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388338",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734043863828432439",
+                "slug": "new-6700-dusameya-2026-kasut-kasual-lelaki-musim-bunga-dan-luruh-bergaya-mewah-ringan-dengan-tapak-tebal-yang-menambah-ketinggian-sesuai-untuk-pasangan-kasut-fesyen-premium",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1733921687830103607",
+            "title": "【NEW】 6792 【DUSAMEYA】 Kasut Santai Mewah Musim Luruh dan Sejuk 2025 Rekaan Baru Tebal Menambah Ketinggian dengan Corak Graffiti Jelly untuk Pasangan Kasut Putih Berhujung Bulat Tahan Lasak Kasual",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637510328401725185,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1733921687830103607",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/cd90e02f61f145548dc1c2b9f91aaa3b",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/cd90e02f61f145548dc1c2b9f91aaa3b~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/cd90e02f61f145548dc1c2b9f91aaa3b~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "285.00",
+                "sale_price_format": "285.00",
+                "single_product_price_format": "285.00",
+                "single_product_price_decimal": "285.00",
+                "sale_price_integer_part_format": "285",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2880.00",
+                "origin_price_format": "2880.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM2595.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2595.00",
+                    "seller_subtotal_deduction_decimal": "2595"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 6
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388339",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1733921687830103607",
+                "slug": "new-6792-dusameya-kasut-santai-mewah-musim-luruh-dan-sejuk-2025-rekaan-baru-tebal-menambah-ketinggian-dengan-corak-graffiti-jelly-untuk-pasangan-kasut-putih-berhujung-bulat-tahan-lasak-kasual",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734172856833574455",
+            "title": "DSMY6809【BARU】【DUSAMEYA】 Kasut sukan gaya mewah ringan bercahaya untuk musim luruh dan musim sejuk 2025, model laris dengan tempoh jualan yang panjang, trendi dan serba boleh, kasut gaya PALLAS berlapik kulit asli serta tapak kasual. DSMY",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637509968786245393,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734172856833574455",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/8568c26b9d044ac091de99a2de5aed21",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/8568c26b9d044ac091de99a2de5aed21~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/8568c26b9d044ac091de99a2de5aed21~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "396.00",
+                "sale_price_format": "396.00",
+                "single_product_price_format": "396.00",
+                "single_product_price_decimal": "396.00",
+                "sale_price_integer_part_format": "396",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2999.00",
+                "origin_price_format": "2999.00",
+                "discount_decimal": "0.87",
+                "discount_format": "87%",
+                "reduce_price_format": "Saving RM2603.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2603.00",
+                    "seller_subtotal_deduction_decimal": "2603"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 5
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388340",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734172856833574455",
+                "slug": "dsmy6809-baru-dusameya-kasut-sukan-gaya-mewah-ringan-bercahaya-untuk-musim-luruh-dan-musim-sejuk-2025-model-laris-dengan-tempoh-jualan-yang-panjang-trendi-dan-serba-boleh-kasut-gaya-pallas-berlapik-kulit-asli-serta-tapak-kasual-dsmy",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729627625828484116",
+            "title": "WEBEE B-9999 School Sneaker Men's Sport's Kasut Outdoor Shoe Lelaki Sekolah Travel",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729627625828484116",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/95b7ced996764ed7a300f8d31ea6fd29",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/95b7ced996764ed7a300f8d31ea6fd29~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/95b7ced996764ed7a300f8d31ea6fd29~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "25.00",
+                "sale_price_format": "25.00",
+                "single_product_price_format": "25.00",
+                "single_product_price_decimal": "25.00",
+                "sale_price_integer_part_format": "25",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "50.00",
+                "origin_price_format": "50.00",
+                "discount_decimal": "0.50",
+                "discount_format": "50%",
+                "reduce_price_format": "Saving RM25.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "25.00",
+                    "seller_subtotal_deduction_decimal": "25"
+                }
+            },
+            "rate_info": {
+                "score": 4.2,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 10914
+            },
+            "seller_info": {
+                "seller_id": "7495754929623107604",
+                "shop_name": "Webee.my",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388340",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729627625828484116",
+                "slug": "webee-b-9999-school-sneaker-men-s-sport-s-kasut-outdoor-shoe-lelaki-sekolah-travel",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729492653599917970",
+            "title": "Unisex Fashion Slides Women Men Selipar Slippers Kasut Lelaki Perempuan Indoors Outdoors",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729492653599917970",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/fe20d878c47248518e8604418d598c3e",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/fe20d878c47248518e8604418d598c3e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/fe20d878c47248518e8604418d598c3e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "5.99",
+                "sale_price_format": "5.99",
+                "single_product_price_format": "5.99",
+                "single_product_price_decimal": "5.99",
+                "sale_price_integer_part_format": "5",
+                "sale_price_decimal_part_format": "99",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "promotion_deduction_details": null
+            },
+            "rate_info": {
+                "score": 4.4,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 62719
+            },
+            "seller_info": {
+                "seller_id": "7494682629197564818",
+                "shop_name": "funfuninmalay",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388341",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729492653599917970",
+                "slug": "unisex-fashion-slides-women-men-selipar-slippers-kasut-lelaki-perempuan-indoors-outdoors",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1733956523135501879",
+            "title": "DK0102 Deke Wasachi Kasut Khaki Gaya Kotor Jenama Trend Kulit Asli Mewah Ringan Retro Model Popular Santai Bernafas Serbaguna Unisex Reka Bentuk Pasangan dengan Permukaan Lembut dan Tapak Fleksibel",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637510328401725185,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1733956523135501879",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/41f3f402c6f543abb867c8d91ac3fcc1",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/41f3f402c6f543abb867c8d91ac3fcc1~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/41f3f402c6f543abb867c8d91ac3fcc1~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "246.00",
+                "sale_price_format": "246.00",
+                "single_product_price_format": "246.00",
+                "single_product_price_decimal": "246.00",
+                "sale_price_integer_part_format": "246",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2490.00",
+                "origin_price_format": "2490.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM2244.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2244.00",
+                    "seller_subtotal_deduction_decimal": "2244"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 5
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388341",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1733956523135501879",
+                "slug": "dk0102-deke-wasachi-kasut-khaki-gaya-kotor-jenama-trend-kulit-asli-mewah-ringan-retro-model-popular-santai-bernafas-serbaguna-unisex-reka-bentuk-pasangan-dengan-permukaan-lembut-dan-tapak-fleksibel",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1733361241021187698",
+            "title": "6633【OGR】Kasut tapak Apache buatan tangan gaya mewah ringan dan fesyen tinggi, siri “old flower”, tapak lembut, permukaan lembut, bergaya, selesa, kalis air",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1733361241021187698",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/5b512205482f452cbe614a1895d67bb8",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/5b512205482f452cbe614a1895d67bb8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/5b512205482f452cbe614a1895d67bb8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "283.00",
+                "sale_price_format": "283.00",
+                "single_product_price_format": "283.00",
+                "single_product_price_decimal": "283.00",
+                "sale_price_integer_part_format": "283",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2888.00",
+                "origin_price_format": "2888.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM2605.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2605.00",
+                    "seller_subtotal_deduction_decimal": "2605"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 8
+            },
+            "seller_info": {
+                "seller_id": "7494217287778272882",
+                "shop_name": "OGR",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388342",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1733361241021187698",
+                "slug": "6633-ogr-kasut-tapak-apache-buatan-tangan-gaya-mewah-ringan-dan-fesyen-tinggi-siri-old-flower-tapak-lembut-permukaan-lembut-bergaya-selesa-kalis-air",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729482300414134026",
+            "title": "[Online Exclusive] BATA Denese Men Black Dress Slip On 8116190 Kasut Formal Sarung Lelaki",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729482300414134026",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/362e870c22e64aaaa8bc892b22984e81",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/362e870c22e64aaaa8bc892b22984e81~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/362e870c22e64aaaa8bc892b22984e81~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "75.00",
+                "sale_price_format": "75.00",
+                "single_product_price_format": "75.00",
+                "single_product_price_decimal": "75.00",
+                "sale_price_integer_part_format": "75",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "99.99",
+                "origin_price_format": "99.99",
+                "discount_decimal": "0.25",
+                "discount_format": "25%",
+                "reduce_price_format": "Saving RM24.99",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "24.99",
+                    "seller_subtotal_deduction_decimal": "24"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 4500
+            },
+            "seller_info": {
+                "seller_id": "7494831249052896010",
+                "shop_name": "Official Bata Store 24104-P",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388372",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729482300414134026",
+                "slug": "online-exclusive-bata-denese-men-black-dress-slip-on-8116190-kasut-formal-sarung-lelaki",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734463201619313923",
+            "title": "【HOT SALE】 VANS OFF THE WALL Knu skool high-street style American retro men's and women's sneakers, loafers",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+            "product_label_info": [
+                {
+                    "label_type": 34,
+                    "text": "Giao nhanh 24h"
+                }
+            ],
+            "search_meta": {
+                "search_result_id": "1734463201619313923",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/a8198594dc964046a08154454a49107e",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/a8198594dc964046a08154454a49107e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/a8198594dc964046a08154454a49107e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "170.01",
+                "sale_price_format": "170.01",
+                "single_product_price_format": "170.01",
+                "single_product_price_decimal": "170.01",
+                "sale_price_integer_part_format": "170",
+                "sale_price_decimal_part_format": "01",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "299.00",
+                "origin_price_format": "299.00",
+                "discount_decimal": "0.43",
+                "discount_format": "43%",
+                "reduce_price_format": "Saving RM128.99",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "128.99",
+                    "seller_subtotal_deduction_decimal": "128"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 241
+            },
+            "seller_info": {
+                "seller_id": "7494395906492433667",
+                "shop_name": "SUPERS shoe",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388372",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734463201619313923",
+                "slug": "hot-sale-vans-off-the-wall-knu-skool-high-street-style-american-retro-men-s-and-women-s-sneakers-loafers",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729438591386290380",
+            "title": "Dr Cardin Men Faux Leather  Formal  Lace-up Formal Shoe  YOD-6339 | Wedding |",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729438591386290380",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb",
+                "url_list": [
+                    "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/68e43de9b0de4f5bb11de0611c0338cb~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "79.00",
+                "sale_price_format": "79.00",
+                "single_product_price_format": "79.00",
+                "single_product_price_decimal": "79.00",
+                "sale_price_integer_part_format": "79",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "199.90",
+                "origin_price_format": "199.90",
+                "discount_decimal": "0.60",
+                "discount_format": "60%",
+                "reduce_price_format": "Saving RM120.90",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "120.90",
+                    "seller_subtotal_deduction_decimal": "120"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 14208
+            },
+            "seller_info": {
+                "seller_id": "7494638588954577100",
+                "shop_name": "Dr. Cardin",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388372",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729438591386290380",
+                "slug": "dr-cardin-men-faux-leather-formal-lace-up-formal-shoe-yod-6339-wedding",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729478472559331268",
+            "title": "safety shoes for men  kasut safety lelaki  steel toe shoes Anti-piercing Non-slip Toe Safety Boots",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729478472559331268",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-maliva-i-o3syd03w52-us/8042f8f7e3e44ed68e83d6f2bcdafb6d",
+                "url_list": [
+                    "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/8042f8f7e3e44ed68e83d6f2bcdafb6d~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/8042f8f7e3e44ed68e83d6f2bcdafb6d~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "58.99",
+                "sale_price_format": "58.99",
+                "single_product_price_format": "58.99",
+                "single_product_price_decimal": "58.99",
+                "sale_price_integer_part_format": "58",
+                "sale_price_decimal_part_format": "99",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "116.00",
+                "origin_price_format": "116.00",
+                "discount_decimal": "0.49",
+                "discount_format": "49%",
+                "reduce_price_format": "Saving RM57.01",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "57.01",
+                    "seller_subtotal_deduction_decimal": "57"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 3562
+            },
+            "seller_info": {
+                "seller_id": "7495210894450133956",
+                "shop_name": "COMLAZY",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388372",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729478472559331268",
+                "slug": "safety-shoes-for-men-kasut-safety-lelaki-steel-toe-shoes-anti-piercing-non-slip-toe-safety-boots",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734056768634979895",
+            "title": "6808【BARU】【DUSAMEYA】Kasut Trend Mewah Musim Luruh dan Sejuk 2025 Kasut Papan Tebal Anti Licin Tahan Haus Kasut Lelaki Ringan Serbaguna Kasut Santai Fesyen Lelaki",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637509968786245393,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734056768634979895",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/ea9cee49bd44474491e505c6c347c0e4",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/ea9cee49bd44474491e505c6c347c0e4~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/ea9cee49bd44474491e505c6c347c0e4~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "265.00",
+                "sale_price_format": "265.00",
+                "single_product_price_format": "265.00",
+                "single_product_price_decimal": "265.00",
+                "sale_price_integer_part_format": "265",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "2680.00",
+                "origin_price_format": "2680.00",
+                "discount_decimal": "0.90",
+                "discount_format": "90%",
+                "reduce_price_format": "Saving RM2415.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "2415.00",
+                    "seller_subtotal_deduction_decimal": "2415"
+                }
+            },
+            "rate_info": null,
+            "sold_info": {
+                "sold_count": 10
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734056768634979895",
+                "slug": "6808-baru-dusameya-kasut-trend-mewah-musim-luruh-dan-sejuk-2025-kasut-papan-tebal-anti-licin-tahan-haus-kasut-lelaki-ringan-serbaguna-kasut-santai-fesyen-lelaki",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729614405162666106",
+            "title": "READY STOCK Men's Sport Shoes Sneakers Kasut Sukan Lelaki Fashion Harga Murah Harga Lelong Unisex Fashionable Running",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_119-119",
+            "product_label_info": [
+                {
+                    "label_type": 119,
+                    "text": "Giao hỏa tốc"
+                }
+            ],
+            "search_meta": {
+                "search_result_id": "1729614405162666106",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/2445512d45424b26adf5ea5adbb8c773~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "10.49",
+                "sale_price_format": "10.49",
+                "single_product_price_format": "10.49",
+                "single_product_price_decimal": "10.49",
+                "sale_price_integer_part_format": "10",
+                "sale_price_decimal_part_format": "49",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "29.00",
+                "origin_price_format": "29.00",
+                "discount_decimal": "0.64",
+                "discount_format": "64%",
+                "reduce_price_format": "Saving RM18.51",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "18.51",
+                    "seller_subtotal_deduction_decimal": "18"
+                }
+            },
+            "rate_info": {
+                "score": 4.5,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 32170
+            },
+            "seller_info": {
+                "seller_id": "7494682742017329274",
+                "shop_name": "KOREANSFASHIONSHOP",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729614405162666106",
+                "slug": "ready-stock-men-s-sport-shoes-sneakers-kasut-sukan-lelaki-fashion-harga-murah-harga-lelong-unisex-fashionable-running",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734224435645613761",
+            "title": "STEAPEX HIVE SWIFT Kasut Larian Unisex Slip-On Ultra Ringan dengan Kusyen Sarang Elastik & Tapak Anti-Slip",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637776523600299794,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_34-34",
+            "product_label_info": [
+                {
+                    "label_type": 34,
+                    "text": "Giao nhanh 24h"
+                }
+            ],
+            "search_meta": {
+                "search_result_id": "1734224435645613761",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/b2d640da0dbe437ebc1b3cd3968e3036",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b2d640da0dbe437ebc1b3cd3968e3036~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b2d640da0dbe437ebc1b3cd3968e3036~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "126.00",
+                "sale_price_format": "126.00",
+                "single_product_price_format": "126.00",
+                "single_product_price_decimal": "126.00",
+                "sale_price_integer_part_format": "126",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "599.00",
+                "origin_price_format": "599.00",
+                "discount_decimal": "0.79",
+                "discount_format": "79%",
+                "reduce_price_format": "Saving RM473.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "473.00",
+                    "seller_subtotal_deduction_decimal": "473"
+                }
+            },
+            "rate_info": {
+                "score": 4.9,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 1541
+            },
+            "seller_info": {
+                "seller_id": "7494233487112177345",
+                "shop_name": "Steapex.Malaysia",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734224435645613761",
+                "slug": "steapex-hive-swift-kasut-larian-unisex-slip-on-ultra-ringan-dengan-kusyen-sarang-elastik-tapak-anti-slip",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1730232137608955369",
+            "title": "Men Waterproof Sports Casual Shoes Anti-slip Shoes Soft Sole Running Shoes Sneaker Kasut Sukan Berjoging Lelaki 916 Kasual",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3,warehouse_label_119-119",
+            "product_label_info": [
+                {
+                    "label_type": 119,
+                    "text": "Giao hỏa tốc"
+                }
+            ],
+            "search_meta": {
+                "search_result_id": "1730232137608955369",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/824db84705824b3a8a7bd69c5dd8fe3a",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/824db84705824b3a8a7bd69c5dd8fe3a~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/824db84705824b3a8a7bd69c5dd8fe3a~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "21.47",
+                "sale_price_format": "21.47",
+                "single_product_price_format": "21.47",
+                "single_product_price_decimal": "21.47",
+                "sale_price_integer_part_format": "21",
+                "sale_price_decimal_part_format": "47",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "21.88",
+                "origin_price_format": "21.88",
+                "discount_decimal": "0.02",
+                "discount_format": "2%",
+                "reduce_price_format": "Saving RM0.41",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "0.41",
+                    "seller_subtotal_deduction_decimal": "0"
+                }
+            },
+            "rate_info": {
+                "score": 4.6,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 19657
+            },
+            "seller_info": {
+                "seller_id": "7494721571143977449",
+                "shop_name": "DMDconceptstore",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1730232137608955369",
+                "slug": "men-waterproof-sports-casual-shoes-anti-slip-shoes-soft-sole-running-shoes-sneaker-kasut-sukan-berjoging-lelaki-916-kasual",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729637556497385351",
+            "title": "Sneakers Breathable Increase height fashion casual shoes and Korean simple and cute women's shoes Rubber Badminton",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729637556497385351",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-maliva-i-o3syd03w52-us/7b43877f52fb4b80863ee44334600303",
+                "url_list": [
+                    "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7b43877f52fb4b80863ee44334600303~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/7b43877f52fb4b80863ee44334600303~tplv-o3syd03w52-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "23.79",
+                "sale_price_format": "23.79",
+                "single_product_price_format": "23.79",
+                "single_product_price_decimal": "23.79",
+                "sale_price_integer_part_format": "23",
+                "sale_price_decimal_part_format": "79",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "50.00",
+                "origin_price_format": "50.00",
+                "discount_decimal": "0.52",
+                "discount_format": "52%",
+                "reduce_price_format": "Saving RM26.21",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "26.21",
+                    "seller_subtotal_deduction_decimal": "26"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 27287
+            },
+            "seller_info": {
+                "seller_id": "7495613725630958471",
+                "shop_name": "Casas shoes",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729637556497385351",
+                "slug": "sneakers-breathable-increase-height-fashion-casual-shoes-and-korean-simple-and-cute-women-s-shoes-rubber-badminton",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729553183901582959",
+            "title": "READY STOCK EVA Men Outdoor Sneakers Sport Shoes Kasut Sukan Lelaki B36",
+            "product_description": null,
+            "ship_from": null,
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637838320646506241,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729553183901582959",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/9bc593e1a7b14af29609f54c200139f8",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/9bc593e1a7b14af29609f54c200139f8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/9bc593e1a7b14af29609f54c200139f8~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "36.45",
+                "sale_price_format": "36.45",
+                "single_product_price_format": "36.45",
+                "single_product_price_decimal": "36.45",
+                "sale_price_integer_part_format": "36",
+                "sale_price_decimal_part_format": "45",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "50.00",
+                "origin_price_format": "50.00",
+                "discount_decimal": "0.27",
+                "discount_format": "27%",
+                "reduce_price_format": "Saving RM13.55",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "13.55",
+                    "seller_subtotal_deduction_decimal": "13"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 3521
+            },
+            "seller_info": {
+                "seller_id": "7494977840119908975",
+                "shop_name": "Eva Wholesale",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388373",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729553183901582959",
+                "slug": "ready-stock-eva-men-outdoor-sneakers-sport-shoes-kasut-sukan-lelaki-b36",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1732165629338289440",
+            "title": "Ready Stock Kasut sukan lelaki dan kasut kasual Men's sports shoes and casual shoes",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "7610254947484994837",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_video_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/b7d4606663ef49519875cb2365ac0dd0",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b7d4606663ef49519875cb2365ac0dd0~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/b7d4606663ef49519875cb2365ac0dd0~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": {
+                "url_list": [
+                    "https://v45-eu.tiktokcdn.com/680a9ac7b1ca151a00328a0446cd06e2/6a024990/video/tos/alisg/tos-alisg-pve-0037c001/ognA0BEQpgDBRcgm54xOF0dBfeUQqpEEDkIvFj/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1076&ft=XsFbYqgwmILPD127XTfI3wUDy~pcMeF~O5&mime_type=video_mp4&rc=ODo0ZTQ0aDtoMzc4M2c2OUBpMzlqNHg5cnVqOTMzODczNEAuM19hMmMwXy0xNmA2LjEzYSNucWBwMmRzcGJhLS1kMTFzcw%3D%3D&vvpl=1&l=2026051105262629C20A4623E87E0D3CE5&btag=e000b5000",
+                    "https://v15m.tiktokcdn.com/19fedbf9e0164130c63c49826e817a02/6a024990/video/tos/alisg/tos-alisg-pve-0037c001/ognA0BEQpgDBRcgm54xOF0dBfeUQqpEEDkIvFj/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1076&ft=XsFbYqgwmILPD127XTfI3wUDy~pcMeF~O5&mime_type=video_mp4&rc=ODo0ZTQ0aDtoMzc4M2c2OUBpMzlqNHg5cnVqOTMzODczNEAuM19hMmMwXy0xNmA2LjEzYSNucWBwMmRzcGJhLS1kMTFzcw%3D%3D&vvpl=1&l=2026051105262629C20A4623E87E0D3CE5&btag=e000b0000",
+                    "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=66431d90c594400eb83ef151dbb16715&is_play_url=1&item_id=7610254947484994837&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLjU4M2M3ZTE1ZWZkOTJjYTBlYjllOGM2YzA3NGE4YWNi&source=SEARCH&video_id=v14044g50000d6egsrvog65us1cgt6q0"
+                ],
+                "img_urls": [],
+                "aweme_id": "7610254947484994837",
+                "desc": "#shoes #tiktokshop #fyp ",
+                "create_time": 1771900567,
+                "share_url": "https://www.tiktok.com/@aghhkklm/video/7610254947484994837?_r=1&u_code=f0304h43ak9l34&region=NL&mid=7094390065677208347&preview_pb=0&sharer_language=vi&_d=f03ak603m00cfc&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227610254947484994837%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-common-sign.tiktokcdn.com%252Ftos-alisg-p-0037%252Fos5kDQn4DIWp0de5AOFAUZRvmBfHpwBIEBgFEn~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253D125a06fa%2526x-expires%253D1809982800%2526x-signature%253DMc0esAQpYJju87yvI%25252FqYi1pQpYU%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221732165629338289440%22%2C%22placeholder_video_id%22%3A%227610254947484994837%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7610254947484994837&source=h5_t",
+                "duration_ms": 13515,
+                "author": {
+                    "uid": "7186187037057172486",
+                    "nickname": "aghhkklnm",
+                    "unique_id": "aghhkklm",
+                    "sec_uid": "MS4wLjABAAAALLpHPyKbFEhD8VUjL3kfyMlgrYA-Ff2Bazx5czPNmwUkl44OIm0G1ETz9Oq5ibT8",
+                    "follower_count": 4660
+                },
+                "music": {
+                    "id": 7094390065677209000,
+                    "id_str": "7094390065677208347",
+                    "title": "âm thanh gốc - Cristino KH",
+                    "author": "Cristino KH"
+                },
+                "statistics": {
+                    "comment_count": 11,
+                    "digg_count": 1443,
+                    "play_count": 223240,
+                    "share_count": 82,
+                    "collect_count": 133
+                },
+                "cha_list": [
+                    {
+                        "cid": "7383",
+                        "cha_name": "shoes",
+                        "desc": ""
+                    }
+                ]
+            },
+            "category_breadcrumb": [
+                {
+                    "category_id": 601352,
+                    "category_name": "Kasut",
+                    "level": 1
+                },
+                {
+                    "category_id": 900616,
+                    "category_name": "Kasut Lelaki",
+                    "level": 2
+                },
+                {
+                    "category_id": 601357,
+                    "category_name": "Kasut Kasual",
+                    "level": 3
+                }
+            ],
+            "product_price_info": {
+                "sale_price_decimal": "29.99",
+                "sale_price_format": "29.99",
+                "single_product_price_format": "29.99",
+                "single_product_price_decimal": "29.99",
+                "sale_price_integer_part_format": "29",
+                "sale_price_decimal_part_format": "99",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "56.99",
+                "origin_price_format": "56.99",
+                "discount_decimal": "0.47",
+                "discount_format": "47%",
+                "reduce_price_format": "Saving RM27.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "27.00",
+                    "seller_subtotal_deduction_decimal": "27"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 8550
+            },
+            "seller_info": {
+                "seller_id": "7495840012659099936",
+                "shop_name": "YIYISKY",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388375",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1732165629338289440",
+                "slug": "ready-stock-kasut-sukan-lelaki-dan-kasut-kasual-men-s-sports-shoes-and-casual-shoes",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729614927244331036",
+            "title": "Novencci Unisex Outdoor Canvas Shoes Kasut Lelaki Perempuan (Ready Stock)",
+            "product_description": null,
+            "ship_from": "Johor",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637729463190652680,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729614927244331036",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 600,
+                "width": 450,
+                "uri": "tos-maliva-i-o3syd03w52-us/792a9ce1734f9c54ff1d47da6036a74f",
+                "url_list": [
+                    "https://p16-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/792a9ce1734f9c54ff1d47da6036a74f~tplv-o3syd03w52-crop-webp:450:600.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-va.ibyteimg.com/tos-maliva-i-o3syd03w52-us/792a9ce1734f9c54ff1d47da6036a74f~tplv-o3syd03w52-crop-webp:450:600.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "12.13",
+                "sale_price_format": "12.13",
+                "single_product_price_format": "12.13",
+                "single_product_price_decimal": "12.13",
+                "sale_price_integer_part_format": "12",
+                "sale_price_decimal_part_format": "13",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "25.00",
+                "origin_price_format": "25.00",
+                "discount_decimal": "0.51",
+                "discount_format": "51%",
+                "reduce_price_format": "Saving RM12.87",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "12.87",
+                    "seller_subtotal_deduction_decimal": "12"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 126990
+            },
+            "seller_info": {
+                "seller_id": "7494988793567479836",
+                "shop_name": "NOVENCCI",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388375",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729614927244331036",
+                "slug": "novencci-unisex-outdoor-canvas-shoes-kasut-lelaki-perempuan-ready-stock",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1732029358428096330",
+            "title": "Steel Toe Anti-puncture Lightweight Shoes Probeli Safety Shoes Boots Anti SlipAnti Smash Lightweight Breathable Steel ToeKasut Lelaki Kerja Kasut Safty kasutsafetymurah",
+            "product_description": null,
+            "ship_from": "Negeri Sembilan",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1732029358428096330",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/0e131ec31459492f84f45f3f9c3d627e",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/0e131ec31459492f84f45f3f9c3d627e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/0e131ec31459492f84f45f3f9c3d627e~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "43.26",
+                "sale_price_format": "43.26",
+                "single_product_price_format": "43.26",
+                "single_product_price_decimal": "43.26",
+                "sale_price_integer_part_format": "43",
+                "sale_price_decimal_part_format": "26",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "99.04",
+                "origin_price_format": "99.04",
+                "discount_decimal": "0.56",
+                "discount_format": "56%",
+                "reduce_price_format": "Saving RM55.78",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "55.78",
+                    "seller_subtotal_deduction_decimal": "55"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 723
+            },
+            "seller_info": {
+                "seller_id": "7496034617144609610",
+                "shop_name": "LMVELO work safety shoes",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388375",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1732029358428096330",
+                "slug": "steel-toe-anti-puncture-lightweight-shoes-probeli-safety-shoes-boots-anti-slipanti-smash-lightweight-breathable-steel-toekasut-lelaki-kerja-kasut-safty-kasutsafetymurah",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729678220032706124",
+            "title": "READYSTOCK Magni Fashion Men Sport Shoes Breathable Sneakers Running Shoes Lelaki Kasut Sukan",
+            "product_description": null,
+            "ship_from": "Pahang",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "7580210700417502485",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_video_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/f9fc87bdb2ec442aaab7c040577ef3cb",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/f9fc87bdb2ec442aaab7c040577ef3cb~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/f9fc87bdb2ec442aaab7c040577ef3cb~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": {
+                "url_list": [
+                    "https://v45-eu.tiktokcdn.com/54a2d1c13a299d25d5a83eeb38ac53c3/6a024992/video/tos/alisg/tos-alisg-pve-0037c001/oMYDKYGOLCy3ZUy1HjLkACrIefpIEoQeASKgLI/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1152&ft=XsFbYqgwmILPD127XTfI3wUDy~pcMeF~O5&mime_type=video_mp4&rc=MzQ4OzU6ZDs0Nzk0ODRoPEBpM2w5O3k5cnA4NzMzODczNEA1XzZfLTA2XjQxLWJgYDMuYSNmazJzMmRzL21hLS1kMTFzcw%3D%3D&vvpl=1&l=2026051105262629C20A4623E87E0D3CE5&btag=e000b5000",
+                    "https://v15m.tiktokcdn.com/d3d0465656fa140f4fc2f008a1f89f52/6a024992/video/tos/alisg/tos-alisg-pve-0037c001/oMYDKYGOLCy3ZUy1HjLkACrIefpIEoQeASKgLI/?a=1233&bti=NEBzbmRidWZrdWgxaHdmKTc6OWYucCNgbWFeK2BecGBxOmQ0NDA6&&bt=1152&ft=XsFbYqgwmILPD127XTfI3wUDy~pcMeF~O5&mime_type=video_mp4&rc=MzQ4OzU6ZDs0Nzk0ODRoPEBpM2w5O3k5cnA4NzMzODczNEA1XzZfLTA2XjQxLWJgYDMuYSNmazJzMmRzL21hLS1kMTFzcw%3D%3D&vvpl=1&l=2026051105262629C20A4623E87E0D3CE5&btag=e000b0000",
+                    "https://api-h2.tiktokv.com/aweme/v1/play/?faid=1233&file_id=196ec1c5e1064471a89a3702b895b180&is_play_url=1&item_id=7580210700417502485&line=0&signaturev3=dmlkZW9faWQ7ZmlsZV9pZDtpdGVtX2lkLjViNTI0MGFiMTQ2YjhmOTZmZmE0ZTBiNDFmOWYxODFk&source=SEARCH&video_id=v14044g50000d4p52mvog65vv856nii0"
+                ],
+                "img_urls": [],
+                "aweme_id": "7580210700417502485",
+                "desc": "#foryou#foryoupage",
+                "create_time": 1764905342,
+                "share_url": "https://www.tiktok.com/@yueyue1551/video/7580210700417502485?_r=1&u_code=f0304h43ak9l34&region=NL&mid=7580210724484500225&preview_pb=0&sharer_language=vi&_d=f03ak603m00cfc&ec_shared_reflux_dynamic_params=%7B%22placeholder_material_id%22%3A%227580210700417502485%22%2C%22placeholder_origin_cover%22%3A%22https%253A%252F%252Fp16-common-sign.tiktokcdn.com%252Ftos-alisg-p-0037%252FogpyKSgeIBkKALNYrAoIXADUz36ZCkGfIIYejy~tplv-tiktokx-origin.webp%253Fdr%253D14572%2526refresh_token%253D6bc01e98%2526x-expires%253D1809982800%2526x-signature%253Dtlo1MsW7eYSeZNlaLtSncPhfCFs%25253D%2526t%253D4d5b0474%2526ps%253D13740610%2526shp%253Dd05b14bd%2526shcp%253D34ff8df6%2526idc%253Dmy%2526s%253DSEARCH%22%2C%22placeholder_product_id%22%3A%221729678220032706124%22%2C%22placeholder_video_id%22%3A%227580210700417502485%22%7D&ec_shared_reflux_scene=shop_tab_feed&share_item_id=7580210700417502485&source=h5_t",
+                "duration_ms": 15034,
+                "author": {
+                    "uid": "7472296347077805064",
+                    "nickname": "YUEYUE",
+                    "unique_id": "yueyue1551",
+                    "sec_uid": "MS4wLjABAAAAN7xVbKQec_L-ExeFlVuHDsiNsfvHkSREDhfv8W-2luAmO7bGfetusnRzA5e4kgXZ",
+                    "follower_count": 11279
+                },
+                "music": {
+                    "id": 7580210724484500000,
+                    "id_str": "7580210724484500225",
+                    "title": "âm thanh gốc - YUEYUE",
+                    "author": "YUEYUE"
+                },
+                "statistics": {
+                    "comment_count": 48,
+                    "digg_count": 9640,
+                    "play_count": 2233432,
+                    "share_count": 508,
+                    "collect_count": 976
+                },
+                "cha_list": [
+                    {
+                        "cid": "42164",
+                        "cha_name": "foryou",
+                        "desc": ""
+                    }
+                ]
+            },
+            "category_breadcrumb": [
+                {
+                    "category_id": 601352,
+                    "category_name": "Kasut",
+                    "level": 1
+                },
+                {
+                    "category_id": 900616,
+                    "category_name": "Kasut Lelaki",
+                    "level": 2
+                },
+                {
+                    "category_id": 601357,
+                    "category_name": "Kasut Kasual",
+                    "level": 3
+                }
+            ],
+            "product_price_info": {
+                "sale_price_decimal": "11.95",
+                "sale_price_format": "11.95",
+                "single_product_price_format": "11.95",
+                "single_product_price_decimal": "11.95",
+                "sale_price_integer_part_format": "11",
+                "sale_price_decimal_part_format": "95",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "30.00",
+                "origin_price_format": "30.00",
+                "discount_decimal": "0.60",
+                "discount_format": "60%",
+                "reduce_price_format": "Saving RM18.05",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "18.05",
+                    "seller_subtotal_deduction_decimal": "18"
+                }
+            },
+            "rate_info": {
+                "score": 4.3,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 15186
+            },
+            "seller_info": {
+                "seller_id": "7495000902581586508",
+                "shop_name": "Magni Fashion Store",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729678220032706124",
+                "slug": "readystock-magni-fashion-men-sport-shoes-breathable-sneakers-running-shoes-lelaki-kasut-sukan",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1733507743588910589",
+            "title": "Men's casual shoes, sneakers, white sneakers, trendy and versatile Kasut kasual lelaki, kasut sukan, kasut putih",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_label_4-4,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1733507743588910589",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/9de71c4d1ad845c5af74bbc414790829",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/9de71c4d1ad845c5af74bbc414790829~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/9de71c4d1ad845c5af74bbc414790829~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "19.89",
+                "sale_price_format": "19.89",
+                "single_product_price_format": "19.89",
+                "single_product_price_decimal": "19.89",
+                "sale_price_integer_part_format": "19",
+                "sale_price_decimal_part_format": "89",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "51.60",
+                "origin_price_format": "51.60",
+                "discount_decimal": "0.61",
+                "discount_format": "61%",
+                "reduce_price_format": "Saving RM31.71",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "31.71",
+                    "seller_subtotal_deduction_decimal": "31"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 981
+            },
+            "seller_info": {
+                "seller_id": "7494268668488025597",
+                "shop_name": "camanimawuda",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1733507743588910589",
+                "slug": "men-s-casual-shoes-sneakers-white-sneakers-trendy-and-versatile-kasut-kasual-lelaki-kasut-sukan-kasut-putih",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729627028940687932",
+            "title": "Sniika - Kasut Taji All Black / Khaki",
+            "product_description": null,
+            "ship_from": "Kelantan",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637165861002086165,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729627028940687932",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/dd68ea5cbf944c898e3de927e3e96394~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "69.00",
+                "sale_price_format": "69.00",
+                "single_product_price_format": "69.00",
+                "single_product_price_decimal": "69.00",
+                "sale_price_integer_part_format": "69",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "140.00",
+                "origin_price_format": "140.00",
+                "discount_decimal": "0.51",
+                "discount_format": "51%",
+                "reduce_price_format": "Saving RM71.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "71.00",
+                    "seller_subtotal_deduction_decimal": "71"
+                }
+            },
+            "rate_info": {
+                "score": 4.8,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 40018
+            },
+            "seller_info": {
+                "seller_id": "7494735719178930748",
+                "shop_name": "Sniika Hq",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729627028940687932",
+                "slug": "sniika-kasut-taji-all-black-khaki",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729680703650498344",
+            "title": "Kasut lelaki/Kasut sukan lelaki /kasut jalan lelaki sepatu lelaki Kualiti tinggi selesa Pilihan warna 3color",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729680703650498344",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/220f9c8d717f40cf99f63a2cddb741ab",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/220f9c8d717f40cf99f63a2cddb741ab~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/220f9c8d717f40cf99f63a2cddb741ab~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "23.99",
+                "sale_price_format": "23.99",
+                "single_product_price_format": "23.99",
+                "single_product_price_decimal": "23.99",
+                "sale_price_integer_part_format": "23",
+                "sale_price_decimal_part_format": "99",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "48.00",
+                "origin_price_format": "48.00",
+                "discount_decimal": "0.50",
+                "discount_format": "50%",
+                "reduce_price_format": "Saving RM24.01",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "24.01",
+                    "seller_subtotal_deduction_decimal": "24"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 20690
+            },
+            "seller_info": {
+                "seller_id": "7495339886041991976",
+                "shop_name": "Shoe Lounge",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729680703650498344",
+                "slug": "kasut-lelaki-kasut-sukan-lelaki-kasut-jalan-lelaki-sepatu-lelaki-kualiti-tinggi-selesa-pilihan-warna-3color",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1734551465579742775",
+            "title": "5 1025 【NEW】【MATTREMONS】 Model Apache baharu, tapak lembut yang berpengudaraan baik, sesuai sepanjang tahun, kalis air dan selesa, penyesuaian peribadi, mewah ringan berfesyen tinggi, kasut sukan kasual trendi",
+            "product_description": null,
+            "ship_from": "Trung Hoa",
+            "trust_label": null,
+            "product_label": "promotion_label_4-7637510158033094401,promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1734551465579742775",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/0ab20bff491842c887717f8e3de19346",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/0ab20bff491842c887717f8e3de19346~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/0ab20bff491842c887717f8e3de19346~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "195.00",
+                "sale_price_format": "195.00",
+                "single_product_price_format": "195.00",
+                "single_product_price_decimal": "195.00",
+                "sale_price_integer_part_format": "195",
+                "sale_price_decimal_part_format": "00",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "1680.00",
+                "origin_price_format": "1680.00",
+                "discount_decimal": "0.88",
+                "discount_format": "88%",
+                "reduce_price_format": "Saving RM1485.00",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "1485.00",
+                    "seller_subtotal_deduction_decimal": "1485"
+                }
+            },
+            "rate_info": {
+                "score": 4.9,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 151
+            },
+            "seller_info": {
+                "seller_id": "8652417632130467383",
+                "shop_name": "Light Luxury Selection",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1734551465579742775",
+                "slug": "5-1025-new-mattremons-model-apache-baharu-tapak-lembut-yang-berpengudaraan-baik-sesuai-sepanjang-tahun-kalis-air-dan-selesa-penyesuaian-peribadi-mewah-ringan-berfesyen-tinggi-kasut-sukan-kasual-trendi",
+                "type": 2,
+                "version": 2
+            }
+        },
+        {
+            "product_id": "1729840594478990614",
+            "title": "【Venous】2024 New Kasut Putih Lelaki Original 100% Korean White Shoes for Men on Sale Aesthetic Casual Sport Men Shoes  Fashion Casual Sneakers for Men High Quality Stars",
+            "product_description": null,
+            "ship_from": "Selangor",
+            "trust_label": null,
+            "product_label": "promotion_sticker_2,promotion_sticker_5,promotion_sticker_3",
+            "product_label_info": null,
+            "search_meta": {
+                "search_result_id": "1729840594478990614",
+                "search_id": "2026051105262629C20A4623E87E0D3CE5",
+                "entrance_form": "search_pure_goods_card"
+            },
+            "image": {
+                "height": 400,
+                "width": 400,
+                "uri": "tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324",
+                "url_list": [
+                    "https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001",
+                    "https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/30dae850c891475ab65d7315de511324~tplv-aphluv4xwc-crop-webp:400:400.webp?dr=15592&t=555f072d&ps=933b5bde&shp=678cc231&shcp=678cc231&idc=my&from=1737278001"
+                ]
+            },
+            "video": null,
+            "category_breadcrumb": null,
+            "product_price_info": {
+                "sale_price_decimal": "54.80",
+                "sale_price_format": "54.80",
+                "single_product_price_format": "54.80",
+                "single_product_price_decimal": "54.80",
+                "sale_price_integer_part_format": "54",
+                "sale_price_decimal_part_format": "80",
+                "decimal_point_symbol": ".",
+                "symbol_position": 1,
+                "show_currency_space": false,
+                "currency_show_mode": 1,
+                "currency_name": "",
+                "currency_symbol": "RM",
+                "origin_price_decimal": "150.00",
+                "origin_price_format": "150.00",
+                "discount_decimal": "0.63",
+                "discount_format": "63%",
+                "reduce_price_format": "Saving RM95.20",
+                "promotion_deduction_details": {
+                    "seller_subtotal_deduction": "95.20",
+                    "seller_subtotal_deduction_decimal": "95"
+                }
+            },
+            "rate_info": {
+                "score": 4.7,
+                "review_count": null
+            },
+            "sold_info": {
+                "sold_count": 4009
+            },
+            "seller_info": {
+                "seller_id": "7495294954210560278",
+                "shop_name": "Venous Shoes",
+                "shop_logo": null
+            },
+            "seo_url": {
+                "updated_at": "1778448388376",
+                "canonical_url": "https://www.tiktok.com/shop/pdp/1729840594478990614",
+                "slug": "venous-2024-new-kasut-putih-lelaki-original-100-korean-white-shoes-for-men-on-sale-aesthetic-casual-sport-men-shoes-fashion-casual-sneakers-for-men-high-quality-stars",
+                "type": 2,
+                "version": 2
+            }
+        }
+    ]
+}

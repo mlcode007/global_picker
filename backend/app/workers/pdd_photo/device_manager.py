@@ -3,12 +3,15 @@
 
 拍照购调度：只使用「云手机池」中状态为 available 且已配置 adb_host_port 的实例；
 与 device_pool 行级锁（FOR UPDATE SKIP LOCKED）配合，多任务可并行占用不同设备。
+
+新增超时检测：当设备状态为 busy 但绑定的任务已超时（超过 TASK_TIMEOUT_MINUTES 分钟），
+自动释放设备。用于处理服务器重启导致的设备卡死问题。
 """
 from __future__ import annotations
 
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Set
 
 from sqlalchemy import func
@@ -17,6 +20,7 @@ from sqlalchemy.orm import Session
 
 from app.models.cloud_phone import CloudPhonePool
 from app.models.device import Device
+from app.models.photo_search_task import PhotoSearchTask
 from .adb_client import AdbClient
 
 logger = logging.getLogger(__name__)
@@ -31,18 +35,122 @@ ADB_RECONNECT_INTERVAL = 2
 ACQUIRE_WAIT_SECONDS = 10
 ACQUIRE_POLL_INTERVAL = 2.0
 
+# 任务超时时间（分钟）- 超过此时长的任务视为卡死，自动释放设备
+TASK_TIMEOUT_MINUTES = 3
+
 
 class DeviceManager:
 
     def __init__(self, db: Session):
         self.db = db
 
+    # ── 超时任务检测与自动释放 ────────────────────────────────
+
+    def _check_and_release_timeout_devices(self, user_id: Optional[int] = None) -> int:
+        """检查并释放超时任务绑定的设备。
+        
+        当设备状态为 busy 但绑定的任务已超过 TASK_TIMEOUT_MINUTES 分钟没有更新，
+        或者任务已经完成（success/failed/cancelled）但设备仍显示 busy，
+        自动释放设备。
+        
+        用于处理服务器重启或进程崩溃导致的设备卡死问题。
+        
+        Args:
+            user_id: 可选，仅处理指定用户的设备
+            
+        Returns:
+            释放的设备数量
+        """
+        released_count = 0
+        timeout_threshold = datetime.now() - timedelta(minutes=TASK_TIMEOUT_MINUTES)
+
+        # 查询所有 busy 状态的设备
+        query = self.db.query(Device).filter(Device.status == "busy")
+        if user_id is not None:
+            # 限制只处理指定用户云手机池中的设备
+            cloud_serials = self._list_cloud_pool_adb_serials(user_id)
+            if cloud_serials:
+                query = query.filter(Device.device_id.in_(cloud_serials))
+
+        busy_devices = query.all()
+
+        for device in busy_devices:
+            task_id = device.current_task_id
+            if not task_id:
+                # 设备状态为 busy 但没有绑定任务，直接释放
+                logger.warning("Device %s is busy but has no task, releasing", device.device_id)
+                device.status = "idle"
+                device.current_task_id = None
+                device.last_heartbeat = datetime.now()
+                released_count += 1
+                continue
+
+            # 查询绑定的任务
+            task = self.db.query(PhotoSearchTask).filter(PhotoSearchTask.id == task_id).first()
+            if not task:
+                # 任务不存在，释放设备
+                logger.warning("Device %s is busy but task #%d not found, releasing", 
+                             device.device_id, task_id)
+                device.status = "idle"
+                device.current_task_id = None
+                device.last_heartbeat = datetime.now()
+                released_count += 1
+                continue
+
+            # 检查任务是否已完成
+            if task.status in ("success", "failed", "cancelled"):
+                logger.warning("Device %s is busy but task #%d is %s, releasing", 
+                             device.device_id, task_id, task.status)
+                device.status = "idle"
+                device.current_task_id = None
+                device.last_heartbeat = datetime.now()
+                released_count += 1
+                continue
+
+            # 检查任务是否超时（根据任务开始时间判断）
+            if task.started_at and task.started_at < timeout_threshold:
+                elapsed_minutes = (datetime.now() - task.started_at).total_seconds() / 60
+                logger.warning(
+                    "Device %s is busy with task #%d which started %d minutes ago (timeout=%d), releasing",
+                    device.device_id, task_id, int(elapsed_minutes), TASK_TIMEOUT_MINUTES
+                )
+                device.status = "idle"
+                device.current_task_id = None
+                device.last_heartbeat = datetime.now()
+                released_count += 1
+                continue
+
+            # 检查设备最后心跳时间（服务器重启后心跳会停止）
+            if device.last_heartbeat and device.last_heartbeat < timeout_threshold:
+                elapsed_minutes = (datetime.now() - device.last_heartbeat).total_seconds() / 60
+                logger.warning(
+                    "Device %s heartbeat timeout: last heartbeat %d minutes ago (timeout=%d), releasing",
+                    device.device_id, int(elapsed_minutes), TASK_TIMEOUT_MINUTES
+                )
+                device.status = "idle"
+                device.current_task_id = None
+                device.last_heartbeat = datetime.now()
+                released_count += 1
+                continue
+
+        if released_count > 0:
+            self.db.commit()
+            logger.info("Released %d timeout/broken devices", released_count)
+
+        return released_count
+
     # ── 设备获取与锁定 ────────────────────────────────────────
 
     def acquire_device(self, task_id: int, user_id: Optional[int] = None) -> Optional[Device]:
         """从云手机池（available + 有效 ADB）获取一台 idle 设备并锁定；池内有机器但暂忙时会等待轮询。
-        user_id 非空时仅使用 cloud_phone_pool.created_by == user_id 的实例，避免多用户串设备。"""
+        user_id 非空时仅使用 cloud_phone_pool.created_by == user_id 的实例，避免多用户串设备。
+        
+        增加超时检测：在尝试获取设备前，先检查是否有超时任务绑定的设备，如有则自动释放。
+        """
         deadline = time.monotonic() + ACQUIRE_WAIT_SECONDS
+
+        # 在获取设备前，先检查并释放超时任务绑定的设备（处理服务器重启导致的卡死）
+        self._check_and_release_timeout_devices(user_id=user_id)
 
         while time.monotonic() < deadline:
             self._sync_cloud_phones_to_device_pool(user_id=user_id)
@@ -59,11 +167,15 @@ class DeviceManager:
             if device:
                 return device
 
+            # 尝试恢复离线/错误设备
             recovered = self._recover_devices(cloud_serials)
             if recovered:
                 device = self._try_acquire_from_cloud_pool(task_id, user_id=user_id)
                 if device:
                     return device
+
+            # 再次检查超时设备（处理等待期间超时的情况）
+            self._check_and_release_timeout_devices(user_id=user_id)
 
             time.sleep(ACQUIRE_POLL_INTERVAL)
 
@@ -273,4 +385,17 @@ class DeviceManager:
         return self.db.query(Device).all()
 
     def get_idle_count(self) -> int:
-        return self.db.query(Device).filter(Device.status == "idle").count()
+        """获取云手机池中处于空闲状态的设备数量。
+        
+        注意：只统计云手机池（cloud_phone_pool）中的设备，
+        因为拍照购任务只能使用云手机池中的设备。
+        """
+        # 获取云手机池中的设备序列号
+        cloud_serials = self._list_cloud_pool_adb_serials(user_id=None)
+        if not cloud_serials:
+            return 0
+        # 只统计云手机池中状态为 idle 的设备
+        return self.db.query(Device).filter(
+            Device.device_id.in_(cloud_serials),
+            Device.status == "idle"
+        ).count()

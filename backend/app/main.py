@@ -20,7 +20,7 @@ def _startup_recover():
     """恢复服务重启前中断的拍照购任务，并重新调度执行。"""
     from app.database import SessionLocal
     from app.services import photo_search_service
-    from app.workers.pdd_photo.worker import execute_photo_search_task
+    from app.workers.pdd_photo.task_scheduler import scheduler
 
     db = SessionLocal()
     try:
@@ -28,17 +28,16 @@ def _startup_recover():
         if not recovered:
             return
 
+        # 获取所有 queued 状态的任务
         tasks = db.query(photo_search_service.PhotoSearchTask).filter(
             photo_search_service.PhotoSearchTask.status == "queued"
-        ).order_by(photo_search_service.PhotoSearchTask.created_at.desc()).limit(1).all()
+        ).order_by(photo_search_service.PhotoSearchTask.created_at.asc()).all()
 
-        for task in tasks:
-            logger.info("Re-dispatching recovered task #%d", task.id)
-            threading.Thread(
-                target=execute_photo_search_task,
-                args=(task.id,),
-                daemon=True,
-            ).start()
+        # 通过调度器调度任务（而不是直接启动线程），确保并发控制生效
+        task_ids = [task.id for task in tasks]
+        if task_ids:
+            logger.info("Re-dispatching %d recovered tasks via scheduler", len(task_ids))
+            scheduler.add_tasks(task_ids)
     except Exception as e:
         logger.error("Startup recovery failed: %s", e)
         db.rollback()
@@ -46,13 +45,28 @@ def _startup_recover():
         db.close()
 
 
+def _start_scheduler():
+    """启动拍照购任务调度器，支持多设备并行处理。"""
+    from app.workers.pdd_photo.task_scheduler import scheduler, start_scheduler
+    try:
+        # 设置默认最大并发数为50（用户有2个云手机）
+        scheduler.set_concurrency(50)
+        start_scheduler()
+        logger.info("Photo search task scheduler started with concurrency=2")
+    except Exception as e:
+        logger.error("Failed to start task scheduler: %s", e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Global Picker API 启动 (env=%s)", settings.APP_ENV)
     threading.Thread(target=_startup_recover, daemon=True).start()
+    threading.Thread(target=_start_scheduler, daemon=True).start()
     from app.services.payment_compensation import start_compensation_scheduler
     start_compensation_scheduler()
     yield
+    from app.workers.pdd_photo.task_scheduler import stop_scheduler
+    stop_scheduler()
     logger.info("Global Picker API 关闭")
 
 
