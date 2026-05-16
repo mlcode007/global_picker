@@ -371,8 +371,8 @@
               <a-image
                 v-if="record.main_image_url"
                 :src="record.main_image_url"
-                :width="100"
-                :height="100"
+                :width="150"
+                :height="150"
                 style="object-fit:cover;border-radius:6px;flex-shrink:0"
                 :preview="true"
                 :fallback="fallbackImg"
@@ -609,7 +609,7 @@
                   v-if="m.pdd_image_url"
                   :src="m.pdd_image_url"
                   referrerpolicy="no-referrer"
-                  :width="100" :height="100"
+                  :width="150" :height="150"
                   style="object-fit:cover;border-radius:6px;flex-shrink:0"
                   :fallback="fallbackImg"
                 />
@@ -2194,7 +2194,7 @@ onBeforeUnmount(() => {
 .product-cell { display: flex; align-items: center; gap: 12px; }
 .category-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .img-placeholder {
-  width: 100px; height: 100px; background: #f5f5f5; border-radius: 6px;
+  width: 150px; height: 150px; background: #f5f5f5; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   color: #bbb; font-size: 24px; flex-shrink: 0;
 }
@@ -2252,7 +2252,7 @@ a.shop:hover { color: #1677ff; }
   border-color: #1677ff; background: #f0f7ff;
 }
 .pdd-img-placeholder {
-  width: 100px; height: 100px; background: #f0f0f0; border-radius: 6px;
+  width: 150px; height: 150px; background: #f0f0f0; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   color: #ccc; font-size: 16px; flex-shrink: 0;
 }
