@@ -2284,4 +2284,24 @@ a.shop:hover { color: #1677ff; }
   text-overflow: clip;
   white-space: nowrap;
 }
+
+/* 拼多多商品图片预览全屏展示 */
+:deep(.ant-image-preview-img) {
+  width: 800px !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  height: auto !important;
+  object-fit: contain;
+}
+</style>
+
+<style>
+/* 全局样式 - 图片预览（Teleport 到 body 下，不受 scoped 影响） */
+.ant-image-preview-img {
+  width: 800px !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  height: auto !important;
+  object-fit: contain;
+}
 </style>
