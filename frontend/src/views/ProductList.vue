@@ -599,46 +599,40 @@
             <div v-else-if="!pddMatchesMap[record.id]?.length" class="pdd-expand-empty">
               暂无拼多多匹配商品
             </div>
-            <div v-else class="pdd-match-list">
-              <div
-                v-for="m in pddMatchesMap[record.id]"
-                :key="m.id"
-                :class="['pdd-match-row', m.is_primary && 'is-primary']"
-              >
-                <a-image
-                  v-if="m.pdd_image_url"
-                  :src="m.pdd_image_url"
-                  referrerpolicy="no-referrer"
-                  :width="150" :height="150"
-                  style="object-fit:cover;border-radius:6px;flex-shrink:0"
-                  :fallback="fallbackImg"
-                />
-                <div v-else class="pdd-img-placeholder"><PictureOutlined /></div>
-                <div class="pdd-match-info">
-                  <span class="pdd-match-title">{{ m.pdd_title }}</span>
-                  <div class="pdd-match-meta">
-                    <span class="pdd-price">¥{{ m.pdd_price }}</span>
-                    <span v-if="m.pdd_sales_volume" class="pdd-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</span>
-                    <span v-if="m.pdd_shop_name" class="pdd-shop">{{ m.pdd_shop_name }}</span>
-                    <a
-                      v-if="m.pdd_product_url"
-                      :href="m.pdd_product_url"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      @click.stop
-                      class="pdd-link"
-                    >
-                      <LinkOutlined /> 拼多多商品页
-                    </a>
+            <template v-else>
+              <div class="pdd-layout-toggle">
+                <a-radio-group v-model:value="pddLayoutMode" size="small" button-style="solid">
+                  <a-radio-button value="card">卡片</a-radio-button>
+                  <a-radio-button value="list">列表</a-radio-button>
+                </a-radio-group>
+              </div>
+              <div v-if="pddLayoutMode === 'card'" class="pdd-match-cards">
+                <div
+                  v-for="m in pddMatchesMap[record.id]"
+                  :key="m.id"
+                  :class="['pdd-match-card', m.is_primary && 'is-primary']"
+                >
+                  <a-image
+                    v-if="m.pdd_image_url"
+                    :src="m.pdd_image_url"
+                    referrerpolicy="no-referrer"
+                    :width="150" :height="150"
+                    style="object-fit:cover;border-radius:6px"
+                    :fallback="fallbackImg"
+                  />
+                  <div v-else class="pdd-card-img-placeholder"><PictureOutlined /></div>
+                  <div class="pdd-card-info">
+                    <div class="pdd-card-title" :title="m.pdd_title">{{ m.pdd_title }}</div>
+                    <div class="pdd-card-price">¥{{ m.pdd_price }}</div>
+                    <div v-if="m.pdd_sales_volume" class="pdd-card-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</div>
+                    <div v-if="m.pdd_shop_name" class="pdd-card-shop">{{ m.pdd_shop_name }}</div>
+                    <div class="pdd-card-tags">
+                      <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
+                      <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                      <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                    </div>
                   </div>
-                </div>
-                <div class="pdd-match-tags">
-                  <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
-                  <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
-                  <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
-                </div>
-                <div class="pdd-match-actions">
-                  <a-space :size="4" wrap align="center">
+                  <div class="pdd-card-actions">
                     <a-button
                       v-if="!m.is_primary"
                       size="small"
@@ -647,18 +641,88 @@
                     >
                       设为主参照
                     </a-button>
+                    <a
+                      v-if="m.pdd_product_url"
+                      :href="m.pdd_product_url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      @click.stop
+                      class="pdd-card-link"
+                    >
+                      <LinkOutlined /> 商品页
+                    </a>
                     <a-popconfirm
                       title="确认删除该拼多多匹配？"
                       ok-text="删除"
                       ok-type="danger"
                       @confirm="deleteMatchInList(record, m)"
                     >
-                      <a-button size="small" type="link" danger @click.stop>删除</a-button>
+                      <a-button size="small" type="link" danger>删除</a-button>
                     </a-popconfirm>
-                  </a-space>
+                  </div>
                 </div>
               </div>
-            </div>
+              <div v-else class="pdd-match-list">
+                <div
+                  v-for="m in pddMatchesMap[record.id]"
+                  :key="m.id"
+                  :class="['pdd-match-row', m.is_primary && 'is-primary']"
+                >
+                  <a-image
+                    v-if="m.pdd_image_url"
+                    :src="m.pdd_image_url"
+                    referrerpolicy="no-referrer"
+                    :width="150" :height="150"
+                    style="object-fit:cover;border-radius:6px;flex-shrink:0"
+                    :fallback="fallbackImg"
+                  />
+                  <div v-else class="pdd-img-placeholder"><PictureOutlined /></div>
+                  <div class="pdd-match-info">
+                    <span class="pdd-match-title">{{ m.pdd_title }}</span>
+                    <div class="pdd-match-meta">
+                      <span class="pdd-price">¥{{ m.pdd_price }}</span>
+                      <span v-if="m.pdd_sales_volume" class="pdd-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</span>
+                      <span v-if="m.pdd_shop_name" class="pdd-shop">{{ m.pdd_shop_name }}</span>
+                      <a
+                        v-if="m.pdd_product_url"
+                        :href="m.pdd_product_url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        @click.stop
+                        class="pdd-link"
+                      >
+                        <LinkOutlined /> 拼多多商品页
+                      </a>
+                    </div>
+                  </div>
+                  <div class="pdd-match-tags">
+                    <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
+                    <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                    <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                  </div>
+                  <div class="pdd-match-actions">
+                    <a-space :size="4" wrap align="center">
+                      <a-button
+                        v-if="!m.is_primary"
+                        size="small"
+                        type="link"
+                        @click="setPrimaryInList(record, m)"
+                      >
+                        设为主参照
+                      </a-button>
+                      <a-popconfirm
+                        title="确认删除该拼多多匹配？"
+                        ok-text="删除"
+                        ok-type="danger"
+                        @confirm="deleteMatchInList(record, m)"
+                      >
+                        <a-button size="small" type="link" danger @click.stop>删除</a-button>
+                      </a-popconfirm>
+                    </a-space>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
       </a-table>
@@ -720,6 +784,7 @@ const recrawlingIds = ref(new Set())
 
 const dateStart = ref(null)
 const dateEnd = ref(null)
+const pddLayoutMode = ref('card')
 
 function onDateChange() {
   store.filters.created_at_start = dateStart.value || undefined
@@ -2250,8 +2315,80 @@ a.shop:hover { color: #1677ff; }
 .pdd-expand-wrapper {
   padding: 6px 0 6px 92px;
 }
+.pdd-layout-toggle {
+  margin-bottom: 12px;
+}
 .pdd-expand-empty {
   color: #999; font-size: 13px; padding: 8px 0;
+}
+.pdd-match-cards {
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+.pdd-match-card {
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  background: #fafafa;
+  padding: 10px;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pdd-match-card:hover {
+  border-color: #d9d9d9;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.pdd-match-card.is-primary {
+  border-color: #1677ff;
+  background: #f0f7ff;
+}
+.pdd-card-img-placeholder {
+  width: 100px; height: 100px; background: #f0f0f0; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #ccc; font-size: 16px; flex-shrink: 0;
+}
+.pdd-card-info {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+}
+.pdd-card-title {
+  font-size: 12px; font-weight: 500; color: #333;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+  min-height: 34px;
+}
+.pdd-card-price {
+  font-weight: 600; color: #e62e2e; font-size: 16px;
+  margin-top: 6px;
+}
+.pdd-card-sales {
+  color: #999; font-size: 11px; margin-top: 2px;
+}
+.pdd-card-shop {
+  color: #999; font-size: 11px; margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pdd-card-tags {
+  display: flex; gap: 4px; justify-content: center;
+  margin-top: 6px; flex-wrap: wrap;
+}
+.pdd-card-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+.pdd-card-link {
+  color: #1677ff; font-size: 11px;
 }
 .pdd-match-list {
   display: flex; flex-direction: column; gap: 8px;
