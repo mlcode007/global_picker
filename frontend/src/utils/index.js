@@ -3,6 +3,7 @@ export const STATUS_MAP = {
   selected:   { text: '已选',      color: 'success' },
   abandoned:  { text: '放弃',      color: 'error' },
   erp_synced: { text: '已同步ERP', color: 'processing' },
+  restored:   { text: '已恢复',    color: 'warning' },
 }
 
 export const REGION_MAP = {

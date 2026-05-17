@@ -28,7 +28,7 @@ class ProductBatchDelete(BaseModel):
 
 class ProductUpdate(BaseModel):
     """更新商品状态/备注"""
-    status: Optional[Literal["pending", "selected", "abandoned", "erp_synced"]] = None
+    status: Optional[Literal["pending", "selected", "abandoned", "erp_synced", "restored"]] = None
     remark: Optional[str] = None
     title: Optional[str] = None
     price_cny: Optional[Decimal] = None

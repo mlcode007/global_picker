@@ -108,22 +108,25 @@ def create_product(db: Session, data: ProductCreate, user_id: int) -> Tuple[Prod
         ).first()
     if deleted:
         deleted.is_deleted = 0
-        deleted.status = "pending"
+        deleted.status = "restored"
         deleted.crawl_task_id = task.id
         if pid:
             deleted.tiktok_product_id = pid
         deleted.tiktok_url = data.tiktok_url
-        deleted.title = data.title or ""
-        deleted.price = data.price or Decimal("0")
-        deleted.currency = data.currency
-        deleted.sales_volume = data.sales_volume or 0
-        deleted.region = data.region
-        deleted.remark = data.remark
-        deleted.main_image_url = None
-        deleted.image_urls = None
+        if data.title:
+            deleted.title = data.title
+        if data.price:
+            deleted.price = data.price
+        if data.currency:
+            deleted.currency = data.currency
+        if data.sales_volume:
+            deleted.sales_volume = data.sales_volume
+        if data.region:
+            deleted.region = data.region
+        if data.remark:
+            deleted.remark = data.remark
         if shared:
             _copy_crawl_data(shared, deleted)
-            deleted.status = "pending"
         db.commit()
         db.refresh(deleted)
         return deleted, task if not shared else None
@@ -263,16 +266,11 @@ def batch_create_products(db: Session, urls: List[str], user_id: int, batch_size
             db.add(task)
             db.flush()
             deleted.is_deleted = 0
-            deleted.status = "pending"
+            deleted.status = "restored"
             deleted.crawl_task_id = task.id
             if pid:
                 deleted.tiktok_product_id = pid
             deleted.tiktok_url = url
-            deleted.title = ""
-            deleted.price = Decimal("0")
-            deleted.sales_volume = 0
-            deleted.main_image_url = None
-            deleted.image_urls = None
             if shared:
                 _copy_crawl_data(shared, deleted)
             else:

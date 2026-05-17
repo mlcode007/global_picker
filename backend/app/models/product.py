@@ -48,7 +48,7 @@ class Product(Base):
     category3_name = Column(String(128), nullable=True, comment="三级类目名称")
     category3_name_en = Column(String(128), nullable=True, comment="三级类目英文名")
     status = Column(
-        Enum("pending", "selected", "abandoned", "erp_synced"),
+        Enum("pending", "selected", "abandoned", "erp_synced", "restored"),
         nullable=False,
         default="pending",
     )

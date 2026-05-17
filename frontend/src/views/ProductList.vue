@@ -23,6 +23,7 @@
             <a-select-option value="selected">已选</a-select-option>
             <a-select-option value="abandoned">放弃</a-select-option>
             <a-select-option value="erp_synced">已同步ERP</a-select-option>
+            <a-select-option value="restored">已恢复</a-select-option>
           </a-select>
         </a-col>
         <a-col :span="3">
@@ -304,7 +305,7 @@
             <span>间隔</span>
             <a-input-number
               v-model:value="erpGapMinSec"
-              :min="1"
+              :min="0"
               :max="600"
               size="small"
               style="width: 72px"
@@ -312,7 +313,7 @@
             <span>~</span>
             <a-input-number
               v-model:value="erpGapMaxSec"
-              :min="1"
+              :min="0"
               :max="600"
               size="small"
               style="width: 72px"
@@ -547,6 +548,7 @@
                   <a-menu-item key="selected">已选</a-menu-item>
                   <a-menu-item key="abandoned">放弃</a-menu-item>
                   <a-menu-item key="erp_synced">已同步ERP</a-menu-item>
+                  <a-menu-item key="restored">已恢复</a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
@@ -560,10 +562,8 @@
               <a-tooltip title="新标签打开 TikTok 商品页（无 locale 时自动补全为中文）">
                 <a
                   v-if="record.tiktok_url"
-                  :href="productTiktokOpenUrl(record)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  @click.stop
+                  href="javascript:void(0)"
+                  @click.stop.prevent="openProductInNewTab(record)"
                 >
                   打开商品
                 </a>
@@ -995,7 +995,7 @@ function readStoredErpGap(key, fallback) {
     const raw = localStorage.getItem(key)
     if (raw == null || raw === '') return fallback
     const n = parseInt(raw, 10)
-    if (!Number.isFinite(n) || n < 1 || n > 600) return fallback
+    if (!Number.isFinite(n) || n < 0 || n > 600) return fallback
     return n
   } catch {
     return fallback
@@ -1008,7 +1008,7 @@ const erpGapMaxSec = ref(readStoredErpGap(LS_ERP_GAP_MAX, ERP_GAP_DEFAULT_MAX))
 watch(erpGapMinSec, (v) => {
   try {
     const n = Math.floor(Number(v))
-    if (Number.isFinite(n) && n >= 1 && n <= 600) {
+    if (Number.isFinite(n) && n >= 0 && n <= 600) {
       localStorage.setItem(LS_ERP_GAP_MIN, String(n))
     }
   } catch { /* ignore */ }
@@ -1016,7 +1016,7 @@ watch(erpGapMinSec, (v) => {
 watch(erpGapMaxSec, (v) => {
   try {
     const n = Math.floor(Number(v))
-    if (Number.isFinite(n) && n >= 1 && n <= 600) {
+    if (Number.isFinite(n) && n >= 0 && n <= 600) {
       localStorage.setItem(LS_ERP_GAP_MAX, String(n))
     }
   } catch { /* ignore */ }
@@ -1080,10 +1080,12 @@ function restoreErpProgress() {
 }
 
 function resolveErpGapRange() {
-  let min = Math.floor(Number(erpGapMinSec.value)) || ERP_GAP_DEFAULT_MIN
-  let max = Math.floor(Number(erpGapMaxSec.value)) || ERP_GAP_DEFAULT_MAX
-  min = Math.min(Math.max(1, min), 600)
-  max = Math.min(Math.max(1, max), 600)
+  let min = Math.floor(Number(erpGapMinSec.value))
+  let max = Math.floor(Number(erpGapMaxSec.value))
+  if (!Number.isFinite(min)) min = ERP_GAP_DEFAULT_MIN
+  if (!Number.isFinite(max)) max = ERP_GAP_DEFAULT_MAX
+  min = Math.min(Math.max(0, min), 600)
+  max = Math.min(Math.max(0, max), 600)
   if (min > max) [min, max] = [max, min]
   return { min, max }
 }
@@ -1091,7 +1093,9 @@ function resolveErpGapRange() {
 function randomErpGapMs() {
   const { min, max } = resolveErpGapRange()
   const sec = min + Math.random() * (max - min)
-  return Math.round(sec * 1000)
+  const ms = Math.round(sec * 1000)
+  // 配置为0时，最小间隔500ms，确保标签页有足够时间加载
+  return Math.max(ms, 500)
 }
 
 function erpSleepWithCountdown(ms, onTick) {
@@ -1880,6 +1884,19 @@ function ensureLocaleZhCN(raw) {
 
 function productTiktokOpenUrl(record) {
   return ensureLocaleZhCN(record?.tiktok_url || '')
+}
+
+function openProductInNewTab(record) {
+  const url = productTiktokOpenUrl(record)
+  if (!url) return
+  const a = document.createElement('a')
+  a.href = url
+  a.target = '_blank'
+  a.rel = 'noopener noreferrer'
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
 }
 
 function getShopUrl(record) {
