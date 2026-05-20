@@ -121,7 +121,7 @@ async function handleSendCode() {
   sendingCode.value = true
   try {
     const res = await authApi.sendSmsCode(form.phone, 'register')
-    if (res?.dev_code) {
+    if (res?.dev_code && import.meta.env.DEV) {
       form.code = res.dev_code
       message.success('开发模式：验证码已自动填入')
     } else {

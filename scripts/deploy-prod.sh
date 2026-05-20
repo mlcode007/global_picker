@@ -103,6 +103,12 @@ if grep -q "TIKTOK_HEADLESS" .env; then
 else
   echo "TIKTOK_HEADLESS=True" >> .env
 fi
+echo "==> ensuring production env"
+if grep -q "APP_ENV" .env; then
+  sed -i "s/APP_ENV=.*/APP_ENV=production/" .env
+else
+  echo "APP_ENV=production" >> .env
+fi
 echo "==> start adb service"
 adb kill-server
 adb start-server

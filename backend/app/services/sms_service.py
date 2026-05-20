@@ -47,8 +47,11 @@ def _sign(params: dict, access_key_secret: str) -> str:
 def send_sms_via_aliyun(phone: str, code: str) -> bool:
     """通过阿里云 SMS API 发送验证码"""
     if not settings.ALIYUN_SMS_ACCESS_KEY_ID:
-        logger.warning("阿里云短信未配置，跳过实际发送，验证码: %s -> %s", phone, code)
-        return True
+        if settings.APP_ENV == "development":
+            logger.warning("开发模式：阿里云短信未配置，跳过实际发送，验证码: %s -> %s", phone, code)
+            return True
+        logger.error("阿里云短信未配置，无法发送验证码")
+        return False
 
     params = {
         "AccessKeyId": settings.ALIYUN_SMS_ACCESS_KEY_ID,

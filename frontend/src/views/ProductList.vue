@@ -479,7 +479,7 @@
 
           <!-- 销量列 -->
           <template v-else-if="column.key === 'sales_volume'">
-            <span class="sales">{{ record.sales_volume?.toLocaleString() }}</span>
+            <span class="sales">{{ record.sales_volume != null ? record.sales_volume.toLocaleString() : '—' }}</span>
           </template>
 
           <!-- 拼多多匹配列 -->

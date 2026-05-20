@@ -104,7 +104,7 @@ async function handleSendCode(purpose) {
   sendingCode.value = true
   try {
     const res = await authApi.sendSmsCode(smsForm.phone, purpose)
-    if (res?.dev_code) {
+    if (res?.dev_code && import.meta.env.DEV) {
       smsForm.code = res.dev_code
       message.success('开发模式：验证码已自动填入')
     } else {
