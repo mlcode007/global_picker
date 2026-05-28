@@ -352,6 +352,11 @@
         :loading="store.loading"
         :pagination="pagination"
         row-key="id"
+        :row-class-name="record => `product-row`"
+        :custom-row="(record) => ({
+          'data-product-id': record.id,
+          'data-tiktok-product-id': record.tiktok_product_id || '',
+        })"
         :scroll="{ x: 1400 }"
         :row-selection="rowSelection"
         :expanded-row-keys="expandedRowKeys"
@@ -2181,7 +2186,8 @@ async function recrawl(record) {
 }
 
 onMounted(async () => {
-  restoreErpProgress()
+  // 不再恢复ERP进度，刷新页面后清除所有进度显示
+  // restoreErpProgress()
   await store.fetchList()
   if (store.list.length) {
     const ids = store.list.map(p => p.id)

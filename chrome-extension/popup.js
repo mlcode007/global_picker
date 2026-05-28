@@ -13,6 +13,11 @@ const remainingQuotaEl = document.getElementById('remainingQuota');
 const syncButton = document.getElementById('syncButton');
 const syncButtonText = document.getElementById('syncButtonText');
 const messageEl = document.getElementById('message');
+const alibaba1688Card = document.getElementById('alibaba1688Card');
+const alibaba1688StatusEl = document.getElementById('alibaba1688Status');
+const alibaba1688StatusTextEl = document.getElementById('alibaba1688StatusText');
+const alibaba1688ProgressEl = document.getElementById('alibaba1688Progress');
+const alibaba1688ProgressBarEl = document.getElementById('alibaba1688ProgressBar');
 
 function showMessage(text, type = 'info') {
   messageEl.innerHTML = text;
@@ -51,6 +56,32 @@ function updateQuota(todayCount, dailyLimit) {
     quotaBarEl.className = 'progress-fill warning';
   } else {
     quotaBarEl.className = 'progress-fill';
+  }
+}
+
+function updateAlibaba1688Status(status, current, total) {
+  if (!alibaba1688Card) return;
+
+  alibaba1688Card.style.display = 'block';
+
+  if (status === 'collecting') {
+    alibaba1688StatusEl.className = 'status-badge warning';
+    alibaba1688StatusTextEl.textContent = '采集中';
+  } else if (status === 'completed') {
+    alibaba1688StatusEl.className = 'status-badge success';
+    alibaba1688StatusTextEl.textContent = '已完成';
+  } else if (status === 'stopped') {
+    alibaba1688StatusEl.className = 'status-badge error';
+    alibaba1688StatusTextEl.textContent = '已停止';
+  } else {
+    alibaba1688StatusEl.className = 'status-badge';
+    alibaba1688StatusTextEl.textContent = '未开始';
+  }
+
+  if (current != null && total != null) {
+    alibaba1688ProgressEl.textContent = `${current} / ${total}`;
+    const percentage = total > 0 ? (current / total) * 100 : 0;
+    alibaba1688ProgressBarEl.style.width = `${Math.min(percentage, 100)}%`;
   }
 }
 
@@ -101,6 +132,12 @@ async function loadStatus() {
 }
 
 syncButton.addEventListener('click', syncLoginStatus);
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'UPDATE_1688_STATUS') {
+    updateAlibaba1688Status(message.data.status, message.data.current, message.data.total);
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   loadStatus();

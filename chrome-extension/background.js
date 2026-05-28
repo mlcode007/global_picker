@@ -30,6 +30,13 @@ const MESSAGE_TYPES = {
   SYNC_AUTH: 'SYNC_AUTH',
   GET_STATUS: 'GET_STATUS',
   GP_AUTH_CHANGED: 'GP_AUTH_CHANGED',
+  SAVE_1688_DATA: 'SAVE_1688_DATA',
+  CLOSE_1688_TAB: 'CLOSE_1688_TAB',
+  START_1688_COLLECTION: 'START_1688_COLLECTION',
+  STOP_1688_COLLECTION: 'STOP_1688_COLLECTION',
+  OPEN_1688_TAB: 'OPEN_1688_TAB',
+  CLOSE_1688_PLUGIN: 'CLOSE_1688_PLUGIN',
+  CLICK_CLOSE_BUTTON: 'CLICK_CLOSE_BUTTON',
 };
 
 // ── 日志工具 ──
@@ -383,6 +390,22 @@ const BackgroundService = {
           sendResponse({ success: true });
           return false;
 
+        case MESSAGE_TYPES.SAVE_1688_DATA:
+          this.handleSave1688Data(message, sendResponse);
+          return true;
+
+        case MESSAGE_TYPES.CLOSE_1688_TAB:
+          this.handleClose1688Tab(sender, sendResponse);
+          return false;
+
+        case MESSAGE_TYPES.OPEN_1688_TAB:
+          this.handleOpen1688Tab(message, sendResponse);
+          return false;
+
+        case MESSAGE_TYPES.CLOSE_1688_PLUGIN:
+          this.handleClose1688Plugin(sender, sendResponse);
+          return true;
+
         default:
           return false;
       }
@@ -480,6 +503,116 @@ const BackgroundService = {
     } catch (e) {
       Logger.error('获取状态失败:', e);
       sendResponse({ success: false, error: { code: 'STATUS_ERROR', message: '获取状态失败' } });
+    }
+  },
+
+  async handleSave1688Data(message, sendResponse) {
+    try {
+      const { tiktokProductId, productId, products } = message.data;
+
+      Logger.info(`收到1688数据: TikTok商品ID=${tiktokProductId}, 商品表ID=${productId}, 商品数量=${products.length}`);
+
+      const token = await StorageManager.get(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        sendResponse({ success: false, error: { code: 'AUTH_NOT_LOGGED_IN', message: '未登录' } });
+        return;
+      }
+
+      const url = `${CONFIG.apiBaseUrl}/1688/products/batch`;
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          tiktok_product_id: tiktokProductId,
+          product_id: productId,
+          products: products,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        Logger.error('1688数据入库失败:', result);
+        sendResponse({ success: false, error: { code: 'API_ERROR', message: result.detail || result.message || '入库失败' } });
+        return;
+      }
+
+      Logger.info('1688数据入库成功');
+      sendResponse({ success: true, data: result.data });
+    } catch (e) {
+      Logger.error('保存1688数据失败:', e);
+      sendResponse({ success: false, error: { code: 'SAVE_ERROR', message: '保存失败: ' + e.message } });
+    }
+  },
+
+  handleClose1688Tab(sender) {
+    const tabId = sender.tab?.id;
+    if (tabId == null) return;
+
+    chrome.tabs.remove(tabId).catch(() => {});
+    Logger.info('关闭1688标签页:', tabId);
+  },
+
+  handleOpen1688Tab(message, sendResponse) {
+    const { url, tiktokProductId, productId } = message.data;
+
+    chrome.tabs.create({ url, active: true }, (tab) => {
+      Logger.info('打开1688标签页:', tab.id, 'TikTok商品ID:', tiktokProductId, '商品表ID:', productId);
+
+      setTimeout(() => {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'START_1688_COLLECTION',
+          data: { 
+            tiktokProductId: tiktokProductId,
+            productId: productId,
+          },
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            Logger.error('发送采集指令失败:', chrome.runtime.lastError);
+          }
+        });
+      }, 2000);
+    });
+  },
+
+  async handleClose1688Plugin(sender, sendResponse) {
+    const tabId = sender.tab?.id;
+    if (!tabId) {
+      sendResponse({ success: false, error: '无法获取标签页ID' });
+      return;
+    }
+
+    Logger.info('收到关闭1688插件请求，标签页:', tabId);
+
+    try {
+      const frames = await chrome.webNavigation.getAllFrames({ tabId });
+      Logger.info('找到 frames:', frames?.length || 0);
+
+      if (frames && frames.length > 0) {
+        for (const frame of frames) {
+          if (frame.url && frame.url.includes('1688.com')) {
+            Logger.info('向1688 frame发送关闭指令, frameId:', frame.frameId);
+            chrome.tabs.sendMessage(tabId, { type: 'CLOSE_1688_PLUGIN' }, { frameId: frame.frameId }, (response) => {
+              if (chrome.runtime.lastError) {
+                Logger.error('发送关闭指令失败:', chrome.runtime.lastError);
+              } else {
+                Logger.info('关闭指令已发送, 响应:', response);
+              }
+            });
+            break;
+          }
+        }
+      }
+
+      sendResponse({ success: true });
+    } catch (e) {
+      Logger.error('关闭1688插件失败:', e);
+      sendResponse({ success: false, error: e.message });
     }
   },
 

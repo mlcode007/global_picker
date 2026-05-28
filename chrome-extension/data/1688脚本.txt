@@ -1,0 +1,46 @@
+关闭跨域脚本:
+document.getElementById('market-mate-for-1688').shadowRoot.querySelector("#find-goods-iframe").contentWindow.postMessage({
+    type: 'CLOSE_1688_PLUGIN'
+}, '*');
+
+拦截请求脚本
+(function() {
+  console.log('🔧 开始拦截所有 Fetch 请求...');
+  
+  const originalFetch = window.fetch;
+  
+  window.fetch = async function(...args) {
+    const url = args[0];
+    const urlString = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+    
+    console.log('📡 Fetch 请求:', urlString);
+    console.log('  参数:', args);
+    
+    const startTime = Date.now();
+    const response = await originalFetch.apply(this, args);
+    const duration = Date.now() - startTime;
+    
+    console.log('✅ 响应状态:', response.status, `(${duration}ms)`);
+    
+    // 如果是 1688 插件的请求，打印详细信息
+    if (urlString && urlString.includes('1688')) {
+      console.log('🎯 1688 请求详情:');
+      console.log('  URL:', urlString);
+      console.log('  方法:', args[1]?.method || 'GET');
+      console.log('  响应头:', Object.fromEntries(response.headers.entries()));
+      
+      try {
+        const clonedResponse = response.clone();
+        const data = await clonedResponse.json();
+        console.log('  响应数据:', JSON.stringify(data).substring(0, 500));
+      } catch (e) {
+        console.log('  响应数据: 非 JSON 格式');
+      }
+    }
+    
+    return response;
+  };
+  
+  console.log('✅ Fetch 拦截器已安装');
+  console.log('💡 提示: 现在所有的 fetch 请求都会被记录到控制台');
+})();

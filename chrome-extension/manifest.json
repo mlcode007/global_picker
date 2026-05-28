@@ -3,7 +3,7 @@
   "name": "TikTok Shop 采集助手",
   "version": "2.0.0",
   "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，支持登录状态检测和采集配额管理",
-  "permissions": ["tabs", "storage", "alarms", "scripting"],
+  "permissions": ["tabs", "storage", "alarms", "scripting", "webNavigation", "webRequest"],
   "host_permissions": [
     "https://shop.tiktok.com/*",
     "https://*.tiktok.com/*",
@@ -11,7 +11,9 @@
     "http://localhost:5173/*",
     "http://www.globalpicker.com/*",
     "https://www.globalpicker.com/*",
-    "http://47.238.72.198/*"
+    "http://47.238.72.198/*",
+    "https://s.1688.com/*",
+    "https://*.1688.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -22,9 +24,18 @@
         "https://shop.tiktok.com/view/product/*",
         "https://*.tiktok.com/view/product/*"
       ],
-      "js": ["content.js"],
-      "run_at": "document_idle",
-      "all_frames": false
+      "js": ["content.js", "alibaba1688-collector.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://air.1688.com/*",
+        "https://*.1688.com/*"
+      ],
+      "js": ["alibaba1688-collector.js"],
+      "run_at": "document_start",
+      "all_frames": true
     },
     {
       "matches": [

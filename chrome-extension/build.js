@@ -13,6 +13,7 @@ const JS_FILES = [
   'content.js',
   'popup.js',
   'sync-inject.js',
+  'alibaba1688-collector.js',
 ];
 
 // 不需要压缩的文件/目录

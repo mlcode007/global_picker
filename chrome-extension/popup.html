@@ -199,6 +199,29 @@
       </div>
     </div>
 
+    <div class="card" id="alibaba1688Card" style="display: none;">
+      <div class="card-title">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+        </svg>
+        1688采集状态
+      </div>
+      <div class="status-row">
+        <span class="status-label">采集状态</span>
+        <span class="status-badge" id="alibaba1688Status">
+          <span class="status-dot"></span>
+          <span id="alibaba1688StatusText">未开始</span>
+        </span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">进度</span>
+        <span class="status-value" id="alibaba1688Progress">0 / 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="alibaba1688ProgressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
     <button class="btn btn-primary" id="syncButton">
       <span id="syncButtonText">同步登录状态</span>
     </button>

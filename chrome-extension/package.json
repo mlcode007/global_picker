@@ -7,7 +7,10 @@
     "build:zip": "node build.js --zip"
   },
   "devDependencies": {
-    "terser": "^5.31.0",
-    "archiver": "^7.0.0"
+    "archiver": "^7.0.0",
+    "terser": "^5.31.0"
+  },
+  "dependencies": {
+    "build": "^0.1.4"
   }
 }
