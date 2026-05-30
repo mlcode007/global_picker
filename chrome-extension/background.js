@@ -15,6 +15,7 @@ const CONFIG = {
 // 应用页面 URL（用于同步登录态 / 推断 API 地址）
 const APP_TAB_URLS = [
   'http://localhost:5173/*', 'http://localhost:8000/*',
+  'http://globalpicker.com/*', 'https://globalpicker.com/*',
   'http://www.globalpicker.com/*', 'https://www.globalpicker.com/*',
   'http://47.238.72.198/*',
 ];

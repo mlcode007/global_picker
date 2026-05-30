@@ -9,6 +9,8 @@
     "https://*.tiktok.com/*",
     "http://localhost:8000/*",
     "http://localhost:5173/*",
+    "http://globalpicker.com/*",
+    "https://globalpicker.com/*",
     "http://www.globalpicker.com/*",
     "https://www.globalpicker.com/*",
     "http://47.238.72.198/*",
@@ -53,6 +55,8 @@
       "matches": [
         "http://localhost:5173/*",
         "http://localhost:8000/*",
+        "http://globalpicker.com/*",
+        "https://globalpicker.com/*",
         "http://www.globalpicker.com/*",
         "https://www.globalpicker.com/*",
         "http://47.238.72.198/*"
