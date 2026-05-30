@@ -71,6 +71,9 @@ class Settings(BaseSettings):
     ALIPAY_NOTIFY_URL: str = "http://your-domain.com/api/v1/payment/alipay/notify"
     ALIPAY_SANDBOX: bool = True
 
+    # 1688同步商品数量限制（插件批量入库时，每个商品最多入库的1688匹配数量）
+    ALIBABA1688_SYNC_LIMIT: int = 5
+
     @property
     def database_url(self) -> str:
         # quote_plus 对密码中的特殊字符（如 @）进行 URL 编码

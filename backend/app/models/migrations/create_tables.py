@@ -10,6 +10,7 @@ from app.models.user import User
 from app.models.product import Product
 from app.models.crawl_task import CrawlTask
 from app.models.pdd_match import PddMatch
+from app.models.alibaba1688_match import Alibaba1688Match
 from app.models.profit_record import ProfitRecord
 from app.models.device import Device
 from app.models.photo_search_task import PhotoSearchTask, DeviceActionLog

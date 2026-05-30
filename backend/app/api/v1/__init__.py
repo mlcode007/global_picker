@@ -1,11 +1,12 @@
 from fastapi import APIRouter
-from app.api.v1 import products, pdd, profit, export, auth, tasks, settings, photo_search, dashboard, cloud_phone, points, user, quota, payment
+from app.api.v1 import products, pdd, profit, export, auth, tasks, settings, photo_search, dashboard, cloud_phone, points, user, quota, payment, alibaba1688
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(auth.router)
 router.include_router(user.router)
 router.include_router(products.router)
 router.include_router(pdd.router)
+router.include_router(alibaba1688.router)
 router.include_router(profit.router)
 router.include_router(export.router)
 router.include_router(tasks.router)

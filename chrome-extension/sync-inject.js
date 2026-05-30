@@ -266,12 +266,51 @@
     };
   }
 
+  // 记录当前正在比价的归属商品，写入 chrome.storage.local(collector/后台入库时读取)。
+  // 每次触发都会覆盖，确保入库归属的是“当前任务”的商品，而非残留的旧值。
+  // sync-inject 运行在主站页面(localhost/globalpicker)，可直接读取前端写入的 localStorage。
+  // 前端「每笔最多入库」会把值写到 localStorage.gp_1688_sync_limit。
+  function readSyncLimitFromPage() {
+    try {
+      const raw = localStorage.getItem('gp_1688_sync_limit');
+      const n = parseInt(raw, 10);
+      if (Number.isFinite(n) && n >= 1 && n <= 30) return n;
+    } catch (e) { /* ignore */ }
+    return 5; // 默认
+  }
+
+  let lastSetContextId = null;
+  function set1688Context(productId, tiktokProductId) {
+    if (!productId) return;
+    if (String(productId) === String(lastSetContextId)) return; // 同一商品不重复写入
+    lastSetContextId = productId;
+
+    const syncLimit = readSyncLimitFromPage();
+    const ctx = {
+      productId: productId,
+      tiktokProductId: tiktokProductId || productId,
+      syncLimit: syncLimit,
+      ts: Date.now(),
+    };
+    try {
+      chrome.storage.local.set({ gp_1688_context: ctx, gp_1688_sync_limit: syncLimit });
+    } catch (e) { /* ignore */ }
+    chrome.runtime.sendMessage({
+      type: 'START_1688_COLLECTION',
+      data: { tiktokProductId: ctx.tiktokProductId, productId: ctx.productId, syncLimit: syncLimit },
+    }, () => { void chrome.runtime.lastError; });
+    console.log('[1688采集] 锁定归属商品 productId=' + productId + ', tiktokProductId=' + ctx.tiktokProductId + ', syncLimit=' + syncLimit);
+  }
+
   function trigger1688ImageSearch(productInfo) {
     const row = document.querySelector(`tr[data-product-id="${productInfo.id}"]`);
     if (!row) {
       console.error('[1688采集] 找不到商品行:', productInfo.id);
       return;
     }
+
+    // 触发比价前先锁定归属商品（覆盖任何残留上下文）
+    set1688Context(productInfo.id, productInfo.tiktokProductId);
 
     const imageEl = row.querySelector('img');
     if (!imageEl) {
@@ -324,21 +363,17 @@
         console.log('[1688采集] 找到同款比价按钮，点击');
         updateProductLog(productInfo.id, '点击同款比价按钮', 'success');
         targetBtn.click();
-        
-        // 通知alibaba1688-collector.js开始采集
+
+        // 主动通知后台：插件即将在页内打开 iframe，请枚举注入拦截脚本（含延时重试）
+        // 注意：丝滑流程走页内 iframe 比价，不再新开 1688 标签页（OPEN_1688_TAB）
         chrome.runtime.sendMessage({
-          type: 'START_1688_COLLECTION',
+          type: 'INJECT_1688_NOW',
           data: {
             tiktokProductId: productInfo.tiktokProductId,
             productId: productInfo.id,
+            syncLimit: readSyncLimitFromPage(),
           },
-        }, (response) => {
-          if (chrome.runtime.lastError) {
-            console.error('[1688采集] 发送START_1688_COLLECTION失败:', chrome.runtime.lastError);
-          } else {
-            console.log('[1688采集] 已发送START_1688_COLLECTION消息');
-          }
-        });
+        }, () => { void chrome.runtime.lastError; });
       } else {
         console.error('[1688采集] 未找到同款比价按钮');
         updateProductLog(productInfo.id, '未找到同款比价按钮', 'error');
@@ -377,6 +412,11 @@
       const row = document.querySelector(`tr[data-product-id="${product.id}"], tr[data-id="${product.id}"]`);
       console.log('[1688采集] 找到商品行:', !!row);
       updateProductLog(product.id, '采集完成', 'success');
+
+      // 通知网页(ProductList)：该商品的1688数据已入库，刷新展示
+      try {
+        window.postMessage({ source: 'gp-extension', type: 'GP_1688_SAVED', productId: product.id }, '*');
+      } catch (e) { /* ignore */ }
       
       const marketMate = document.getElementById('market-mate-for-1688');
       if (marketMate && marketMate.shadowRoot) {
@@ -401,6 +441,14 @@
       alert('请先选择要采集的商品');
       return;
     }
+
+    selectedProducts.forEach(p => {
+      const row = document.querySelector(`tr[data-product-id="${p.id}"], tr[data-id="${p.id}"]`);
+      if (row) {
+        const logContainer = row.querySelector('.gp-1688-product-log');
+        if (logContainer) logContainer.remove();
+      }
+    });
 
     isCollecting1688 = true;
     currentIndex = 0;
@@ -469,10 +517,17 @@
   }
 
   function inject1688Buttons() {
-    if (document.getElementById('gp-1688-buttons')) return;
-
+    const existingButtons = document.getElementById('gp-1688-buttons');
     const toolbar = document.querySelector('.toolbar, .action-bar, .btn-group, [class*="toolbar"], [class*="action-bar"]');
+    
     if (!toolbar) return;
+    
+    if (existingButtons) {
+      if (toolbar.contains(existingButtons)) {
+        return;
+      }
+      existingButtons.remove();
+    }
 
     const container = document.createElement('div');
     container.id = 'gp-1688-buttons';
@@ -535,10 +590,13 @@
   }
 
   function waitForToolbar() {
+    let injected = false;
+    
     const observer = new MutationObserver((mutations, obs) => {
-      if (document.querySelector('.toolbar, .action-bar, .btn-group, [class*="toolbar"], [class*="action-bar"]')) {
+      const toolbar = document.querySelector('.toolbar, .action-bar, .btn-group, [class*="toolbar"], [class*="action-bar"]');
+      if (toolbar) {
         inject1688Buttons();
-        obs.disconnect();
+        injected = true;
       }
     });
 
@@ -547,15 +605,127 @@
       subtree: true,
     });
 
+    // 定期检查按钮是否存在，如果不存在则重新注入
+    const checkInterval = setInterval(() => {
+      const toolbar = document.querySelector('.toolbar, .action-bar, .btn-group, [class*="toolbar"], [class*="action-bar"]');
+      const buttons = document.getElementById('gp-1688-buttons');
+      
+      if (toolbar && !buttons) {
+        inject1688Buttons();
+        injected = true;
+      }
+    }, 1000);
+
+    // 初始注入
     setTimeout(() => {
       inject1688Buttons();
+      injected = true;
+    }, 500);
+
+    // 5分钟后停止定期检查以节省资源
+    setTimeout(() => {
+      clearInterval(checkInterval);
       observer.disconnect();
-    }, 3000);
+    }, 300000);
   }
 
   if (window.location.pathname.includes('/product') || window.location.pathname.includes('/goods')) {
     waitForToolbar();
   }
+
+  // ── 持续把前端写入的 localStorage.gp_1688_sync_limit 镜像到 chrome.storage.local ──
+  // 这样无论触发时机/去重如何，后台入库时都能读到「每笔最多入库」的最新值。
+  let lastMirroredSyncLimit = null;
+  function mirror1688SyncLimit() {
+    try {
+      const raw = localStorage.getItem('gp_1688_sync_limit');
+      const n = parseInt(raw, 10);
+      const val = (Number.isFinite(n) && n >= 1 && n <= 30) ? n : null;
+      if (val != null && val !== lastMirroredSyncLimit) {
+        lastMirroredSyncLimit = val;
+        chrome.storage.local.set({ gp_1688_sync_limit: val }, () => { void chrome.runtime.lastError; });
+        console.log('[1688采集] 已镜像 syncLimit 到扩展存储:', val);
+      }
+    } catch (e) { /* ignore */ }
+  }
+  mirror1688SyncLimit();
+  setInterval(mirror1688SyncLimit, 1500);
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'gp_1688_sync_limit') mirror1688SyncLimit();
+  });
+
+  // ── 手动触发兜底：手动 hover 某个商品图片即锁定该商品为归属，捕获“同款比价”点击二次确认 ──
+  // 覆盖用户不走「1688采集」按钮、而是手动逐个 hover 图片点同款比价的情况。
+  // 要触发同款比价必须先 hover 商品图片，所以在图片 hover 时直接同步 productId 最可靠。
+  let lastHoveredProduct = null;
+
+  document.addEventListener('mouseover', (e) => {
+    const target = e.target;
+    if (!target || !target.closest) return;
+    const row = target.closest('[data-product-id]');
+    if (!row) return;
+    const id = row.getAttribute('data-product-id');
+    if (!id) return;
+    lastHoveredProduct = {
+      productId: id,
+      tiktokProductId: row.getAttribute('data-tiktok-product-id') || id,
+    };
+    // 悬停到商品图片即锁定归属（批量采集进行中时不抢占，避免打断队列）
+    if (!isCollecting1688 && target.closest('img')) {
+      set1688Context(lastHoveredProduct.productId, lastHoveredProduct.tiktokProductId);
+    }
+  }, true);
+
+  // 用 composedPath 判断是否点中“同款比价”插件（可穿透 shadow DOM；按钮容器 id 是随机生成的，不能写死）
+  function pathHitsCompare(e) {
+    const path = (e.composedPath && e.composedPath()) || [];
+    for (const node of path) {
+      if (!node || node.nodeType !== 1) continue;
+      const id = (node.id || '');
+      if (id.indexOf('market-mate-for-1688') === 0) return true;
+      const cls = (typeof node.className === 'string') ? node.className : '';
+      if (/compare|bijia|image-?search|find-?goods/i.test(cls)) return true;
+      const t = (node.textContent || '').trim();
+      if (t && t.length <= 30 && t.indexOf('同款比价') !== -1) return true;
+    }
+    return false;
+  }
+
+  function handleCompareTrigger(e) {
+    // ── 诊断：始终打印点击路径，便于定位按钮结构（穿透 shadow）──
+    try {
+      const path = (e.composedPath && e.composedPath()) || [];
+      const desc = path.slice(0, 12).map(n => {
+        if (!n || n.nodeType !== 1) return String(n && n.toString ? n.toString() : n);
+        const id = n.id ? '#' + n.id : '';
+        const cls = (typeof n.className === 'string' && n.className) ? '.' + n.className.trim().split(/\s+/).join('.') : '';
+        const txt = (n.textContent || '').trim().slice(0, 10);
+        return (n.tagName || '').toLowerCase() + id + cls + (txt ? '{' + txt + '}' : '');
+      });
+      console.log('[1688调试] PATH>>>', e.type, desc);
+    } catch (err) { /* ignore */ }
+
+    if (!pathHitsCompare(e)) return;
+
+    const ctx = lastHoveredProduct;
+    if (!ctx || !ctx.productId) {
+      // alert('[1688调试] 点中同款比价插件，但未捕获到归属商品（请先把鼠标移到某个商品图片上）lastHovered=' + JSON.stringify(ctx));
+      console.warn('[1688调试] 点中同款比价插件，但未捕获到归属商品（请先把鼠标移到某个商品图片上）lastHovered=', ctx);
+      return;
+    }
+    lastSetContextId = null; // 调试期间绕过去重，确保每次都写入
+    set1688Context(ctx.productId, ctx.tiktokProductId);
+    chrome.storage.local.get('gp_1688_context', (r) => {
+      // alert('[1688调试] 点中同款比价 ...');
+      console.log('[1688调试] 点中同款比价, 当前 productId=' + ctx.productId +
+            ', tiktokProductId=' + ctx.tiktokProductId +
+            ', 已写入缓存 gp_1688_context=', r && r.gp_1688_context);
+    });
+  }
+
+  // mousedown 最早触发、最不易被插件吞掉；click 兜底
+  document.addEventListener('mousedown', handleCompareTrigger, true);
+  document.addEventListener('click', handleCompareTrigger, true);
 
   console.log('[同步注入] 已启动，监听登录状态变化');
 })();

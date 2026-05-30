@@ -1,10 +1,20 @@
 /**
  * 1688 采集脚本 - TikTok页面版本
  * 运行在 TikTok Shop 商品页，拦截1688插件的API请求
+ * 
+ * 关键：1688内部代码把 window.fetch 包装成了 HookBX$1.window.fetch
+ * 必须拦截 HookBX$1.window.fetch 才能生效
  */
 
 (function () {
   'use strict';
+
+  // 幂等守卫：声明式注入与后台 scripting.executeScript 主动注入可能同时发生，
+  // 避免重复注册 message 监听 / 定时器导致重复处理。
+  if (window.__GP_1688_COLLECTOR__) {
+    return;
+  }
+  window.__GP_1688_COLLECTOR__ = true;
 
   const MESSAGE_TYPES = {
     SAVE_1688_DATA: 'SAVE_1688_DATA',
@@ -16,357 +26,295 @@
   let isCollecting = false;
   let currentTikTokProductId = null;
   let currentProductId = null;
-  let originalFetch = window.fetch;
-  let originalXHR = window.XMLHttpRequest;
+  let pendingProducts = []; // 缓冲队列：等ID设置后再发送
 
   const isInIframe = window !== window.top;
   const is1688Domain = window.location.hostname.includes('1688.com');
 
-  // 监听1688插件iframe的创建，并动态注入拦截脚本
-  function watchAndInjectToIframe() {
-    if (isInIframe || is1688Domain) return; // iframe内不需要监听
+  // 把 offerList 单条解析成统一字段（含价格/标题/图片/店铺信息）
+  function parseOfferListItem(offer) {
+    const info = offer.information || {};
+    const priceInfo = (offer.tradePrice && offer.tradePrice.offerPrice && offer.tradePrice.offerPrice.priceInfo) || {};
+    const tradeService = offer.tradeService || {};
+    const company = offer.company || {};
+    const image = offer.image || {};
 
-    console.log('[1688采集] 开始监听1688插件iframe创建...');
+    // 代发价(consignPrice)优先，作为比价/利润计算的基准；否则用展示价 price
+    const consignPrice = parseFloat(priceInfo.consignPrice) || 0;
+    const showPrice = parseFloat(priceInfo.price) || 0;
+    const price = consignPrice || showPrice || 0;
 
-    // 定期检查是否有新的1688 iframe创建
-    const checkInterval = setInterval(() => {
-      const marketMate = document.getElementById('market-mate-for-1688');
-      if (marketMate && marketMate.shadowRoot) {
-        const iframe = marketMate.shadowRoot.querySelector('#find-goods-iframe');
-        if (iframe && !iframe.dataset.injected) {
-          console.log('[1688采集] 检测到1688 iframe创建:', iframe.src);
-          iframe.dataset.injected = 'true';
-          
-          // 获取所有frames，找到1688的frameId
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs.length > 0) {
-              chrome.webNavigation.getAllFrames({ tabId: tabs[0].id }, (frames) => {
-                if (frames) {
-                  frames.forEach((frame) => {
-                    if (frame.url && frame.url.includes('1688.com')) {
-                      console.log('[1688采集] 找到1688 frame, frameId:', frame.frameId);
-                      
-                      // 向iframe注入拦截脚本
-                      chrome.scripting.executeScript({
-                        target: { tabId: tabs[0].id, frameIds: [frame.frameId] },
-                        files: ['alibaba1688-collector.js'],
-                      }).then(() => {
-                        console.log('[1688采集] 成功注入拦截脚本到iframe');
-                        
-                        // 注入成功后，立即发送采集状态到iframe
-                        setTimeout(() => {
-                          if (iframe && iframe.contentWindow) {
-                            iframe.contentWindow.postMessage({
-                              type: 'START_1688_COLLECTION',
-                              data: {
-                                tiktokProductId: currentTikTokProductId,
-                                productId: currentProductId,
-                              },
-                            }, '*');
-                            console.log('[1688采集] 已发送采集状态到iframe');
-                          }
-                        }, 500); // 等待脚本初始化完成
-                      }).catch((e) => {
-                        console.log('[1688采集] 注入失败:', e);
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
+    return {
+      offerId: String(offer.id || ''),
+      title: info.subject || info.simpleSubject || '',
+      mainImage: image.imgUrl || '',
+      images: [image.imgUrl || ''].filter(Boolean),
+      price: price,
+      consignPrice: consignPrice,
+      repurchaseRate: info.rePurchaseRate || '',
+      freeReturnIn7d: tradeService.sevenDaysReturn ? '是' : '',
+      tpYear: tradeService.tpYear || 0,
+      shiliType: company.isSuperFactory ? '超级工厂' : (company.bizTypeName || ''),
+    };
+  }
+
+  // 从插件搜索响应里取出嵌套在 responseInfo 字符串中的 offerList
+  function extractOfferListMap(data) {
+    const map = {};
+    let offerList = null;
+
+    if (data.offerList && Array.isArray(data.offerList)) {
+      offerList = data.offerList;
+    } else if (data.responseInfo && typeof data.responseInfo.imageSearchOfferResultViewService === 'string') {
+      try {
+        const inner = JSON.parse(data.responseInfo.imageSearchOfferResultViewService);
+        if (inner && inner.data && Array.isArray(inner.data.offerList)) {
+          offerList = inner.data.offerList;
         }
+      } catch (e) {
+        console.log('[1688采集] 解析 responseInfo.offerList 失败:', e.message);
       }
-    }, 1000);
+    }
 
-    // 30秒后停止检查
-    setTimeout(() => {
-      clearInterval(checkInterval);
-      console.log('[1688采集] 停止监听iframe创建');
-    }, 30000);
-
-    console.log('[1688采集] 定时检查已启动');
+    if (offerList) {
+      for (const offer of offerList) {
+        const parsed = parseOfferListItem(offer);
+        if (parsed.offerId) map[parsed.offerId] = parsed;
+      }
+    }
+    return map;
   }
 
   function parse1688Data(responseData) {
-    if (!responseData || !responseData.data || !responseData.data.offerExtend) {
+    if (!responseData || !responseData.data) {
       return [];
     }
 
-    const offerExtend = responseData.data.offerExtend;
-    const offerMember = responseData.data.offerMember || {};
+    const data = responseData.data;
     const products = [];
 
-    for (const [offerId, extendData] of Object.entries(offerExtend)) {
-      const saleStats = extendData.saleStatsModel || {};
-      const shopInfo = extendData.shopInfoModel || {};
-      const images = extendData.images || [];
+    // offerList(含价格)按 offerId 建索引，用于给 offerExtend 补充价格/标题/图片
+    const offerListMap = extractOfferListMap(data);
 
-      const product = {
-        offerId: offerId,
-        memberId: offerMember[offerId] || '',
-        title: extendData.title || '',
-        images: images,
-        mainImage: images[0] || '',
-        last30DaysSales: saleStats.last30DaysSales || '',
-        totalSales: saleStats.totalSales || '',
-        last30DaysDropShippingSales: saleStats.last30DaysDropShippingSales || '',
-        goodRates: saleStats.goodRates || 0,
-        repurchaseRate: saleStats.repurchaseRate || '',
-        collectionRate24h: saleStats.collectionRate24h || '',
-        earliestListingTime: saleStats.earliestListingTime || '',
-        latestUpdateTime: saleStats.latestUpdateTime || '',
-        freeReturnIn7d: shopInfo.freeReturnIn7d || '',
-        tpYear: shopInfo.tpYear || 0,
-        consignmentSales30d: shopInfo.consignmentSales30d || '',
-        shiliType: shopInfo.shiliType || '',
-        supportWaybill: (shopInfo.surportWaybill || []).map(w => w.name).join(','),
-      };
+    // 详情/插件搜索格式: offerExtend（销量、店铺、好评等），价格需从 offerList 合并
+    if (data.offerExtend) {
+      const offerExtend = data.offerExtend;
+      const offerMember = data.offerMember || {};
 
-      products.push(product);
+      for (const [offerId, extendData] of Object.entries(offerExtend)) {
+        const saleStats = extendData.saleStatsModel || {};
+        const shopInfo = extendData.shopInfoModel || {};
+        const images = extendData.images || [];
+        const fromList = offerListMap[String(offerId)] || {};
+
+        products.push({
+          offerId: offerId,
+          memberId: offerMember[offerId] || '',
+          title: extendData.title || fromList.title || '',
+          images: images.length ? images : (fromList.images || []),
+          mainImage: images[0] || fromList.mainImage || '',
+          price: fromList.price || 0,
+          consignPrice: fromList.consignPrice || 0,
+          last30DaysSales: saleStats.last30DaysSales || '',
+          totalSales: saleStats.totalSales || '',
+          last30DaysDropShippingSales: saleStats.last30DaysDropShippingSales || '',
+          goodRates: saleStats.goodRates || 0,
+          repurchaseRate: saleStats.repurchaseRate || fromList.repurchaseRate || '',
+          collectionRate24h: saleStats.collectionRate24h || '',
+          earliestListingTime: saleStats.earliestListingTime || '',
+          latestUpdateTime: saleStats.latestUpdateTime || '',
+          freeReturnIn7d: shopInfo.freeReturnIn7d || fromList.freeReturnIn7d || '',
+          tpYear: shopInfo.tpYear || fromList.tpYear || 0,
+          consignmentSales30d: shopInfo.consignmentSales30d || '',
+          shiliType: shopInfo.shiliType || fromList.shiliType || '',
+          supportWaybill: (shopInfo.surportWaybill || []).map(w => w.name).join(','),
+        });
+      }
+      return products;
+    }
+
+    // 纯 offerList 格式（无 offerExtend 时的兜底）
+    for (const item of Object.values(offerListMap)) {
+      products.push({
+        offerId: item.offerId,
+        memberId: '',
+        title: item.title,
+        images: item.images,
+        mainImage: item.mainImage,
+        price: item.price,
+        consignPrice: item.consignPrice,
+        last30DaysSales: '',
+        totalSales: '',
+        last30DaysDropShippingSales: '',
+        goodRates: 0,
+        repurchaseRate: item.repurchaseRate,
+        collectionRate24h: '',
+        earliestListingTime: '',
+        latestUpdateTime: '',
+        freeReturnIn7d: item.freeReturnIn7d,
+        tpYear: item.tpYear,
+        consignmentSales30d: '',
+        shiliType: item.shiliType,
+        supportWaybill: '',
+      });
     }
 
     return products;
   }
 
-  function interceptFetch() {
-    console.log('[1688采集] 开始拦截Fetch请求');
-    console.log('[1688采集] 当前域名:', window.location.hostname);
-    console.log('[1688采集] 当前URL:', window.location.href);
-    console.log('[1688采集] window.fetch 类型:', typeof window.fetch);
-    
-    const originalFetch = window.fetch;
-    
-    window.fetch = async function(...args) {
-      const url = args[0];
-      const urlString = typeof url === 'string' ? url : (url && url.url ? url.url : '');
-      
-      console.log('[1688采集] 📡 Fetch 请求:', urlString.substring(0, 200));
-      
-      const startTime = Date.now();
-      const response = await originalFetch.apply(this, args);
-      const duration = Date.now() - startTime;
-      
-      console.log('[1688采集] ✅ 响应状态:', response.status, `(${duration}ms)`);
-      
-      if (urlString && urlString.includes('mtop.1688.pc.plugin.imagesearch.plugin.search')) {
-        console.log('[1688采集] 🎯 拦截到1688插件请求');
-        console.log('[1688采集] isCollecting:', isCollecting);
-        
-        if (isCollecting) {
-          try {
-            const clonedResponse = response.clone();
-            const data = await clonedResponse.json();
-            
-            if (data && data.data && data.data.offerExtend) {
-              const products = parse1688Data(data);
+  function listenForInterceptedData() {
+    document.addEventListener('__1688_intercept_data', (e) => {
+      const detail = e.detail || {};
+      const type = detail.type;
+      const url = detail.url;
 
-              console.log('[1688采集] 解析到商品数据, 数量:', products.length);
-
-              chrome.runtime.sendMessage({
-                type: MESSAGE_TYPES.SAVE_1688_DATA,
-                data: {
-                  tiktokProductId: currentTikTokProductId,
-                  productId: currentProductId,
-                  products: products,
-                  timestamp: Date.now(),
-                },
-              }, (saveResponse) => {
-                if (chrome.runtime.lastError) {
-                  console.error('[1688采集] 发送数据失败:', chrome.runtime.lastError);
-                } else if (saveResponse && saveResponse.success) {
-                  console.log('[1688采集] 数据保存成功，1秒后关闭插件');
-
-                  setTimeout(() => {
-                    const marketMate = document.getElementById('market-mate-for-1688');
-                    if (marketMate && marketMate.shadowRoot) {
-                      const iframe = marketMate.shadowRoot.querySelector('#find-goods-iframe');
-                      if (iframe && iframe.contentWindow) {
-                        iframe.contentWindow.postMessage({ type: 'CLOSE_1688_PLUGIN' }, '*');
-                        console.log('[1688采集] 已发送关闭指令到iframe');
-                      } else {
-                        console.error('[1688采集] 未找到iframe');
-                      }
-                    } else {
-                      console.error('[1688采集] 未找到1688插件容器');
-                    }
-                  }, 1000);
-                }
-              });
-            } else {
-              console.log('[1688采集] 响应数据格式不匹配:', JSON.stringify(data).substring(0, 200));
-            }
-          } catch (e) {
-            console.error('[1688采集] 解析响应失败:', e);
-          }
-        } else {
-          console.log('[1688采集] ️ 拦截到请求但isCollecting=false，跳过处理');
-        }
+      // MAIN 世界以 JSON 字符串形式跨 world 传递数据，这里解析回对象
+      let data = null;
+      try {
+        data = detail.json ? JSON.parse(detail.json) : (detail.data || null);
+      } catch (parseErr) {
+        console.log('[1688采集] 拦截数据 JSON 解析失败:', parseErr.message);
+        return;
       }
 
-      return response;
-    };
-    
-    console.log('[1688采集] Fetch拦截器已安装');
-  }
+      const hasOfferExtend = data && data.data && data.data.offerExtend;
+      const hasOfferList = data && data.data && data.data.offerList && Array.isArray(data.data.offerList);
+      const hasNestedOfferList = data && data.data && data.data.responseInfo &&
+        typeof data.data.responseInfo.imageSearchOfferResultViewService === 'string';
+      const hitCount = hasOfferExtend ? Object.keys(data.data.offerExtend).length : (hasOfferList ? data.data.offerList.length : 0);
+      console.log('[1688采集] 收到MAIN世界拦截数据, 请求类型:', type, '商品数:', hitCount);
 
-  function interceptXHR() {
-    console.log('[1688采集] 开始拦截XHR请求');
-    
-    const origOpen = originalXHR.prototype.open;
-    const origSend = originalXHR.prototype.send;
+      if (hasOfferExtend || hasOfferList || hasNestedOfferList) {
+        const products = parse1688Data(data);
+        console.log('[1688采集] 解析到商品数据, 数量:', products.length);
 
-    originalXHR.prototype.open = function (method, url) {
-      this._url = url;
-      return origOpen.apply(this, arguments);
-    };
+        // 打印所有商品详细信息
+        console.log('========== 1688商品数据 ==========');
+        products.forEach((p, idx) => {
+          console.log(`--- 商品 ${idx + 1} ---`);
+          console.log('  currentTikTokProductId:', currentTikTokProductId);
+          console.log('  offerId:', p.offerId);
+          console.log('  title:', p.title);
+          console.log('  price(代发价优先):', p.price);
+          console.log('  mainImage:', p.mainImage);
+          console.log('  tpYear:', p.tpYear);
+          console.log('  shiliType:', p.shiliType);
+          console.log('  freeReturnIn7d:', p.freeReturnIn7d);
+          console.log('  repurchaseRate:', p.repurchaseRate);
+          console.log('  last30DaysSales:', p.last30DaysSales);
+          console.log('  totalSales:', p.totalSales);
+          console.log('  goodRates:', p.goodRates);
+          console.log('');
+        });
+        console.log('==================================');
 
-    originalXHR.prototype.send = function () {
-      const xhr = this;
-
-      if (xhr._url && xhr._url.includes('mtop.1688.pc.plugin.imagesearch.plugin.search')) {
-        console.log('[1688采集] ✅ XHR拦截到1688请求');
-        console.log('[1688采集] isCollecting:', isCollecting);
-        console.log('[1688采集] URL:', xhr._url.substring(0, 150));
-        
-        const origOnReadyStateChange = xhr.onreadystatechange;
-
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            if (isCollecting) {
-              try {
-                const data = JSON.parse(xhr.responseText);
-
-                if (data && data.data && data.data.offerExtend) {
-                  const products = parse1688Data(data);
-
-                  console.log('[1688采集] XHR解析到商品数据, 数量:', products.length);
-
-                  chrome.runtime.sendMessage({
-                    type: MESSAGE_TYPES.SAVE_1688_DATA,
-                    data: {
-                      tiktokProductId: currentTikTokProductId,
-                      productId: currentProductId,
-                      products: products,
-                      timestamp: Date.now(),
-                    },
-                  }, (saveResponse) => {
-                    if (chrome.runtime.lastError) {
-                      console.error('[1688采集] 发送数据失败:', chrome.runtime.lastError);
-                    } else if (saveResponse && saveResponse.success) {
-                      console.log('[1688采集] XHR数据保存成功，1秒后关闭插件');
-
-                      setTimeout(() => {
-                        const marketMate = document.getElementById('market-mate-for-1688');
-                        if (marketMate && marketMate.shadowRoot) {
-                          const iframe = marketMate.shadowRoot.querySelector('#find-goods-iframe');
-                          if (iframe && iframe.contentWindow) {
-                            iframe.contentWindow.postMessage({ type: 'CLOSE_1688_PLUGIN' }, '*');
-                            console.log('[1688采集] 已发送关闭指令到iframe');
-                          } else {
-                            console.error('[1688采集] 未找到iframe');
-                          }
-                        } else {
-                          console.error('[1688采集] 未找到1688插件容器');
-                        }
-                      }, 1000);
-                    }
-                  });
-                } else {
-                  console.log('[1688采集] XHR响应数据格式不匹配:', JSON.stringify(data).substring(0, 200));
-                }
-              } catch (e) {
-                console.error('[1688采集] XHR解析响应失败:', e);
-              }
-            } else {
-              console.log('[1688采集] ️ XHR拦截到请求但isCollecting=false，跳过处理');
-            }
-          }
-
-          if (origOnReadyStateChange) {
-            origOnReadyStateChange.apply(xhr, arguments);
-          }
-        };
-      }
-
-      return origSend.apply(this, arguments);
-    };
-    
-    console.log('[1688采集] XHR拦截器已安装');
-  }
-
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'START_1688_COLLECTION') {
-      isCollecting = true;
-      currentTikTokProductId = message.data.tiktokProductId;
-      currentProductId = message.data.productId;
-      console.log('[1688采集] 开始采集, TikTok商品ID:', currentTikTokProductId, '商品表ID:', currentProductId);
-
-      if (is1688Domain) {
-        console.log('[1688采集] 当前在1688 iframe内，直接设置采集状态');
+        // 直接发送给后台入库；归属商品(product_id/tiktok_product_id)由后台
+        // 从 gp_1688_context 上下文补全，collector 自身不强依赖这两个 ID。
+        sendProductsToBackend(products);
       } else {
-        console.log('[1688采集] 当前在TikTok页面，通过postMessage通知iframe');
-        const marketMate = document.getElementById('market-mate-for-1688');
-        if (marketMate && marketMate.shadowRoot) {
-          const iframe = marketMate.shadowRoot.querySelector('#find-goods-iframe');
-          if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage({
-              type: 'START_1688_COLLECTION',
-              data: {
-                tiktokProductId: currentTikTokProductId,
-                productId: currentProductId,
-              },
-            }, '*');
-            console.log('[1688采集] 已发送采集状态到iframe');
-          }
-        }
+        console.log('[1688采集] 响应数据格式不匹配');
       }
+    });
+    console.log('[1688采集] MAIN世界数据监听器已注册');
+  }
 
-      sendResponse({ success: true });
-    } else if (message.type === 'STOP_1688_COLLECTION') {
-      isCollecting = false;
-      currentTikTokProductId = null;
-      currentProductId = null;
-      console.log('[1688采集] 停止采集');
-      sendResponse({ success: true });
+  function sendProductsToBackend(products) {
+    // 归属商品优先用消息设置的值；拿不到时从共享存储 gp_1688_context 读取
+    // （sync-inject 在触发同款比价时写入），最终仍由后台兜底补全。
+    chrome.storage.local.get('gp_1688_context', (res) => {
+      const ctx = (res && res.gp_1688_context) || {};
+      const productId = currentProductId != null ? currentProductId : (ctx.productId != null ? ctx.productId : null);
+      const tiktokProductId = currentTikTokProductId != null ? currentTikTokProductId : (ctx.tiktokProductId != null ? ctx.tiktokProductId : null);
+      const syncLimit = ctx.syncLimit != null ? ctx.syncLimit : undefined;
+
+      console.log('[1688采集] 准备入库, productId:', productId, 'tiktokProductId:', tiktokProductId, '商品数:', products.length, 'syncLimit:', syncLimit);
+
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.SAVE_1688_DATA,
+        data: {
+          tiktokProductId: tiktokProductId,
+          productId: productId,
+          products: products,
+          syncLimit: syncLimit,
+          timestamp: Date.now(),
+        },
+      }, (saveResponse) => {
+        if (chrome.runtime.lastError) {
+          console.error('[1688采集] 发送数据失败:', chrome.runtime.lastError.message);
+        } else if (saveResponse && saveResponse.success) {
+          console.log('[1688采集] ✅ 数据保存成功');
+        } else {
+          console.error('[1688采集] ❌ 入库失败:', saveResponse && saveResponse.error);
+        }
+      });
+    });
+  }
+
+  function setCollecting(state) {
+    isCollecting = state.isCollecting;
+    currentTikTokProductId = state.tiktokProductId;
+    currentProductId = state.productId;
+    console.log('[1688采集] 设置采集状态, isCollecting:', isCollecting, 'TikTok商品ID:', currentTikTokProductId);
+
+    // 发送缓冲的数据
+    if (pendingProducts.length > 0) {
+      console.log('[1688采集] 发送缓冲数据, 批次:', pendingProducts.length);
+      pendingProducts.forEach(batch => sendProductsToBackend(batch));
+      pendingProducts = [];
     }
-    return true;
-  });
+  }
 
   if (is1688Domain) {
-    console.log('[1688采集] 运行在1688 iframe内，启动请求拦截');
-    interceptFetch();
-    interceptXHR();
-    
+    console.log('[1688采集] 运行在1688 iframe内');
+    console.log('[1688采集] 当前域名:', window.location.hostname);
+    console.log('[1688采集] 当前URL:', window.location.href);
+
+    // MAIN 世界拦截器已通过 manifest 声明式注入(inject_main.js, world: MAIN, document_start)
+    // 这里仅注册跨 world 数据监听器，接收拦截到的响应
+    listenForInterceptedData();
+
+    // 只在1688 iframe中注册消息监听器
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.type === 'START_1688_COLLECTION') {
+        setCollecting({
+          isCollecting: true,
+          tiktokProductId: message.data.tiktokProductId,
+          productId: message.data.productId,
+        });
+        sendResponse({ success: true });
+      } else if (message.type === 'STOP_1688_COLLECTION') {
+        isCollecting = false;
+        currentTikTokProductId = null;
+        currentProductId = null;
+        pendingProducts = [];
+        console.log('[1688采集] 停止采集');
+        sendResponse({ success: true });
+      }
+      return true;
+    });
+
     window.addEventListener('message', (event) => {
-      console.log('[1688采集-iframe] 收到 message 事件:', event.data);
-      
-      if (event.data && event.data.type === 'CLOSE_1688_PLUGIN') {
-        console.log('[1688采集] 收到 postMessage 关闭指令');
-        console.log('[1688采集] 当前域名:', window.location.hostname);
-        console.log('[1688采集] 当前URL:', window.location.href);
-        
+      if (event.data && event.data.type === 'START_1688_COLLECTION') {
+        setCollecting({
+          isCollecting: true,
+          tiktokProductId: event.data.data.tiktokProductId,
+          productId: event.data.data.productId,
+        });
+      } else if (event.data && event.data.type === 'CLOSE_1688_PLUGIN') {
+        console.log('[1688采集] 收到关闭指令');
+
         function clickCloseButton() {
           const closeBtns = document.querySelectorAll('[class*="close-icon"]');
-          console.log('[1688采集] 查找关闭按钮，找到数量:', closeBtns.length);
-          
           if (closeBtns && closeBtns.length > 0) {
-            console.log(`[1688采集] 找到 ${closeBtns.length} 个关闭按钮，全部点击`);
-            closeBtns.forEach((btn, index) => {
-              console.log(`[1688采集] 点击第 ${index + 1} 个关闭按钮`);
-              console.log('[1688采集] 按钮元素:', btn);
-              btn.click();
-            });
+            closeBtns.forEach((btn) => btn.click());
             return true;
           }
           return false;
         }
 
         if (!clickCloseButton()) {
-          console.log('[1688采集] 未找到关闭按钮，500ms后重试');
           setTimeout(() => {
             if (!clickCloseButton()) {
-              console.log('[1688采集] 重试失败，1s后再次重试');
               setTimeout(() => {
                 if (!clickCloseButton()) {
                   console.error('[1688采集] 三次尝试后仍未找到关闭按钮');
@@ -375,71 +323,25 @@
             }
           }, 500);
         }
-
-
-        // 测试：拦截当前 iframe 内的 window.fetch 和 XHR 请求
-        console.log('[1688采集] 开始测试 iframe 内请求拦截...');
-        
-        if (window.fetch) {
-          const originalFetch = window.fetch;
-          window.fetch = async function(...args) {
-            const url = args[0];
-            const urlString = typeof url === 'string' ? url : (url && url.url ? url.url : '');
-            console.log('[1688采集-测试] 📡 iframe内拦截到 Fetch 请求:', urlString.substring(0, 300));
-            
-            const response = await originalFetch.apply(this, args);
-            
-            const clonedResponse = response.clone();
-            clonedResponse.json().then(data => {
-              console.log('[1688采集-测试] 📦 iframe内 Fetch 响应数据:', JSON.stringify(data).substring(0, 500));
-            }).catch(e => {
-              console.log('[1688采集-测试] iframe内 Fetch 响应不是JSON格式');
-            });
-            
-            return response;
-          };
-          console.log('[1688采集-测试] iframe 内 window.fetch 拦截器已安装');
-        }
-        
-        if (window.XMLHttpRequest) {
-          const OriginalXHR = window.XMLHttpRequest;
-          const origOpen = OriginalXHR.prototype.open;
-          const origSend = OriginalXHR.prototype.send;
-          
-          OriginalXHR.prototype.open = function(method, url) {
-            this._url = url;
-            return origOpen.apply(this, arguments);
-          };
-          
-          OriginalXHR.prototype.send = function() {
-            const xhr = this;
-            console.log('[1688采集-测试] 📡 iframe内拦截到 XHR 请求:', this._url ? this._url.substring(0, 300) : 'unknown');
-            
-            const origOnReadyStateChange = xhr.onreadystatechange;
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                console.log('[1688采集-测试] 📦 iframe内 XHR 响应数据:', xhr.responseText.substring(0, 500));
-              }
-              if (origOnReadyStateChange) {
-                origOnReadyStateChange.apply(xhr, arguments);
-              }
-            };
-            
-            return origSend.apply(this, arguments);
-          };
-          console.log('[1688采集-测试] iframe 内 XMLHttpRequest 拦截器已安装');
-        }
-        
-      } else if (event.data && event.data.type === 'START_1688_COLLECTION') {
-        isCollecting = true;
-        currentTikTokProductId = event.data.data.tiktokProductId;
-        currentProductId = event.data.data.productId;
-        console.log('[1688采集] 通过postMessage收到采集状态, TikTok商品ID:', currentTikTokProductId, '商品表ID:', currentProductId);
       }
     });
+
+    const checkStorageInterval = setInterval(() => {
+      chrome.storage.local.get('1688_collection_state', (result) => {
+        if (result['1688_collection_state'] && result['1688_collection_state'].isCollecting && !isCollecting) {
+          const state = result['1688_collection_state'];
+          setCollecting({
+            isCollecting: true,
+            tiktokProductId: state.tiktokProductId,
+            productId: state.productId,
+          });
+          clearInterval(checkStorageInterval);
+        }
+      });
+    }, 500);
+    setTimeout(() => clearInterval(checkStorageInterval), 10000);
+
   } else {
     console.log('[1688采集] 运行在TikTok页面，等待采集指令');
-    // 监听1688插件iframe的创建，并动态注入拦截脚本
-    watchAndInjectToIframe();
   }
 })();

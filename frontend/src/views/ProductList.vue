@@ -332,6 +332,23 @@
           </a-space>
         </a-col>
       </a-row>
+      <a-row :gutter="[12, 8]" align="middle" class="photo-batch-toolbar-row">
+        <a-col :span="24">
+          <a-space wrap :size="12" align="center">
+            <span class="toolbar-muted">1688采集</span>
+            <span>每笔最多入库</span>
+            <a-input-number
+              v-model:value="alibaba1688SyncLimit"
+              :min="1"
+              :max="30"
+              size="small"
+              style="width: 72px"
+            />
+            <span>条1688商品</span>
+            <span class="toolbar-hint">插件批量入库时，每个商品最多入库的1688匹配数量</span>
+          </a-space>
+        </a-col>
+      </a-row>
       <a-alert
         v-if="erpBatchRunning"
         type="info"
@@ -595,118 +612,55 @@
           </template>
         </template>
 
-        <!-- 展开行：拼多多匹配商品 -->
+        <!-- 展开行：拼多多匹配商品 & 1688匹配商品 -->
         <template #expandedRowRender="{ record }">
           <div class="pdd-expand-wrapper">
-            <div v-if="pddMatchesLoading[record.id]" style="text-align:center;padding:12px">
-              <a-spin size="small" /> 加载中...
-            </div>
-            <div v-else-if="!pddMatchesMap[record.id]?.length" class="pdd-expand-empty">
-              暂无拼多多匹配商品
-            </div>
-            <template v-else>
-              <div class="pdd-layout-toggle">
-                <a-radio-group v-model:value="pddLayoutMode" size="small" button-style="solid">
-                  <a-radio-button value="card">卡片</a-radio-button>
-                  <a-radio-button value="list">列表</a-radio-button>
-                </a-radio-group>
+            <!-- 拼多多匹配区域 -->
+            <div class="match-section">
+              <div class="match-section-header pdd-header">
+                <span class="match-section-title">拼多多匹配商品</span>
+                <span class="match-section-count">{{ pddMatchesMap[record.id]?.length || 0 }} 个</span>
               </div>
-              <div v-if="pddLayoutMode === 'card'" class="pdd-match-cards">
-                <div
-                  v-for="m in pddMatchesMap[record.id]"
-                  :key="m.id"
-                  :class="['pdd-match-card', m.is_primary && 'is-primary']"
-                >
-                  <a-image
-                    v-if="m.pdd_image_url"
-                    :src="m.pdd_image_url"
-                    referrerpolicy="no-referrer"
-                    :width="150" :height="150"
-                    style="object-fit:cover;border-radius:6px"
-                    :fallback="fallbackImg"
-                  />
-                  <div v-else class="pdd-card-img-placeholder"><PictureOutlined /></div>
-                  <div class="pdd-card-info">
-                    <div class="pdd-card-title" :title="m.pdd_title">{{ m.pdd_title }}</div>
-                    <div class="pdd-card-price">¥{{ m.pdd_price }}</div>
-                    <div v-if="m.pdd_sales_volume" class="pdd-card-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</div>
-                    <div v-if="m.pdd_shop_name" class="pdd-card-shop">{{ m.pdd_shop_name }}</div>
-                    <div class="pdd-card-tags">
-                      <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
-                      <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
-                      <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
-                    </div>
-                  </div>
-                  <div class="pdd-card-actions">
-                    <a-button
-                      v-if="!m.is_primary"
-                      size="small"
-                      type="link"
-                      @click="setPrimaryInList(record, m)"
-                    >
-                      设为主参照
-                    </a-button>
-                    <a
-                      v-if="m.pdd_product_url"
-                      :href="m.pdd_product_url"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      @click.stop
-                      class="pdd-card-link"
-                    >
-                      <LinkOutlined /> 商品页
-                    </a>
-                    <a-popconfirm
-                      title="确认删除该拼多多匹配？"
-                      ok-text="删除"
-                      ok-type="danger"
-                      @confirm="deleteMatchInList(record, m)"
-                    >
-                      <a-button size="small" type="link" danger>删除</a-button>
-                    </a-popconfirm>
-                  </div>
+              <div v-if="pddMatchesLoading[record.id]" style="text-align:center;padding:12px">
+                <a-spin size="small" /> 加载中...
+              </div>
+              <div v-else-if="!pddMatchesMap[record.id]?.length" class="pdd-expand-empty">
+                暂无拼多多匹配商品
+              </div>
+              <template v-else>
+                <div class="pdd-layout-toggle">
+                  <a-radio-group v-model:value="pddLayoutMode" size="small" button-style="solid">
+                    <a-radio-button value="card">卡片</a-radio-button>
+                    <a-radio-button value="list">列表</a-radio-button>
+                  </a-radio-group>
                 </div>
-              </div>
-              <div v-else class="pdd-match-list">
-                <div
-                  v-for="m in pddMatchesMap[record.id]"
-                  :key="m.id"
-                  :class="['pdd-match-row', m.is_primary && 'is-primary']"
-                >
-                  <a-image
-                    v-if="m.pdd_image_url"
-                    :src="m.pdd_image_url"
-                    referrerpolicy="no-referrer"
-                    :width="150" :height="150"
-                    style="object-fit:cover;border-radius:6px;flex-shrink:0"
-                    :fallback="fallbackImg"
-                  />
-                  <div v-else class="pdd-img-placeholder"><PictureOutlined /></div>
-                  <div class="pdd-match-info">
-                    <span class="pdd-match-title">{{ m.pdd_title }}</span>
-                    <div class="pdd-match-meta">
-                      <span class="pdd-price">¥{{ m.pdd_price }}</span>
-                      <span v-if="m.pdd_sales_volume" class="pdd-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</span>
-                      <span v-if="m.pdd_shop_name" class="pdd-shop">{{ m.pdd_shop_name }}</span>
-                      <a
-                        v-if="m.pdd_product_url"
-                        :href="m.pdd_product_url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        @click.stop
-                        class="pdd-link"
-                      >
-                        <LinkOutlined /> 拼多多商品页
-                      </a>
+                <div v-if="pddLayoutMode === 'card'" class="pdd-match-cards">
+                  <div
+                    v-for="m in pddMatchesMap[record.id]"
+                    :key="m.id"
+                    :class="['pdd-match-card', m.is_primary && 'is-primary']"
+                  >
+                    <a-image
+                      v-if="m.pdd_image_url"
+                      :src="m.pdd_image_url"
+                      referrerpolicy="no-referrer"
+                      :width="150" :height="150"
+                      style="object-fit:cover;border-radius:6px"
+                      :fallback="fallbackImg"
+                    />
+                    <div v-else class="pdd-card-img-placeholder"><PictureOutlined /></div>
+                    <div class="pdd-card-info">
+                      <div class="pdd-card-title" :title="m.pdd_title">{{ m.pdd_title }}</div>
+                      <div class="pdd-card-price">¥{{ m.pdd_price }}</div>
+                      <div v-if="m.pdd_sales_volume" class="pdd-card-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</div>
+                      <div v-if="m.pdd_shop_name" class="pdd-card-shop">{{ m.pdd_shop_name }}</div>
+                      <div class="pdd-card-tags">
+                        <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
+                        <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                        <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                      </div>
                     </div>
-                  </div>
-                  <div class="pdd-match-tags">
-                    <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
-                    <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
-                    <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
-                  </div>
-                  <div class="pdd-match-actions">
-                    <a-space :size="4" wrap align="center">
+                    <div class="pdd-card-actions">
                       <a-button
                         v-if="!m.is_primary"
                         size="small"
@@ -715,19 +669,209 @@
                       >
                         设为主参照
                       </a-button>
+                      <a
+                        v-if="m.pdd_product_url"
+                        :href="m.pdd_product_url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        @click.stop
+                        class="pdd-card-link"
+                      >
+                        <LinkOutlined /> 商品页
+                      </a>
                       <a-popconfirm
                         title="确认删除该拼多多匹配？"
                         ok-text="删除"
                         ok-type="danger"
                         @confirm="deleteMatchInList(record, m)"
                       >
-                        <a-button size="small" type="link" danger @click.stop>删除</a-button>
+                        <a-button size="small" type="link" danger>删除</a-button>
                       </a-popconfirm>
-                    </a-space>
+                    </div>
                   </div>
                 </div>
+                <div v-else class="pdd-match-list">
+                  <div
+                    v-for="m in pddMatchesMap[record.id]"
+                    :key="m.id"
+                    :class="['pdd-match-row', m.is_primary && 'is-primary']"
+                  >
+                    <a-image
+                      v-if="m.pdd_image_url"
+                      :src="m.pdd_image_url"
+                      referrerpolicy="no-referrer"
+                      :width="150" :height="150"
+                      style="object-fit:cover;border-radius:6px;flex-shrink:0"
+                      :fallback="fallbackImg"
+                    />
+                    <div v-else class="pdd-img-placeholder"><PictureOutlined /></div>
+                    <div class="pdd-match-info">
+                      <span class="pdd-match-title">{{ m.pdd_title }}</span>
+                      <div class="pdd-match-meta">
+                        <span class="pdd-price">¥{{ m.pdd_price }}</span>
+                        <span v-if="m.pdd_sales_volume" class="pdd-sales">销量 {{ m.pdd_sales_volume?.toLocaleString() }}</span>
+                        <span v-if="m.pdd_shop_name" class="pdd-shop">{{ m.pdd_shop_name }}</span>
+                        <a
+                          v-if="m.pdd_product_url"
+                          :href="m.pdd_product_url"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          @click.stop
+                          class="pdd-link"
+                        >
+                          <LinkOutlined /> 拼多多商品页
+                        </a>
+                      </div>
+                    </div>
+                    <div class="pdd-match-tags">
+                      <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
+                      <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                      <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                    </div>
+                    <div class="pdd-match-actions">
+                      <a-space :size="4" wrap align="center">
+                        <a-button
+                          v-if="!m.is_primary"
+                          size="small"
+                          type="link"
+                          @click="setPrimaryInList(record, m)"
+                        >
+                          设为主参照
+                        </a-button>
+                        <a-popconfirm
+                          title="确认删除该拼多多匹配？"
+                          ok-text="删除"
+                          ok-type="danger"
+                          @confirm="deleteMatchInList(record, m)"
+                        >
+                          <a-button size="small" type="link" danger @click.stop>删除</a-button>
+                        </a-popconfirm>
+                      </a-space>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <!-- 1688匹配区域 -->
+            <div class="match-section">
+              <div class="match-section-header alibaba1688-header">
+                <span class="match-section-title">1688匹配商品</span>
+                <span class="match-section-count">{{ alibaba1688MatchesMap[record.id]?.length || 0 }} 个</span>
               </div>
-            </template>
+              <div v-if="alibaba1688MatchesLoading[record.id]" style="text-align:center;padding:12px">
+                <a-spin size="small" /> 加载中...
+              </div>
+              <div v-else-if="!alibaba1688MatchesMap[record.id]?.length" class="pdd-expand-empty">
+                暂无1688匹配商品
+              </div>
+              <template v-else>
+                <div class="pdd-layout-toggle">
+                  <a-radio-group v-model:value="pddLayoutMode" size="small" button-style="solid">
+                    <a-radio-button value="card">卡片</a-radio-button>
+                    <a-radio-button value="list">列表</a-radio-button>
+                  </a-radio-group>
+                </div>
+                <div v-if="pddLayoutMode === 'card'" class="alibaba1688-match-cards">
+                  <div
+                    v-for="m in alibaba1688MatchesMap[record.id]"
+                    :key="m.id"
+                    :class="['alibaba1688-match-card', m.is_primary && 'is-primary']"
+                  >
+                    <a-image
+                      v-if="m.main_image"
+                      :src="m.main_image"
+                      referrerpolicy="no-referrer"
+                      :width="150" :height="150"
+                      style="object-fit:cover;border-radius:6px"
+                      :fallback="fallbackImg"
+                    />
+                    <div v-else class="alibaba1688-card-img-placeholder"><PictureOutlined /></div>
+                    <div class="alibaba1688-card-info">
+                      <div class="alibaba1688-card-title" :title="m.title">{{ m.title }}</div>
+                      <div class="alibaba1688-card-price">¥{{ m.price }}</div>
+                      <div v-if="m.last30_days_sales" class="alibaba1688-card-sales">近30天销量 {{ m.last30_days_sales }}</div>
+                      <div v-if="m.good_rates" class="alibaba1688-card-goodrates">好评率 {{ m.good_rates }}%</div>
+                      <div v-if="m.tp_year" class="alibaba1688-card-tpyear">诚信通 {{ m.tp_year }}年</div>
+                      <div class="alibaba1688-card-tags">
+                        <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
+                        <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                        <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                      </div>
+                    </div>
+                    <div class="alibaba1688-card-actions">
+                      <a-button
+                        v-if="!m.is_primary"
+                        size="small"
+                        type="link"
+                        @click="setPrimary1688InList(record, m)"
+                      >
+                        设为主参照
+                      </a-button>
+                      <a-popconfirm
+                        title="确认删除该1688匹配？"
+                        ok-text="删除"
+                        ok-type="danger"
+                        @confirm="delete1688MatchInList(record, m)"
+                      >
+                        <a-button size="small" type="link" danger>删除</a-button>
+                      </a-popconfirm>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="alibaba1688-match-list">
+                  <div
+                    v-for="m in alibaba1688MatchesMap[record.id]"
+                    :key="m.id"
+                    :class="['alibaba1688-match-row', m.is_primary && 'is-primary']"
+                  >
+                    <a-image
+                      v-if="m.main_image"
+                      :src="m.main_image"
+                      referrerpolicy="no-referrer"
+                      :width="150" :height="150"
+                      style="object-fit:cover;border-radius:6px;flex-shrink:0"
+                      :fallback="fallbackImg"
+                    />
+                    <div v-else class="alibaba1688-img-placeholder"><PictureOutlined /></div>
+                    <div class="alibaba1688-match-info">
+                      <span class="alibaba1688-match-title">{{ m.title }}</span>
+                      <div class="alibaba1688-match-meta">
+                        <span class="alibaba1688-price">¥{{ m.price }}</span>
+                        <span v-if="m.last30_days_sales" class="alibaba1688-sales">近30天销量 {{ m.last30_days_sales }}</span>
+                        <span v-if="m.good_rates" class="alibaba1688-goodrates">好评率 {{ m.good_rates }}%</span>
+                        <span v-if="m.tp_year" class="alibaba1688-tpyear">诚信通 {{ m.tp_year }}年</span>
+                      </div>
+                    </div>
+                    <div class="alibaba1688-match-tags">
+                      <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
+                      <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
+                      <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                    </div>
+                    <div class="alibaba1688-match-actions">
+                      <a-space :size="4" wrap align="center">
+                        <a-button
+                          v-if="!m.is_primary"
+                          size="small"
+                          type="link"
+                          @click="setPrimary1688InList(record, m)"
+                        >
+                          设为主参照
+                        </a-button>
+                        <a-popconfirm
+                          title="确认删除该1688匹配？"
+                          ok-text="删除"
+                          ok-type="danger"
+                          @confirm="delete1688MatchInList(record, m)"
+                        >
+                          <a-button size="small" type="link" danger @click.stop>删除</a-button>
+                        </a-popconfirm>
+                      </a-space>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
         </template>
       </a-table>
@@ -775,7 +919,7 @@ import {
   ExportOutlined,
 } from '@ant-design/icons-vue'
 import { useProductStore } from '@/stores/product'
-import { productApi, exportApi, taskApi, pddApi, photoSearchApi } from '@/api/products'
+import { productApi, exportApi, taskApi, pddApi, alibaba1688Api, photoSearchApi } from '@/api/products'
 import { userApi } from '@/api/user'
 import { cloudPhoneApi } from '@/api/cloudPhone'
 import { STATUS_MAP, REGION_MAP } from '@/utils'
@@ -1088,6 +1232,41 @@ watch(erpGapMaxSec, (v) => {
     const n = Math.floor(Number(v))
     if (Number.isFinite(n) && n >= 0 && n <= 600) {
       localStorage.setItem(LS_ERP_GAP_MAX, String(n))
+    }
+  } catch { /* ignore */ }
+})
+
+// --- 1688采集同步数量限制 ---
+const LS_1688_SYNC_LIMIT = 'gp_1688_sync_limit'
+const ALIBABA1688_SYNC_LIMIT_DEFAULT = 5
+
+function readStored1688SyncLimit(fallback) {
+  if (typeof localStorage === 'undefined') return fallback
+  try {
+    const raw = localStorage.getItem(LS_1688_SYNC_LIMIT)
+    if (raw == null || raw === '') return fallback
+    const n = parseInt(raw, 10)
+    if (!Number.isFinite(n) || n < 1 || n > 30) return fallback
+    return n
+  } catch {
+    return fallback
+  }
+}
+
+const alibaba1688SyncLimit = ref(readStored1688SyncLimit(ALIBABA1688_SYNC_LIMIT_DEFAULT))
+
+watch(alibaba1688SyncLimit, (v) => {
+  try {
+    const n = Math.floor(Number(v))
+    if (Number.isFinite(n) && n >= 1 && n <= 30) {
+      localStorage.setItem(LS_1688_SYNC_LIMIT, String(n))
+      // 同步到 chrome.storage.local 供插件端读取
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        chrome.runtime.sendMessage({
+          type: 'UPDATE_1688_SYNC_LIMIT',
+          data: { syncLimit: n },
+        }, () => { void chrome.runtime.lastError; })
+      }
     }
   } catch { /* ignore */ }
 })
@@ -1817,6 +1996,8 @@ async function startBatchPhotoSearch() {
 const expandedRowKeys = ref([])
 const pddMatchesMap = reactive({})
 const pddMatchesLoading = reactive({})
+const alibaba1688MatchesMap = reactive({})
+const alibaba1688MatchesLoading = reactive({})
 
 function expandAllPddRows() {
   if (!store.list?.length) return
@@ -1825,6 +2006,9 @@ function expandAllPddRows() {
   ids.forEach((id) => {
     if (pddMatchesMap[id] === undefined) {
       loadPddMatches(id)
+    }
+    if (alibaba1688MatchesMap[id] === undefined) {
+      loadAlibaba1688Matches(id)
     }
   })
 }
@@ -1842,6 +2026,9 @@ function toggleExpand(productId) {
     if (!pddMatchesMap[productId]) {
       loadPddMatches(productId)
     }
+    if (!alibaba1688MatchesMap[productId]) {
+      loadAlibaba1688Matches(productId)
+    }
   }
 }
 
@@ -1852,6 +2039,9 @@ function onExpand(expanded, record) {
     }
     if (!pddMatchesMap[record.id]) {
       loadPddMatches(record.id)
+    }
+    if (!alibaba1688MatchesMap[record.id]) {
+      loadAlibaba1688Matches(record.id)
     }
   } else {
     expandedRowKeys.value = expandedRowKeys.value.filter(k => k !== record.id)
@@ -1870,6 +2060,18 @@ async function loadPddMatches(productId) {
   }
 }
 
+async function loadAlibaba1688Matches(productId) {
+  alibaba1688MatchesLoading[productId] = true
+  try {
+    const data = await alibaba1688Api.getMatches(productId)
+    alibaba1688MatchesMap[productId] = data
+  } catch {
+    alibaba1688MatchesMap[productId] = []
+  } finally {
+    alibaba1688MatchesLoading[productId] = false
+  }
+}
+
 /** 每批 ID 数量：避免 product_ids 查询串过长被网关/浏览器截断 */
 const PD_MATCH_BATCH_SIZE = 50
 
@@ -1881,6 +2083,19 @@ async function loadPddMatchesBatch(productIds) {
       const data = await pddApi.getMatchesBatch(chunk)
       for (const [pid, matches] of Object.entries(data)) {
         pddMatchesMap[pid] = matches
+      }
+    }
+  } catch {}
+}
+
+async function loadAlibaba1688MatchesBatch(productIds) {
+  if (!productIds.length) return
+  try {
+    for (let i = 0; i < productIds.length; i += PD_MATCH_BATCH_SIZE) {
+      const chunk = productIds.slice(i, i + PD_MATCH_BATCH_SIZE)
+      const data = await alibaba1688Api.getMatchesBatch(chunk)
+      for (const [pid, matches] of Object.entries(data)) {
+        alibaba1688MatchesMap[pid] = matches
       }
     }
   } catch {}
@@ -1923,10 +2138,48 @@ async function deleteMatchInList(record, m) {
   }
 }
 
+async function setPrimary1688InList(record, m) {
+  try {
+    await alibaba1688Api.updateMatch(m.id, { is_primary: 1 })
+    if (alibaba1688MatchesMap[record.id]) {
+      alibaba1688MatchesMap[record.id].forEach(x => x.is_primary = x.id === m.id ? 1 : 0)
+    }
+    // 刷新当前商品数据以获取更新后的利润
+    const updatedProduct = await productApi.get(record.id)
+    const index = store.list.findIndex(p => p.id === record.id)
+    if (index !== -1) {
+      store.list[index] = updatedProduct
+    }
+    message.success('已设为主参照')
+  } catch (e) {
+    message.error(e?.message || '设置失败')
+  }
+}
+
+async function delete1688MatchInList(record, m) {
+  try {
+    await alibaba1688Api.deleteMatch(m.id)
+    const list = alibaba1688MatchesMap[record.id]
+    if (list) {
+      alibaba1688MatchesMap[record.id] = list.filter(x => x.id !== m.id)
+    }
+    // 刷新当前商品数据以获取更新后的利润
+    const updatedProduct = await productApi.get(record.id)
+    const index = store.list.findIndex(p => p.id === record.id)
+    if (index !== -1) {
+      store.list[index] = updatedProduct
+    }
+    message.success('已删除该1688匹配')
+  } catch (e) {
+    message.error(e?.message || '删除失败')
+  }
+}
+
 watch(() => store.list, (newList) => {
   if (newList?.length) {
     const idSet = new Set(newList.map(p => p.id))
     loadPddMatchesBatch([...idSet])
+    loadAlibaba1688MatchesBatch([...idSet])
     expandedRowKeys.value = expandedRowKeys.value.filter(k => idSet.has(k))
   } else {
     expandedRowKeys.value = []
@@ -2185,17 +2438,32 @@ async function recrawl(record) {
   }
 }
 
+// 浏览器扩展(sync-inject)在 1688 数据入库后，通过 window.postMessage 通知本页，
+// 这里收到后刷新对应商品行的 1688 匹配与利润，无需手动刷新页面。
+function handleExtensionMessage(event) {
+  if (event.source !== window) return
+  const data = event.data
+  if (!data || data.source !== 'gp-extension' || data.type !== 'GP_1688_SAVED') return
+  const productId = Number(data.productId)
+  if (!productId) return
+  loadAlibaba1688Matches(productId)
+  refreshProductRow(productId)
+}
+
 onMounted(async () => {
   // 不再恢复ERP进度，刷新页面后清除所有进度显示
   // restoreErpProgress()
+  window.addEventListener('message', handleExtensionMessage)
   await store.fetchList()
   if (store.list.length) {
     const ids = store.list.map(p => p.id)
     await loadPddMatchesBatch(ids)
+    await loadAlibaba1688MatchesBatch(ids)
   }
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('message', handleExtensionMessage)
   if (erpCountdownTimer) {
     clearInterval(erpCountdownTimer)
     erpCountdownTimer = null
@@ -2317,6 +2585,44 @@ a.shop:hover { color: #1677ff; }
 .no-data { color: #ccc; }
 .profit-rate-text { font-size: 12px; color: #999; margin-top: 2px; }
 
+/* 展开行 - 匹配区域通用样式 */
+.match-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+}
+.match-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.match-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+.match-section-count {
+  font-size: 12px;
+  color: #999;
+}
+.pdd-header {
+  border-bottom-color: #ff4d4f;
+}
+.pdd-header .match-section-title {
+  color: #ff4d4f;
+}
+.alibaba1688-header {
+  border-bottom-color: #ff6a00;
+}
+.alibaba1688-header .match-section-title {
+  color: #ff6a00;
+}
+
 /* 展开行 - 拼多多匹配 */
 .pdd-expand-wrapper {
   padding: 6px 0 6px 92px;
@@ -2431,6 +2737,111 @@ a.shop:hover { color: #1677ff; }
 .pdd-link { color: #1677ff; font-size: 12px; }
 .pdd-match-tags { display: flex; gap: 4px; flex-shrink: 0; }
 .pdd-match-actions { flex-shrink: 0; }
+
+/* 展开行 - 1688匹配 */
+.alibaba1688-match-cards {
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+.alibaba1688-match-card {
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  background: #fafafa;
+  padding: 10px;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.alibaba1688-match-card:hover {
+  border-color: #d9d9d9;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.alibaba1688-match-card.is-primary {
+  border-color: #ff6a00;
+  background: #fff7f0;
+}
+.alibaba1688-card-img-placeholder {
+  width: 100px; height: 100px; background: #f0f0f0; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #ccc; font-size: 16px; flex-shrink: 0;
+}
+.alibaba1688-card-info {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+}
+.alibaba1688-card-title {
+  font-size: 12px; font-weight: 500; color: #333;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+  min-height: 34px;
+}
+.alibaba1688-card-price {
+  font-weight: 600; color: #e62e2e; font-size: 16px;
+  margin-top: 6px;
+}
+.alibaba1688-card-sales {
+  color: #999; font-size: 11px; margin-top: 2px;
+}
+.alibaba1688-card-goodrates {
+  color: #52c41a; font-size: 11px; margin-top: 2px;
+}
+.alibaba1688-card-tpyear {
+  color: #ff6a00; font-size: 11px; margin-top: 2px;
+}
+.alibaba1688-card-tags {
+  display: flex; gap: 4px; justify-content: center;
+  margin-top: 6px; flex-wrap: wrap;
+}
+.alibaba1688-card-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+.alibaba1688-match-list {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.alibaba1688-match-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 8px;
+  border: 1px solid #f0f0f0; background: #fafafa;
+  transition: all .2s;
+}
+.alibaba1688-match-row:hover {
+  border-color: #d9d9d9;
+}
+.alibaba1688-match-row.is-primary {
+  border-color: #ff6a00; background: #fff7f0;
+}
+.alibaba1688-img-placeholder {
+  width: 150px; height: 150px; background: #f0f0f0; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #ccc; font-size: 16px; flex-shrink: 0;
+}
+.alibaba1688-match-info { flex: 1; min-width: 0; }
+.alibaba1688-match-title {
+  font-size: 13px; font-weight: 500; color: #333;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  display: block; max-width: 360px;
+}
+.alibaba1688-match-meta {
+  display: flex; gap: 10px; align-items: center; font-size: 12px; margin-top: 4px;
+}
+.alibaba1688-price { font-weight: 600; color: #e62e2e; font-size: 14px; }
+.alibaba1688-sales { color: #999; }
+.alibaba1688-goodrates { color: #52c41a; }
+.alibaba1688-tpyear { color: #ff6a00; }
+.alibaba1688-match-tags { display: flex; gap: 4px; flex-shrink: 0; }
+.alibaba1688-match-actions { flex-shrink: 0; }
 
 /* 分页「每页条数」：选择器与下拉层加宽，避免 1000/page 等文案被截断 */
 .product-list-page :deep(.ant-pagination-options-size-changer .ant-select-selector) {

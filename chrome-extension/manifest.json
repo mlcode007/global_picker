@@ -33,9 +33,21 @@
         "https://air.1688.com/*",
         "https://*.1688.com/*"
       ],
+      "js": ["inject_main.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://air.1688.com/*",
+        "https://*.1688.com/*"
+      ],
       "js": ["alibaba1688-collector.js"],
       "run_at": "document_start",
-      "all_frames": true
+      "all_frames": true,
+      "match_about_blank": true
     },
     {
       "matches": [

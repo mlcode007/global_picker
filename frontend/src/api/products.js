@@ -75,6 +75,14 @@ export const pddApi = {
   deleteMatch: (id) => http.delete(`/pdd/matches/${id}`),
 }
 
+export const alibaba1688Api = {
+  getMatches: (productId) => http.get(`/1688/matches/${productId}`),
+  getMatchesBatch: (productIds) => http.get('/1688/matches/batch', { params: { product_ids: productIds.join(',') } }),
+  addMatch: (data) => http.post('/1688/matches', data),
+  updateMatch: (id, data) => http.patch(`/1688/matches/${id}`, data),
+  deleteMatch: (id) => http.delete(`/1688/matches/${id}`),
+}
+
 export const photoSearchApi = {
   createTask: (data) => http.post('/pdd/photo-search/tasks', data),
   getTask: (taskId) => http.get(`/pdd/photo-search/tasks/${taskId}`),

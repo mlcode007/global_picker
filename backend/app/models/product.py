@@ -60,4 +60,5 @@ class Product(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     pdd_matches = relationship("PddMatch", back_populates="product", cascade="all, delete-orphan")
+    alibaba1688_matches = relationship("Alibaba1688Match", back_populates="product", cascade="all, delete-orphan")
     profit_records = relationship("ProfitRecord", back_populates="product", cascade="all, delete-orphan")
