@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TikTok Shop 采集助手",
+  "name": "Global Picker 工作助手",
   "version": "2.0.0",
-  "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，支持登录状态检测和采集配额管理",
+  "description": "在 TikTok Shop 商品页自动识别「采集」按钮并点击，支持登录状态检测和同步配额管理",
   "permissions": ["tabs", "storage", "alarms", "scripting", "webNavigation", "webRequest"],
   "host_permissions": [
     "https://shop.tiktok.com/*",

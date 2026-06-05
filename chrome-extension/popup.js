@@ -66,7 +66,7 @@ function updateAlibaba1688Status(status, current, total) {
 
   if (status === 'collecting') {
     alibaba1688StatusEl.className = 'status-badge warning';
-    alibaba1688StatusTextEl.textContent = '采集中';
+    alibaba1688StatusTextEl.textContent = '同步中';
   } else if (status === 'completed') {
     alibaba1688StatusEl.className = 'status-badge success';
     alibaba1688StatusTextEl.textContent = '已完成';

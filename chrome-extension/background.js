@@ -69,7 +69,7 @@ const Logger = {
 
   _log(level, ...args) {
     if (this.levels[level] >= this.levels[this.level]) {
-      console[level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log']('[采集助手]', ...args);
+      console[level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log']('[Global Picker]', ...args);
     }
   },
 
@@ -234,7 +234,7 @@ const Validator = {
         success: false,
         error: {
           code: 'QUOTA_EXCEEDED',
-          message: `今日采集配额已用完（${todayCount}/${dailyLimit}）`,
+          message: `今日同步配额已用完（${todayCount}/${dailyLimit}）`,
         },
       };
     }
@@ -275,7 +275,7 @@ const BackgroundService = {
   async init() {
     if (this.initialized) return;
 
-    console.log('%c[采集助手] BUILD MARKER >>> 1688-HOOK-v3 (webNav+executeScript+frameEnum) <<<', 'color:#fff;background:#ee0979;padding:2px 6px;border-radius:3px;');
+    console.log('%c[Global Picker] BUILD MARKER >>> 1688-HOOK-v3 (webNav+executeScript+frameEnum) <<<', 'color:#fff;background:#ee0979;padding:2px 6px;border-radius:3px;');
     Logger.info('初始化后台服务...');
 
     this.setupMessageListener();

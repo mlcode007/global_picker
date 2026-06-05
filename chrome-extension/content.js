@@ -49,7 +49,7 @@
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPES.SYNC_AUTH }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error('[采集助手] 同步登录状态失败:', chrome.runtime.lastError);
+          console.error('[Global Picker] 同步登录状态失败:', chrome.runtime.lastError);
           resolve({
             success: false,
             error: { code: 'SYNC_ERROR', message: '同步登录状态失败' },
@@ -65,7 +65,7 @@
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPES.CHECK_ALL }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error('[采集助手] 检查登录状态和配额失败:', chrome.runtime.lastError);
+          console.error('[Global Picker] 检查登录状态和配额失败:', chrome.runtime.lastError);
           resolve({
             success: false,
             error: { code: 'COMMUNICATION_ERROR', message: '与后台通信失败' },
@@ -81,7 +81,7 @@
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPES.RECORD_COLLECTION }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error('[采集助手] 记录采集失败:', chrome.runtime.lastError);
+          console.error('[Global Picker] 记录同步失败:', chrome.runtime.lastError);
           resolve({
             success: false,
             error: { code: 'RECORD_ERROR', message: '记录采集失败' },
@@ -202,7 +202,7 @@
 
     const syncResult = await syncAuth();
     if (!syncResult.success) {
-      console.log('[采集助手] 同步登录状态失败:', syncResult.error);
+      console.log('[Global Picker] 同步登录状态失败:', syncResult.error);
       showNotification('未登录 <a href="http://localhost:5173" target="_blank" style="color:inherit;text-decoration:underline;">Global Picker</a> 平台，请先登录', 'error');
       tries += 1;
       if (tries >= MAX_TRIES) {
@@ -216,7 +216,7 @@
     const quotaStatus = await checkAuthAndQuota();
 
     if (!quotaStatus.success) {
-      console.log('[采集助手] 校验失败:', quotaStatus.error);
+      console.log('[Global Picker] 校验失败:', quotaStatus.error);
 
       if (quotaStatus.error.code === 'AUTH_NOT_LOGGED_IN' ||
           quotaStatus.error.code === 'AUTH_TOKEN_EXPIRED' ||
@@ -256,7 +256,7 @@
 
       hasClickedCollect = true;
       performClick(el);
-      showNotification('采集成功', 'success');
+      showNotification('同步成功', 'success');
       setTimeout(() => verifyAfterClick(0), POST_CLICK_VERIFY_STEP_MS);
       return;
     }
