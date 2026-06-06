@@ -25,6 +25,7 @@ class Alibaba1688Match(Base):
     tp_year = Column(Integer, nullable=True)
     free_return_in7d = Column(String(32), nullable=True)
     support_waybill = Column(String(256), nullable=True)
+    company_name = Column(String(128), nullable=True)
     price = Column(Numeric(12, 2), nullable=False, default=0)
     match_source = Column(
         Enum("image_search", "manual"),

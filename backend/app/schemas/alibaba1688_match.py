@@ -20,6 +20,7 @@ class Alibaba1688ProductItem(BaseModel):
     tpYear: int = 0
     freeReturnIn7d: str = ""
     supportWaybill: str = ""
+    companyName: str = ""
 
 
 class Alibaba1688BatchCreate(BaseModel):
@@ -28,6 +29,7 @@ class Alibaba1688BatchCreate(BaseModel):
     product_id: int
     products: List[Alibaba1688ProductItem]
     sync_limit: Optional[int] = None
+    page: Optional[int] = 1  # 插件回传页码，>1 时跳过入库
 
 
 class Alibaba1688MatchCreate(BaseModel):
@@ -45,6 +47,7 @@ class Alibaba1688MatchCreate(BaseModel):
     tp_year: Optional[int] = None
     free_return_in7d: Optional[str] = None
     support_waybill: Optional[str] = None
+    company_name: Optional[str] = None
     match_source: str = "image_search"
     is_confirmed: int = 0
     is_primary: int = 0
@@ -71,6 +74,7 @@ class Alibaba1688MatchOut(BaseModel):
     tp_year: Optional[int]
     free_return_in7d: Optional[str]
     support_waybill: Optional[str]
+    company_name: Optional[str]
     price: Decimal
     match_source: str
     is_confirmed: int

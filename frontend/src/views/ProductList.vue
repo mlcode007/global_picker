@@ -391,15 +391,20 @@
           <!-- 商品信息列 -->
           <template v-if="column.key === 'product'">
             <div class="product-cell">
-              <a-image
+              <ImageMagnifier
                 v-if="record.main_image_url"
                 :src="record.main_image_url"
-                :width="150"
-                :height="150"
-                style="object-fit:cover;border-radius:6px;flex-shrink:0"
-                :preview="true"
-                :fallback="fallbackImg"
-              />
+                :preview-size="400"
+              >
+                <a-image
+                  :src="record.main_image_url"
+                  :width="180"
+                  :height="180"
+                  style="object-fit:cover;border-radius:8px;flex-shrink:0"
+                  :preview="true"
+                  :fallback="fallbackImg"
+                />
+              </ImageMagnifier>
               <div v-else class="img-placeholder"><PictureOutlined /></div>
               <div class="product-info">
                 <span
@@ -640,14 +645,19 @@
                     :key="m.id"
                     :class="['pdd-match-card', m.is_primary && 'is-primary']"
                   >
-                    <a-image
+                    <ImageMagnifier
                       v-if="m.pdd_image_url"
                       :src="m.pdd_image_url"
-                      referrerpolicy="no-referrer"
-                      :width="150" :height="150"
-                      style="object-fit:cover;border-radius:6px"
-                      :fallback="fallbackImg"
-                    />
+                      :preview-size="400"
+                    >
+                      <a-image
+                        :src="m.pdd_image_url"
+                        referrerpolicy="no-referrer"
+                        :width="170" :height="170"
+                        style="object-fit:cover;border-radius:8px"
+                        :fallback="fallbackImg"
+                      />
+                    </ImageMagnifier>
                     <div v-else class="pdd-card-img-placeholder"><PictureOutlined /></div>
                     <div class="pdd-card-info">
                       <div class="pdd-card-title" :title="m.pdd_title">{{ m.pdd_title }}</div>
@@ -696,14 +706,19 @@
                     :key="m.id"
                     :class="['pdd-match-row', m.is_primary && 'is-primary']"
                   >
-                    <a-image
+                    <ImageMagnifier
                       v-if="m.pdd_image_url"
                       :src="m.pdd_image_url"
-                      referrerpolicy="no-referrer"
-                      :width="150" :height="150"
-                      style="object-fit:cover;border-radius:6px;flex-shrink:0"
-                      :fallback="fallbackImg"
-                    />
+                      :preview-size="400"
+                    >
+                      <a-image
+                        :src="m.pdd_image_url"
+                        referrerpolicy="no-referrer"
+                        :width="160" :height="160"
+                        style="object-fit:cover;border-radius:8px;flex-shrink:0"
+                        :fallback="fallbackImg"
+                      />
+                    </ImageMagnifier>
                     <div v-else class="pdd-img-placeholder"><PictureOutlined /></div>
                     <div class="pdd-match-info">
                       <span class="pdd-match-title">{{ m.pdd_title }}</span>
@@ -778,17 +793,31 @@
                     :key="m.id"
                     :class="['alibaba1688-match-card', m.is_primary && 'is-primary']"
                   >
-                    <a-image
+                    <ImageMagnifier
                       v-if="m.main_image"
                       :src="m.main_image"
-                      referrerpolicy="no-referrer"
-                      :width="150" :height="150"
-                      style="object-fit:cover;border-radius:6px"
-                      :fallback="fallbackImg"
-                    />
+                      :preview-size="400"
+                    >
+                      <a-image
+                        :src="m.main_image"
+                        referrerpolicy="no-referrer"
+                        :width="170" :height="170"
+                        style="object-fit:cover;border-radius:8px"
+                        :fallback="fallbackImg"
+                      />
+                    </ImageMagnifier>
                     <div v-else class="alibaba1688-card-img-placeholder"><PictureOutlined /></div>
                     <div class="alibaba1688-card-info">
-                      <div class="alibaba1688-card-title" :title="m.title">{{ m.title }}</div>
+                      <a
+                        v-if="getAlibaba1688Url(m)"
+                        :href="getAlibaba1688Url(m)"
+                        target="_blank"
+                        rel="noopener"
+                        class="alibaba1688-card-title"
+                        :title="m.title"
+                      >{{ m.title }}</a>
+                      <div v-else class="alibaba1688-card-title" :title="m.title">{{ m.title }}</div>
+                      <div v-if="m.company_name" class="alibaba1688-card-company" :title="m.company_name">🏭 {{ m.company_name }}</div>
                       <div class="alibaba1688-card-price">¥{{ m.price }}</div>
                       <div v-if="m.last30_days_sales" class="alibaba1688-card-sales">近30天销量 {{ m.last30_days_sales }}</div>
                       <div v-if="m.good_rates" class="alibaba1688-card-goodrates">好评率 {{ m.good_rates }}%</div>
@@ -825,17 +854,30 @@
                     :key="m.id"
                     :class="['alibaba1688-match-row', m.is_primary && 'is-primary']"
                   >
-                    <a-image
+                    <ImageMagnifier
                       v-if="m.main_image"
                       :src="m.main_image"
-                      referrerpolicy="no-referrer"
-                      :width="150" :height="150"
-                      style="object-fit:cover;border-radius:6px;flex-shrink:0"
-                      :fallback="fallbackImg"
-                    />
+                      :preview-size="400"
+                    >
+                      <a-image
+                        :src="m.main_image"
+                        referrerpolicy="no-referrer"
+                        :width="160" :height="160"
+                        style="object-fit:cover;border-radius:8px;flex-shrink:0"
+                        :fallback="fallbackImg"
+                      />
+                    </ImageMagnifier>
                     <div v-else class="alibaba1688-img-placeholder"><PictureOutlined /></div>
                     <div class="alibaba1688-match-info">
-                      <span class="alibaba1688-match-title">{{ m.title }}</span>
+                      <a
+                        v-if="getAlibaba1688Url(m)"
+                        :href="getAlibaba1688Url(m)"
+                        target="_blank"
+                        rel="noopener"
+                        class="alibaba1688-match-title"
+                      >{{ m.title }}</a>
+                      <span v-else class="alibaba1688-match-title">{{ m.title }}</span>
+                      <div v-if="m.company_name" class="alibaba1688-match-company" :title="m.company_name">🏭 {{ m.company_name }}</div>
                       <div class="alibaba1688-match-meta">
                         <span class="alibaba1688-price">¥{{ m.price }}</span>
                         <span v-if="m.last30_days_sales" class="alibaba1688-sales">近30天销量 {{ m.last30_days_sales }}</span>
@@ -926,6 +968,7 @@ import { STATUS_MAP, REGION_MAP } from '@/utils'
 import { pollPhotoTaskUntilDone, PHOTO_POLL_ACTIVE, formatPhotoTaskLine } from '@/utils/photoSearchTask'
 import { pollCrawlTaskUntilDone, formatCrawlTaskLine, sleep as crawlSleep } from '@/utils/crawlTask'
 import dayjs from 'dayjs'
+import ImageMagnifier from '@/components/ImageMagnifier.vue'
 
 const router = useRouter()
 const store = useProductStore()
@@ -2230,6 +2273,14 @@ function getShopUrl(record) {
   return ''
 }
 
+// 1688 商品详情页 URL
+function getAlibaba1688Url(m) {
+  if (!m) return ''
+  if (m.offer_id) return `https://detail.1688.com/offer/${m.offer_id}.html`
+  if (m.member_id) return `https://m.1688.com/winport/b2b-${m.member_id}.html`
+  return ''
+}
+
 const columns = [
   { title: '商品', key: 'product', fixed: 'left', width: 400 },
   { title: 'TikTok 价格', key: 'price', width: 140 },
@@ -2780,6 +2831,19 @@ a.shop:hover { color: #1677ff; }
   line-height: 1.4;
   min-height: 34px;
 }
+a.alibaba1688-card-title {
+  color: #1677ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+a.alibaba1688-card-title:hover {
+  color: #4096ff;
+  text-decoration: underline;
+}
+.alibaba1688-card-company {
+  font-size: 11px; color: #666; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .alibaba1688-card-price {
   font-weight: 600; color: #e62e2e; font-size: 16px;
   margin-top: 6px;
@@ -2833,6 +2897,19 @@ a.shop:hover { color: #1677ff; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   display: block; max-width: 360px;
 }
+a.alibaba1688-match-title {
+  color: #1677ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+a.alibaba1688-match-title:hover {
+  color: #4096ff;
+  text-decoration: underline;
+}
+.alibaba1688-match-company {
+  font-size: 11px; color: #666; margin: 2px 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .alibaba1688-match-meta {
   display: flex; gap: 10px; align-items: center; font-size: 12px; margin-top: 4px;
 }
@@ -2863,6 +2940,17 @@ a.shop:hover { color: #1677ff; }
   max-height: 100vh !important;
   height: auto !important;
   object-fit: contain;
+}
+
+/* 允许商品图片溢出表格单元格，避免折叠时被裁剪；放大镜玻璃使用 position:fixed 不受此影响 */
+:deep(.ant-table-tbody > tr > td) {
+  overflow: visible !important;
+}
+:deep(.ant-table-tbody > tr > td .product-cell) {
+  overflow: visible !important;
+}
+:deep(.ant-table-cell-ellipsis) {
+  overflow: visible !important;
 }
 </style>
 

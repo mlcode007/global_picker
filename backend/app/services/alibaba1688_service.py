@@ -128,7 +128,16 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
     - 按 (product_id, offer_id) 去重：已存在则更新关键信息，不重复插入
     - 若该商品当前无主参照，则自动把价格最低的新匹配设为主参照并刷新预估利润
     - 优先使用请求中的 sync_limit，其次使用配置 ALIBABA1688_SYNC_LIMIT，超过数量的商品将被忽略
+    - page > 1 时直接跳过，不入库
     """
+    # 第二页及以上不入库
+    if data.page and data.page > 1:
+        logger.info(
+            "插件批量入库1688商品: product_id=%d, page=%d, 跳过入库",
+            data.product_id, data.page
+        )
+        return 0
+
     settings = get_settings()
     sync_limit = data.sync_limit if data.sync_limit is not None else settings.ALIBABA1688_SYNC_LIMIT
 
@@ -194,6 +203,9 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             if item.totalSales and existing.total_sales != item.totalSales:
                 existing.total_sales = item.totalSales
                 changed = True
+            if item.companyName and existing.company_name != item.companyName:
+                existing.company_name = item.companyName
+                changed = True
             if changed:
                 # 若被更新的是主参照，价格变动需同步刷新利润
                 if existing.is_primary == 1 and price > 0:
@@ -215,6 +227,7 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             tp_year=item.tpYear or None,
             free_return_in7d=item.freeReturnIn7d or None,
             support_waybill=item.supportWaybill or None,
+            company_name=item.companyName or None,
             price=price,
             match_source="image_search",
             is_confirmed=0,

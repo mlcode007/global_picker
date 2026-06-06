@@ -710,7 +710,7 @@ const BackgroundService = {
 
   async handleSave1688Data(message, sendResponse) {
     try {
-      let { tiktokProductId, productId, products, syncLimit } = message.data;
+      let { tiktokProductId, productId, products, syncLimit, page } = message.data;
 
       // collector 自身拿不到归属商品时，用后台记录的采集上下文补全
       if (productId == null || tiktokProductId == null || syncLimit == null) {
@@ -759,6 +759,7 @@ const BackgroundService = {
           product_id: productId,
           products: products,
           sync_limit: syncLimit != null ? syncLimit : 5,
+          page: page != null ? page : 1,
         }),
       });
 

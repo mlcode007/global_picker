@@ -55,12 +55,12 @@
       freeReturnIn7d: tradeService.sevenDaysReturn ? '是' : '',
       tpYear: tradeService.tpYear || 0,
       shiliType: company.isSuperFactory ? '超级工厂' : (company.bizTypeName || ''),
+      companyName: company.name || '',
     };
   }
 
-  // 从插件搜索响应里取出嵌套在 responseInfo 字符串中的 offerList
-  function extractOfferListMap(data) {
-    const map = {};
+  // 从插件搜索响应里按原始顺序取出 offerList 数组
+  function extractOfferListOrdered(data) {
     let offerList = null;
 
     if (data.offerList && Array.isArray(data.offerList)) {
@@ -76,11 +76,26 @@
       }
     }
 
-    if (offerList) {
-      for (const offer of offerList) {
-        const parsed = parseOfferListItem(offer);
-        if (parsed.offerId) map[parsed.offerId] = parsed;
+    return offerList || [];
+  }
+
+  // 从 offerList 数组中提取 offerId 列表（保持原始顺序）
+  function extractOfferIdsFromList(offerList) {
+    const ids = [];
+    for (const offer of offerList) {
+      if (offer && offer.id != null) {
+        ids.push(String(offer.id));
       }
+    }
+    return ids;
+  }
+
+  // 从 offerList 原始数组构建 (offerId -> 解析结果) 索引
+  function buildOfferListMap(offerList) {
+    const map = {};
+    for (const offer of offerList) {
+      const parsed = parseOfferListItem(offer);
+      if (parsed.offerId) map[parsed.offerId] = parsed;
     }
     return map;
   }
@@ -93,15 +108,33 @@
     const data = responseData.data;
     const products = [];
 
-    // offerList(含价格)按 offerId 建索引，用于给 offerExtend 补充价格/标题/图片
-    const offerListMap = extractOfferListMap(data);
+    // 第二页（page > 1）不入库
+    console.log('[1688采集] 当前 page =', data.page);
+    if (data.page && data.page > 1) {
+      console.log('[1688采集] ⏭️ 第二页数据跳过，page =', data.page);
+      return products;
+    }
+
+    // offerList 数组（保持原始页面顺序），含价格/标题/图片
+    const offerList = extractOfferListOrdered(data);
+    // 索引用于给 offerExtend 补充价格/标题/图片
+    const offerListMap = buildOfferListMap(offerList);
 
     // 详情/插件搜索格式: offerExtend（销量、店铺、好评等），价格需从 offerList 合并
     if (data.offerExtend) {
       const offerExtend = data.offerExtend;
       const offerMember = data.offerMember || {};
 
-      for (const [offerId, extendData] of Object.entries(offerExtend)) {
+      // 关键：必须按 offerList 数组的原始顺序遍历，
+      // Object.entries/keys 对数字 key 会按升序排列，会导致顺序错乱
+      const orderedIds = extractOfferIdsFromList(offerList);
+      // 兜底：offerList 为空时退回 offerExtend 的 key
+      const offerIds = orderedIds.length > 0 ? orderedIds : Object.keys(offerExtend);
+
+      for (const offerId of offerIds) {
+        const extendData = offerExtend[offerId];
+        if (!extendData) continue; // offerList 里有但 offerExtend 里没有的跳过
+
         const saleStats = extendData.saleStatsModel || {};
         const shopInfo = extendData.shopInfoModel || {};
         const images = extendData.images || [];
@@ -128,6 +161,7 @@
           consignmentSales30d: shopInfo.consignmentSales30d || '',
           shiliType: shopInfo.shiliType || fromList.shiliType || '',
           supportWaybill: (shopInfo.surportWaybill || []).map(w => w.name).join(','),
+          companyName: fromList.companyName || '',
         });
       }
       return products;
@@ -182,7 +216,12 @@
       const hasNestedOfferList = data && data.data && data.data.responseInfo &&
         typeof data.data.responseInfo.imageSearchOfferResultViewService === 'string';
       const hitCount = hasOfferExtend ? Object.keys(data.data.offerExtend).length : (hasOfferList ? data.data.offerList.length : 0);
-      console.log('[1688采集] 收到MAIN世界拦截数据, 请求类型:', type, '商品数:', hitCount);
+      const page = detail.page || 1;
+      // 把页码合并到 data.data，parse1688Data 内部通过 data.data.page 读取
+      if (data && data.data) {
+        data.data.page = page;
+      }
+      console.log('[1688采集] 收到MAIN世界拦截数据, 请求类型:', type, '商品数:', hitCount, '页码:', page);
 
       if (hasOfferExtend || hasOfferList || hasNestedOfferList) {
         const products = parse1688Data(data);
@@ -210,7 +249,7 @@
 
         // 直接发送给后台入库；归属商品(product_id/tiktok_product_id)由后台
         // 从 gp_1688_context 上下文补全，collector 自身不强依赖这两个 ID。
-        sendProductsToBackend(products);
+        sendProductsToBackend(products, page);
       } else {
         console.log('[1688采集] 响应数据格式不匹配');
       }
@@ -218,7 +257,7 @@
     console.log('[1688采集] MAIN世界数据监听器已注册');
   }
 
-  function sendProductsToBackend(products) {
+  function sendProductsToBackend(products, page) {
     // 归属商品优先用消息设置的值；拿不到时从共享存储 gp_1688_context 读取
     // （sync-inject 在触发同款比价时写入），最终仍由后台兜底补全。
     chrome.storage.local.get('gp_1688_context', (res) => {
@@ -227,7 +266,7 @@
       const tiktokProductId = currentTikTokProductId != null ? currentTikTokProductId : (ctx.tiktokProductId != null ? ctx.tiktokProductId : null);
       const syncLimit = ctx.syncLimit != null ? ctx.syncLimit : undefined;
 
-      console.log('[1688采集] 准备入库, productId:', productId, 'tiktokProductId:', tiktokProductId, '商品数:', products.length, 'syncLimit:', syncLimit);
+      console.log('[1688采集] 准备入库, productId:', productId, 'tiktokProductId:', tiktokProductId, '商品数:', products.length, 'syncLimit:', syncLimit, 'page:', page);
 
       chrome.runtime.sendMessage({
         type: MESSAGE_TYPES.SAVE_1688_DATA,
@@ -236,6 +275,7 @@
           productId: productId,
           products: products,
           syncLimit: syncLimit,
+          page: page,
           timestamp: Date.now(),
         },
       }, (saveResponse) => {

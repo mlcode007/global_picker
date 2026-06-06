@@ -34,10 +34,31 @@
 
   function dispatchData(type, url, data) {
     try {
+      // 从 URL 的 data 参数中提取 beginPage（页码）
+      // URL 结构: ...?data=<URL编码的JSON>
+      //   data 解码后: {"params":"<URL编码的JSON>","scene":"..."}
+      //   params 再解码后才含 serviceParam.extendParam[beginPage] 等键
+      var page = 1;
+      try {
+        var urlString = url || '';
+        var m = urlString.match(/[?&]data=([^&]+)/);
+        if (m) {
+          var dataParam = decodeURIComponent(m[1]);
+          var outer = JSON.parse(dataParam);
+          if (outer.params) {
+            var inner = JSON.parse(decodeURIComponent(outer.params));
+            var bp = inner['serviceParam.extendParam[beginPage]'];
+            if (bp != null) page = parseInt(bp, 10) || 1;
+          }
+        }
+      } catch (e) {
+        console.log('[1688-MAIN] 解析 beginPage 失败:', e && e.message);
+      }
+
       // 用 JSON 字符串跨 world 传递，避免 MAIN/ISOLATED 之间对象引用不可读的问题
       document.dispatchEvent(
         new CustomEvent('__1688_intercept_data', {
-          detail: { type: type, url: url, json: JSON.stringify(data) },
+          detail: { type: type, url: url, json: JSON.stringify(data), page: page },
         })
       );
     } catch (e) {
@@ -136,7 +157,23 @@
               if (data && data.data && data.data.offerExtend) {
                 console.log('[1688-MAIN] 商品数量:', Object.keys(data.data.offerExtend).length);
               }
-              dispatchData('xhr', urlString, data);
+              // 从 URL 提取 page
+              var page = 1;
+              try {
+                var m = urlString.match(/[?&]data=([^&]+)/);
+                if (m) {
+                  var dataParam = decodeURIComponent(m[1]);
+                  var outer = JSON.parse(dataParam);
+                  if (outer.params) {
+                    var inner = JSON.parse(decodeURIComponent(outer.params));
+                    var bp = inner['serviceParam.extendParam[beginPage]'];
+                    if (bp != null) page = parseInt(bp, 10) || 1;
+                  }
+                }
+              } catch (e) {
+                /* ignore */
+              }
+              dispatchData('xhr', urlString, data, page);
             } catch (e) {
               console.log('[1688-MAIN] XHR 响应解析失败:', e && e.message);
             }
