@@ -317,7 +317,14 @@ def save_candidates_to_matches(
     candidates: list,
 ) -> int:
     """把解析出的候选写入 pdd_matches；同步 OSS 图、拼多多商品链接与 goods_id。
-    若该商品尚无主参照，自动将价格最低的候选设为主参照。"""
+    若该商品尚无主参照，自动选择最佳候选设为主参照。
+    选择规则：相似度最高优先，相似度相同时选价格最低。
+    计算图片相似度并存储，供前端展示。"""
+    from app.services.image_similarity_service import calculate_image_similarity
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+    source_image_url = product.main_image_url if product else None
+
     has_primary = db.query(PddMatch).filter(
         PddMatch.product_id == product_id,
         PddMatch.is_primary == 1,
@@ -325,11 +332,16 @@ def save_candidates_to_matches(
 
     saved = 0
     updated_existing = 0
-    cheapest_new_match = None
-    cheapest_price = None
+    # 记录所有新匹配，用于后续选择最佳主参照
+    new_matches = []
     for item in candidates:
         if not item.is_valid:
             continue
+
+        # 计算图片相似度（如果有源图和候选图）
+        match_score = None
+        if source_image_url and item.image_url:
+            match_score = calculate_image_similarity(source_image_url, item.image_url)
 
         existing = db.query(PddMatch).filter(
             PddMatch.product_id == product_id,
@@ -349,6 +361,10 @@ def save_candidates_to_matches(
                 if existing.pdd_product_id != item.pdd_goods_id:
                     existing.pdd_product_id = item.pdd_goods_id
                     row_changed = True
+            # 更新相似度分数
+            if match_score is not None:
+                existing.match_score = match_score
+                row_changed = True
             if row_changed:
                 updated_existing += 1
             continue
@@ -365,24 +381,42 @@ def save_candidates_to_matches(
             pdd_product_url=getattr(item, "product_url", None) or None,
             match_source="image_search",
             match_confidence=None,
+            match_score=match_score,
             is_confirmed=0,
             is_primary=0,
         )
         db.add(match)
         saved += 1
-        # 记录价格最低的候选
-        if cheapest_new_match is None or (item.price is not None and (cheapest_price is None or item.price < cheapest_price)):
-            cheapest_new_match = match
-            cheapest_price = item.price
+        # 记录新匹配，用于后续选择最佳主参照
+        new_matches.append(match)
 
-    if not has_primary and cheapest_new_match is not None:
-        cheapest_new_match.is_primary = 1
-        # 更新商品利润信息
-        from app.services.pdd_service import _update_product_profit
-        _update_product_profit(db, product_id, cheapest_new_match.pdd_price)
+    # 如果没有主参照，从新匹配中选择最佳设为主参照
+    # 选择规则：相似度最高优先，相似度相同时选价格最低
+    if not has_primary and new_matches:
+        best_match = max(
+            new_matches,
+            key=lambda m: (m.match_score or 0, -float(m.pdd_price) if m.pdd_price and m.pdd_price > 0 else 0)
+        )
+        if best_match.pdd_price and best_match.pdd_price > 0:
+            best_match.is_primary = 1
+            from app.services.pdd_service import _update_product_profit
+            _update_product_profit(db, product_id, best_match.pdd_price)
 
     if saved or updated_existing:
         db.commit()
+
+    # 日志记录放在 commit 之后，确保 id 已生成
+    if not has_primary and new_matches:
+        best_match = max(
+            new_matches,
+            key=lambda m: (m.match_score or 0, -float(m.pdd_price) if m.pdd_price and m.pdd_price > 0 else 0)
+        )
+        if best_match.pdd_price and best_match.pdd_price > 0:
+            logger.info(
+                "自动设置主参照: product_id=%d, match_id=%d, score=%.4f, price=%.2f",
+                product_id, best_match.id, best_match.match_score or 0, best_match.pdd_price
+            )
+
     logger.info(
         "Saved %d new matches, updated %d existing rows for product #%d",
         saved, updated_existing, product_id,
@@ -609,6 +643,80 @@ def get_task_queue_status(db: Session) -> dict:
         'active_tasks': queue_status.get('active_tasks', 0),
         'pending_tasks': queue_status.get('pending_tasks', 0),
     }
+
+
+def recalculate_similarity_for_product(db: Session, product_id: int) -> dict:
+    """为指定商品的PDD匹配重新计算图片相似度，并重新选择主参照
+
+    当TikTok商品主图爬取完成后，调用此函数补算之前缺失的相似度分数。
+    计算完成后，按相似度最高（相同时选价格最低）的规则重新选择主参照。
+
+    Returns:
+        {"calculated": int, "skipped": int, "errors": int}
+    """
+    from app.services.image_similarity_service import calculate_image_similarity
+    from app.models.pdd_match import PddMatch
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product or not product.main_image_url:
+        logger.warning("Product #%d has no main_image_url, skip similarity calculation", product_id)
+        return {"calculated": 0, "skipped": 0, "errors": 0}
+
+    source_image_url = product.main_image_url
+    matches = db.query(PddMatch).filter(
+        PddMatch.product_id == product_id,
+        PddMatch.pdd_image_url.isnot(None),
+    ).all()
+
+    calculated = 0
+    skipped = 0
+    errors = 0
+
+    for match in matches:
+        if not match.pdd_image_url:
+            skipped += 1
+            continue
+
+        try:
+            score = calculate_image_similarity(source_image_url, match.pdd_image_url)
+            if score is not None:
+                match.match_score = score
+                calculated += 1
+            else:
+                errors += 1
+        except Exception as e:
+            logger.error("Failed to calculate similarity for PDD match #%d: %s", match.id, e)
+            errors += 1
+
+    if calculated > 0:
+        # 重新选择主参照：相似度最高优先，相似度相同时选价格最低
+        # 先取消所有主参照
+        db.query(PddMatch).filter(
+            PddMatch.product_id == product_id,
+            PddMatch.is_primary == 1,
+        ).update({"is_primary": 0})
+
+        # 选择最佳匹配
+        best_match = max(
+            matches,
+            key=lambda m: (m.match_score or 0, -float(m.pdd_price) if m.pdd_price and m.pdd_price > 0 else 0)
+        )
+        if best_match.pdd_price and best_match.pdd_price > 0:
+            best_match.is_primary = 1
+            from app.services.pdd_service import _update_product_profit
+            _update_product_profit(db, product_id, best_match.pdd_price)
+            logger.info(
+                "重新设置主参照: product_id=%d, match_id=%d, score=%.4f, price=%.2f",
+                product_id, best_match.id, best_match.match_score or 0, best_match.pdd_price
+            )
+
+        db.commit()
+
+    logger.info(
+        "Recalculated PDD similarity for product #%d: calculated=%d, skipped=%d, errors=%d",
+        product_id, calculated, skipped, errors,
+    )
+    return {"calculated": calculated, "skipped": skipped, "errors": errors}
 
 
 def schedule_queued_tasks(db: Session, limit: Optional[int] = None) -> int:

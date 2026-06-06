@@ -39,6 +39,8 @@ export const useProductStore = defineStore('product', () => {
     profit_rate_min: undefined,
     profit_rate_max: undefined,
     pdd_matched: undefined,
+    pdd_match_count_min: undefined,
+    pdd_match_count_max: undefined,
     created_at_start: undefined,
     created_at_end: undefined,
     crawl_status: undefined,

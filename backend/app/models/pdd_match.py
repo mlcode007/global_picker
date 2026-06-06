@@ -28,6 +28,7 @@ class PddMatch(Base):
         default="image_search",
     )
     match_confidence = Column(Numeric(5, 4), nullable=True)
+    match_score = Column(Numeric(5, 4), nullable=True, comment="图片相似度分数(0~1)")
     is_confirmed = Column(TINYINT(1), nullable=False, default=0)
     is_primary = Column(TINYINT(1), nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

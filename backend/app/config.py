@@ -74,6 +74,9 @@ class Settings(BaseSettings):
     # 1688同步商品数量限制（插件批量入库时，每个商品最多入库的1688匹配数量）
     ALIBABA1688_SYNC_LIMIT: int = 5
 
+    # 图片相似度阈值（0~1），拍照购匹配时低于此值的候选将被过滤
+    IMAGE_SIMILARITY_THRESHOLD: float = 0.75
+
     @property
     def database_url(self) -> str:
         # quote_plus 对密码中的特殊字符（如 @）进行 URL 编码

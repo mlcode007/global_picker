@@ -83,6 +83,7 @@ class Alibaba1688MatchOut(BaseModel):
     min_freight: Optional[float] = None
     price: Decimal
     match_source: str
+    match_score: Optional[float]
     is_confirmed: int
     is_primary: int
     created_at: datetime

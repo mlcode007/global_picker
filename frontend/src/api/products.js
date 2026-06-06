@@ -73,6 +73,7 @@ export const pddApi = {
   addMatch: (data) => http.post('/pdd/matches', data),
   updateMatch: (id, data) => http.patch(`/pdd/matches/${id}`, data),
   deleteMatch: (id) => http.delete(`/pdd/matches/${id}`),
+  recalculateSimilarity: (productId) => http.post(`/pdd/matches/${productId}/recalculate-similarity`),
 }
 
 export const alibaba1688Api = {
@@ -81,6 +82,7 @@ export const alibaba1688Api = {
   addMatch: (data) => http.post('/1688/matches', data),
   updateMatch: (id, data) => http.patch(`/1688/matches/${id}`, data),
   deleteMatch: (id) => http.delete(`/1688/matches/${id}`),
+  recalculateSimilarity: (productId) => http.post(`/1688/matches/${productId}/recalculate-similarity`),
 }
 
 export const photoSearchApi = {

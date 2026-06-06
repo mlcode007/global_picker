@@ -81,3 +81,15 @@ def delete_match(
     if not ok:
         raise HTTPException(status_code=404, detail="匹配记录不存在")
     return Response(message="删除成功")
+
+
+@router.post("/matches/{product_id}/recalculate-similarity", response_model=Response, summary="重新计算商品的PDD匹配图片相似度")
+def recalculate_similarity(
+    product_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    from app.services import photo_search_service
+    _check_product_ownership(db, product_id, current_user.id)
+    result = photo_search_service.recalculate_similarity_for_product(db, product_id)
+    return Response(data=result, message=f"重新计算完成: {result['calculated']} 个已计算, {result['skipped']} 个跳过, {result['errors']} 个错误")

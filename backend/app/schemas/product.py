@@ -74,6 +74,7 @@ class ProductOut(BaseModel):
     remark: Optional[str]
     estimated_profit: Optional[Decimal] = None
     profit_rate: Optional[Decimal] = None
+    pdd_match_count: int = 0
     created_at: datetime
     updated_at: datetime
 

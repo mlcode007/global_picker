@@ -2,7 +2,7 @@ import re
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 from app.models.product import Product
 from app.models.crawl_task import CrawlTask
@@ -327,6 +327,8 @@ def get_products(
     profit_rate_min: Optional[float] = None,
     profit_rate_max: Optional[float] = None,
     pdd_matched: Optional[bool] = None,
+    pdd_match_count_min: Optional[int] = None,
+    pdd_match_count_max: Optional[int] = None,
     created_at_start: Optional[str] = None,
     created_at_end: Optional[str] = None,
     crawl_status: Optional[str] = None,
@@ -378,6 +380,19 @@ def get_products(
             query = query.filter(Product.id.in_(matched_ids))
         else:
             query = query.filter(~Product.id.in_(matched_ids))
+    if pdd_match_count_min is not None or pdd_match_count_max is not None:
+        match_count_subq = (
+            db.query(PddMatch.product_id, func.count(PddMatch.id).label("cnt"))
+            .filter(PddMatch.product_id.isnot(None))
+            .group_by(PddMatch.product_id)
+            .subquery()
+        )
+        count_query = db.query(match_count_subq.c.product_id)
+        if pdd_match_count_min is not None:
+            count_query = count_query.filter(match_count_subq.c.cnt >= pdd_match_count_min)
+        if pdd_match_count_max is not None:
+            count_query = count_query.filter(match_count_subq.c.cnt <= pdd_match_count_max)
+        query = query.filter(Product.id.in_(count_query.subquery()))
     if category1_id:
         query = query.filter(Product.category1_id == category1_id)
     if category2_id:

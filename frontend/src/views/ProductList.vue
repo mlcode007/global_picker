@@ -134,6 +134,26 @@
           </a-select>
         </a-col>
         <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.pdd_match_count_min"
+            placeholder="匹配数≥"
+            :min="0"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+        <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.pdd_match_count_max"
+            placeholder="匹配数≤"
+            :min="0"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+        <a-col :span="3">
           <a-select
             v-model:value="store.filters.category1_id"
             placeholder="一级类目"
@@ -520,7 +540,7 @@
                 <DownOutlined v-if="!expandedRowKeys.includes(record.id)" />
                 <UpOutlined v-else />
               </template>
-              {{ pddMatchesMap[record.id]?.length || 0 }} 个匹配
+              {{ record.pdd_match_count || 0 }} 个匹配
             </a-button>
           </template>
 
@@ -625,6 +645,15 @@
               <div class="match-section-header pdd-header">
                 <span class="match-section-title">拼多多匹配商品</span>
                 <span class="match-section-count">{{ pddMatchesMap[record.id]?.length || 0 }} 个</span>
+                <a-button
+                  size="small"
+                  type="link"
+                  :loading="recalcPddLoading[record.id]"
+                  @click="recalculatePddSimilarity(record)"
+                >
+                  <template #icon><ReloadOutlined /></template>
+                  重算相似度
+                </a-button>
               </div>
               <div v-if="pddMatchesLoading[record.id]" style="text-align:center;padding:12px">
                 <a-spin size="small" /> 加载中...
@@ -668,6 +697,9 @@
                         <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
                         <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
                         <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                        <a-tag v-if="m.match_score != null" :color="m.match_score >= 0.75 ? 'green' : m.match_score >= 0.5 ? 'orange' : 'red'" size="small">
+                          相似度 {{ (m.match_score * 100).toFixed(0) }}%
+                        </a-tag>
                       </div>
                     </div>
                     <div class="pdd-card-actions">
@@ -742,6 +774,9 @@
                       <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
                       <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
                       <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                      <a-tag v-if="m.match_score != null" :color="m.match_score >= 0.75 ? 'green' : m.match_score >= 0.5 ? 'orange' : 'red'" size="small">
+                        相似度 {{ (m.match_score * 100).toFixed(0) }}%
+                      </a-tag>
                     </div>
                     <div class="pdd-match-actions">
                       <a-space :size="4" wrap align="center">
@@ -773,6 +808,15 @@
               <div class="match-section-header alibaba1688-header">
                 <span class="match-section-title">1688匹配商品</span>
                 <span class="match-section-count">{{ alibaba1688MatchesMap[record.id]?.length || 0 }} 个</span>
+                <a-button
+                  size="small"
+                  type="link"
+                  :loading="recalcLoading[record.id]"
+                  @click="recalculate1688Similarity(record)"
+                >
+                  <template #icon><ReloadOutlined /></template>
+                  重算相似度
+                </a-button>
               </div>
               <div v-if="alibaba1688MatchesLoading[record.id]" style="text-align:center;padding:12px">
                 <a-spin size="small" /> 加载中...
@@ -831,6 +875,9 @@
                         <a-tag v-if="m.is_primary" color="blue" size="small">主参照</a-tag>
                         <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
                         <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                        <a-tag v-if="m.match_score != null" :color="m.match_score >= 0.75 ? 'green' : m.match_score >= 0.5 ? 'orange' : 'red'" size="small">
+                          相似度 {{ (m.match_score * 100).toFixed(0) }}%
+                        </a-tag>
                       </div>
                     </div>
                     <div class="alibaba1688-card-actions">
@@ -899,6 +946,9 @@
                       <a-tag v-if="m.is_primary" color="blue">主参照</a-tag>
                       <a-tag v-if="m.match_source === 'manual'" color="default" size="small">手动</a-tag>
                       <a-tag v-if="m.match_source === 'image_search'" color="orange" size="small">自动</a-tag>
+                      <a-tag v-if="m.match_score != null" :color="m.match_score >= 0.75 ? 'green' : m.match_score >= 0.5 ? 'orange' : 'red'" size="small">
+                        相似度 {{ (m.match_score * 100).toFixed(0) }}%
+                      </a-tag>
                     </div>
                     <div class="alibaba1688-match-actions">
                       <a-space :size="4" wrap align="center">
@@ -2051,6 +2101,8 @@ const pddMatchesMap = reactive({})
 const pddMatchesLoading = reactive({})
 const alibaba1688MatchesMap = reactive({})
 const alibaba1688MatchesLoading = reactive({})
+const recalcLoading = reactive({})
+const recalcPddLoading = reactive({})
 
 function expandAllPddRows() {
   if (!store.list?.length) return
@@ -2225,6 +2277,35 @@ async function delete1688MatchInList(record, m) {
     message.success('已删除该1688匹配')
   } catch (e) {
     message.error(e?.message || '删除失败')
+  }
+}
+
+// --- 重新计算相似度 ---
+async function recalculate1688Similarity(record) {
+  recalcLoading[record.id] = true
+  try {
+    const result = await alibaba1688Api.recalculateSimilarity(record.id)
+    message.success(`重新计算完成: ${result.calculated} 个已计算, ${result.skipped} 个跳过, ${result.errors} 个错误`)
+    // 刷新匹配列表
+    await loadAlibaba1688Matches(record.id)
+  } catch (e) {
+    message.error(e?.message || '重新计算失败')
+  } finally {
+    recalcLoading[record.id] = false
+  }
+}
+
+async function recalculatePddSimilarity(record) {
+  recalcPddLoading[record.id] = true
+  try {
+    const result = await pddApi.recalculateSimilarity(record.id)
+    message.success(`重新计算完成: ${result.calculated} 个已计算, ${result.skipped} 个跳过, ${result.errors} 个错误`)
+    // 刷新匹配列表
+    await loadPddMatches(record.id)
+  } catch (e) {
+    message.error(e?.message || '重新计算失败')
+  } finally {
+    recalcPddLoading[record.id] = false
   }
 }
 

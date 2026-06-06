@@ -220,6 +220,9 @@
                   <a-tag v-if="m.is_confirmed" color="green">已确认</a-tag>
                   <a-tag v-if="m.match_source === 'manual'" color="default">手动</a-tag>
                   <a-tag v-if="m.match_source === 'image_search'" color="orange">自动</a-tag>
+                  <a-tag v-if="m.match_score != null" :color="m.match_score >= 0.75 ? 'green' : m.match_score >= 0.5 ? 'orange' : 'red'">
+                    图片相似度 {{ (m.match_score * 100).toFixed(0) }}%
+                  </a-tag>
                   <span v-if="m.match_confidence" style="font-size:11px;color:#999;margin-left:4px">
                     相似 {{ (parseFloat(m.match_confidence) * 100).toFixed(0) }}%
                   </span>

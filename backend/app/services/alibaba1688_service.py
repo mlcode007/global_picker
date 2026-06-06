@@ -129,7 +129,10 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
     - 若该商品当前无主参照，则自动把价格最低的新匹配设为主参照并刷新预估利润
     - 优先使用请求中的 sync_limit，其次使用配置 ALIBABA1688_SYNC_LIMIT，超过数量的商品将被忽略
     - page > 1 时直接跳过，不入库
+    - 计算图片相似度并存储，供前端展示
     """
+    from app.services.image_similarity_service import calculate_image_similarity
+
     # 第二页及以上不入库
     if data.page and data.page > 1:
         logger.info(
@@ -145,14 +148,19 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
     created = 0
     updated_existing = 0
 
+    # 获取TikTok商品主图
+    product = db.query(Product).filter(Product.id == product_id).first()
+    source_image_url = product.main_image_url if product else None
+
     has_primary = (
         db.query(Alibaba1688Match)
         .filter(Alibaba1688Match.product_id == product_id, Alibaba1688Match.is_primary == 1)
         .first()
         is not None
     )
-    cheapest_new_match = None
-    cheapest_price = None
+    # 记录所有新匹配，用于后续选择最佳主参照
+    # 选择规则：相似度最高优先，相似度相同时选价格最低
+    new_matches = []
 
     for item in data.products:
         if created >= sync_limit:
@@ -167,6 +175,11 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
         offer_id = item.offerId or None
         good_rates = Decimal(str(item.goodRates)) if item.goodRates else None
         images = ",".join(item.images) if item.images else None
+
+        # 计算图片相似度（如果有源图和候选图）
+        match_score = None
+        if source_image_url and item.mainImage:
+            match_score = calculate_image_similarity(source_image_url, item.mainImage)
 
         # 按 offer_id 去重（offer_id 为空时按标题兜底）
         existing = None
@@ -206,6 +219,10 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             if item.companyName and existing.company_name != item.companyName:
                 existing.company_name = item.companyName
                 changed = True
+            # 更新相似度分数
+            if match_score is not None:
+                existing.match_score = match_score
+                changed = True
             # 包邮字段：始终更新（不依赖 changed 标记）
             if item.isFreeShipping is not None:
                 existing.is_free_shipping = bool(item.isFreeShipping)
@@ -237,24 +254,111 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             min_freight=float(item.minFreight) if item.minFreight is not None else 0.0,
             price=price,
             match_source="image_search",
+            match_score=match_score,
             is_confirmed=0,
             is_primary=0,
         )
         db.add(match)
         created += 1
 
-        # 记录价格最低（且 > 0）的新匹配，用于自动设主参照
-        if price > 0 and (cheapest_price is None or price < cheapest_price):
-            cheapest_new_match = match
-            cheapest_price = price
+        # 记录新匹配，用于后续选择最佳主参照
+        new_matches.append(match)
 
-    if not has_primary and cheapest_new_match is not None:
-        cheapest_new_match.is_primary = 1
-        _update_product_profit(db, product_id, cheapest_new_match.price)
+    # 如果没有主参照，从新匹配中选择最佳设为主参照
+    # 选择规则：相似度最高优先，相似度相同时选价格最低
+    if not has_primary and new_matches:
+        best_match = max(
+            new_matches,
+            key=lambda m: (m.match_score or 0, -float(m.price) if m.price and m.price > 0 else 0)
+        )
+        if best_match.price and best_match.price > 0:
+            best_match.is_primary = 1
+            _update_product_profit(db, product_id, best_match.price)
 
     if created or updated_existing:
         db.commit()
+
+    # 日志记录放在 commit 之后，确保 id 已生成
+    if not has_primary and new_matches:
+        best_match = max(
+            new_matches,
+            key=lambda m: (m.match_score or 0, -float(m.price) if m.price and m.price > 0 else 0)
+        )
+        if best_match.price and best_match.price > 0:
+            logger.info(
+                "自动设置主参照: product_id=%d, match_id=%d, score=%.4f, price=%.2f",
+                product_id, best_match.id, best_match.match_score or 0, best_match.price
+            )
+
     logger.info(
         "插件批量入库1688商品: product_id=%d, 新增=%d, 更新=%d", product_id, created, updated_existing
     )
     return created
+
+
+def recalculate_similarity_for_product(db: Session, product_id: int) -> dict:
+    """为指定商品的1688匹配重新计算图片相似度
+
+    当TikTok商品主图爬取完成后，调用此函数补算之前缺失的相似度分数。
+
+    Returns:
+        {"calculated": int, "skipped": int, "errors": int}
+    """
+    from app.services.image_similarity_service import calculate_image_similarity
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product or not product.main_image_url:
+        logger.warning("Product #%d has no main_image_url, skip similarity calculation", product_id)
+        return {"calculated": 0, "skipped": 0, "errors": 0}
+
+    source_image_url = product.main_image_url
+    matches = db.query(Alibaba1688Match).filter(
+        Alibaba1688Match.product_id == product_id,
+        Alibaba1688Match.main_image.isnot(None),
+    ).all()
+
+    calculated = 0
+    skipped = 0
+    errors = 0
+
+    for match in matches:
+        if not match.main_image:
+            skipped += 1
+            continue
+
+        try:
+            score = calculate_image_similarity(source_image_url, match.main_image)
+            if score is not None:
+                match.match_score = score
+                calculated += 1
+            else:
+                errors += 1
+        except Exception as e:
+            logger.error("Failed to calculate similarity for match #%d: %s", match.id, e)
+            errors += 1
+
+    if calculated > 0:
+        db.commit()
+
+    logger.info(
+        "Recalculated similarity for product #%d: calculated=%d, skipped=%d, errors=%d",
+        product_id, calculated, skipped, errors,
+    )
+    return {"calculated": calculated, "skipped": skipped, "errors": errors}
+
+
+def recalculate_similarity_batch(db: Session, product_ids: List[int]) -> dict:
+    """批量为多个商品重新计算1688匹配的图片相似度
+
+    Returns:
+        {"total": int, "results": {product_id: {"calculated": int, "skipped": int, "errors": int}}}
+    """
+    results = {}
+    total_calculated = 0
+
+    for pid in product_ids:
+        result = recalculate_similarity_for_product(db, pid)
+        results[pid] = result
+        total_calculated += result["calculated"]
+
+    return {"total": total_calculated, "results": results}

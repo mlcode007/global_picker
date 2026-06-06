@@ -38,6 +38,7 @@ class PddMatchOut(BaseModel):
     pdd_product_url: Optional[str]
     match_source: str
     match_confidence: Optional[Decimal]
+    match_score: Optional[float]
     is_confirmed: int
     is_primary: int
     created_at: datetime
