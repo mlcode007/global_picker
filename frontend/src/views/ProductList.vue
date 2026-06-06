@@ -819,6 +819,11 @@
                       <div v-else class="alibaba1688-card-title" :title="m.title">{{ m.title }}</div>
                       <div v-if="m.company_name" class="alibaba1688-card-company" :title="m.company_name">🏭 {{ m.company_name }}</div>
                       <div class="alibaba1688-card-price">¥{{ m.price }}</div>
+                      <div v-if="m.is_free_shipping === true || m.is_free_shipping === 1" class="alibaba1688-card-freight alibaba1688-freight-free">包邮</div>
+                      <div v-else-if="m.min_freight && Number(m.min_freight) > 0" class="alibaba1688-card-freight alibaba1688-freight-paid">¥{{ m.min_freight }} 起邮</div>
+                      <div v-else class="alibaba1688-card-freight-debug" :data-debug="`isFree=${m.is_free_shipping}(type:${typeof m.is_free_shipping}) min=${m.min_freight}(type:${typeof m.min_freight})`">⚠无邮费数据</div>
+                      <!-- 调试：打印每个商品的邮费字段 -->
+                      <div style="font-size:10px;color:#f56" :data-log="`offerId=${m.offer_id} isFree=${m.is_free_shipping}(${typeof m.is_free_shipping}) min=${m.min_freight}(${typeof m.min_freight})`"> {{ m.offer_id }} | isFree={{ m.is_free_shipping }} | min={{ m.min_freight }}</div>
                       <div v-if="m.last30_days_sales" class="alibaba1688-card-sales">近30天销量 {{ m.last30_days_sales }}</div>
                       <div v-if="m.good_rates" class="alibaba1688-card-goodrates">好评率 {{ m.good_rates }}%</div>
                       <div v-if="m.tp_year" class="alibaba1688-card-tpyear">诚信通 {{ m.tp_year }}年</div>
@@ -880,6 +885,11 @@
                       <div v-if="m.company_name" class="alibaba1688-match-company" :title="m.company_name">🏭 {{ m.company_name }}</div>
                       <div class="alibaba1688-match-meta">
                         <span class="alibaba1688-price">¥{{ m.price }}</span>
+                        <span v-if="m.is_free_shipping === true || m.is_free_shipping === 1" class="alibaba1688-freight alibaba1688-freight-free">包邮</span>
+                        <span v-else-if="m.min_freight && Number(m.min_freight) > 0" class="alibaba1688-freight alibaba1688-freight-paid">¥{{ m.min_freight }} 起邮</span>
+                        <span v-else class="alibaba1688-freight-debug" :data-debug="`isFree=${m.is_free_shipping}(type:${typeof m.is_free_shipping}) min=${m.min_freight}(type:${typeof m.min_freight})`">⚠无邮费数据</span>
+                        <!-- 调试：打印每个商品的邮费字段 -->
+                        <span style="font-size:10px;color:#f56" :data-log="`offerId=${m.offer_id} isFree=${m.is_free_shipping}(${typeof m.is_free_shipping}) min=${m.min_freight}(${typeof m.min_freight})`"> {{ m.offer_id }} | isFree={{ m.is_free_shipping }} | min={{ m.min_freight }}</span>
                         <span v-if="m.last30_days_sales" class="alibaba1688-sales">近30天销量 {{ m.last30_days_sales }}</span>
                         <span v-if="m.good_rates" class="alibaba1688-goodrates">好评率 {{ m.good_rates }}%</span>
                         <span v-if="m.tp_year" class="alibaba1688-tpyear">诚信通 {{ m.tp_year }}年</span>
@@ -2848,6 +2858,30 @@ a.alibaba1688-card-title:hover {
   font-weight: 600; color: #e62e2e; font-size: 16px;
   margin-top: 6px;
 }
+.alibaba1688-card-freight {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 2px;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.alibaba1688-freight-free {
+  background: #fff1f0;
+  color: #e62e2e;
+  border: 1px solid #ffa39e;
+}
+.alibaba1688-freight-paid {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+.alibaba1688-card-freight-debug,
+.alibaba1688-freight-debug {
+  font-size: 10px;
+  color: #bbb;
+  margin-top: 2px;
+  display: inline-block;
+}
 .alibaba1688-card-sales {
   color: #999; font-size: 11px; margin-top: 2px;
 }
@@ -2914,6 +2948,23 @@ a.alibaba1688-match-title:hover {
   display: flex; gap: 10px; align-items: center; font-size: 12px; margin-top: 4px;
 }
 .alibaba1688-price { font-weight: 600; color: #e62e2e; font-size: 14px; }
+.alibaba1688-freight {
+  display: inline-block;
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 3px;
+  line-height: 18px;
+}
+.alibaba1688-freight-free {
+  background: #fff1f0;
+  color: #e62e2e;
+  border: 1px solid #ffa39e;
+}
+.alibaba1688-freight-paid {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
 .alibaba1688-sales { color: #999; }
 .alibaba1688-goodrates { color: #52c41a; }
 .alibaba1688-tpyear { color: #ff6a00; }

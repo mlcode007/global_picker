@@ -59,24 +59,214 @@
     };
   }
 
-  // 从插件搜索响应里按原始顺序取出 offerList 数组
-  function extractOfferListOrdered(data) {
-    let offerList = null;
+  // 1688 插件搜索响应结构（见 product_1688_old4.json）：
+  //   商品数据 → data.responseInfo.imageSearchOfferResultViewService → data.offerList
+  //   快递数据 → data.offerExtend[offerId].deliveryChargeInfo
 
+  function parseImageSearchViewService(svc) {
+    if (!svc) return null;
+    if (typeof svc === 'string') {
+      try { return JSON.parse(svc); } catch (e) { return null; }
+    }
+    if (typeof svc === 'object') return svc;
+    return null;
+  }
+
+  // 从 responseInfo.imageSearchOfferResultViewService 提取商品列表（保持页面顺序）
+  function extractOfferListFromImageSearch(data) {
+    const svc = data.responseInfo && data.responseInfo.imageSearchOfferResultViewService;
+    const parsed = parseImageSearchViewService(svc);
+    if (parsed && parsed.data && Array.isArray(parsed.data.offerList)) {
+      return parsed.data.offerList;
+    }
     if (data.offerList && Array.isArray(data.offerList)) {
-      offerList = data.offerList;
-    } else if (data.responseInfo && typeof data.responseInfo.imageSearchOfferResultViewService === 'string') {
-      try {
-        const inner = JSON.parse(data.responseInfo.imageSearchOfferResultViewService);
-        if (inner && inner.data && Array.isArray(inner.data.offerList)) {
-          offerList = inner.data.offerList;
+      return data.offerList;
+    }
+    return [];
+  }
+
+  // 从原始 JSON 文本的 offerExtend 段补全 deliveryChargeInfo（防止解析后字段缺失）
+  function extractDciMapFromRaw(rawJson) {
+    const map = {};
+    if (!rawJson || typeof rawJson !== 'string') return map;
+    const oeStart = rawJson.indexOf('"offerExtend"');
+    if (oeStart < 0) return map;
+    const section = rawJson.substring(oeStart, oeStart + 200000);
+    const offerRe = /"(\d{10,})"\s*:/g;
+    let m;
+    while ((m = offerRe.exec(section)) !== null) {
+      const offerId = m[1];
+      const dciKey = '"deliveryChargeInfo"';
+      const dciStart = section.indexOf(dciKey, m.index);
+      if (dciStart < 0 || dciStart > m.index + 15000) continue;
+      const braceStart = section.indexOf('{', dciStart + dciKey.length);
+      if (braceStart < 0) continue;
+      let depth = 0;
+      let dci = null;
+      for (let i = braceStart; i < section.length; i++) {
+        if (section[i] === '{') depth++;
+        else if (section[i] === '}') {
+          depth--;
+          if (depth === 0) {
+            try { dci = JSON.parse(section.slice(braceStart, i + 1)); } catch (e) { /* ignore */ }
+            break;
+          }
         }
-      } catch (e) {
-        console.log('[1688采集] 解析 responseInfo.offerList 失败:', e.message);
+      }
+      if (dci) map[offerId] = dci;
+    }
+    return map;
+  }
+
+  function hydrateOfferExtendDci(data, rawJson) {
+    if (!data || !data.offerExtend || !rawJson) return;
+    const dciMap = extractDciMapFromRaw(rawJson);
+    for (const [offerId, ext] of Object.entries(data.offerExtend)) {
+      if (!ext.deliveryChargeInfo && dciMap[offerId]) {
+        ext.deliveryChargeInfo = dciMap[offerId];
       }
     }
+  }
 
-    return offerList || [];
+  function countDciInPayload(data) {
+    if (!data || !data.data || !data.data.offerExtend) return 0;
+    return Object.values(data.data.offerExtend).filter((e) => e && e.deliveryChargeInfo).length;
+  }
+
+  function mergePayloadData(base, incoming) {
+    if (!incoming || !incoming.data) return base;
+    if (!base || !base.data) return incoming;
+    const merged = { ...base, data: { ...base.data, ...incoming.data } };
+    if (incoming.data.responseInfo && !merged.data.responseInfo) {
+      merged.data.responseInfo = incoming.data.responseInfo;
+    }
+    if (base.data.offerExtend && incoming.data.offerExtend) {
+      merged.data.offerExtend = { ...base.data.offerExtend };
+      for (const [offerId, ext] of Object.entries(incoming.data.offerExtend)) {
+        const prev = merged.data.offerExtend[offerId] || {};
+        merged.data.offerExtend[offerId] = {
+          ...prev,
+          ...ext,
+          deliveryChargeInfo: ext.deliveryChargeInfo || prev.deliveryChargeInfo,
+        };
+      }
+    } else if (incoming.data.offerExtend) {
+      merged.data.offerExtend = incoming.data.offerExtend;
+    }
+    return merged;
+  }
+
+  // DOM 兜底：1688 插件卡片上展示的邮费文字
+  function scrapeFreightFromDom() {
+    const map = {};
+    try {
+      document.querySelectorAll('a[href*="detail.1688.com/offer/"], a[href*="/offer/"]').forEach((a) => {
+        const href = a.getAttribute('href') || '';
+        const m = href.match(/offer\/(\d{10,})/);
+        if (!m) return;
+        const offerId = m[1];
+        let card = a;
+        for (let i = 0; i < 12 && card; i++) {
+          const text = (card.innerText || '').replace(/\s+/g, ' ');
+          if (!text || text.length > 3000) {
+            card = card.parentElement;
+            continue;
+          }
+          if (text.includes('包邮')) {
+            map[offerId] = { isFreeShipping: true, minFreight: 0 };
+            break;
+          }
+          const freightMatch =
+            text.match(/(?:运费|邮费|快递)[^¥\d]{0,10}¥?\s*(\d+(?:\.\d+)?)\s*(?:起)?/) ||
+            text.match(/¥\s*(\d+(?:\.\d+)?)\s*起(?:邮|运费)?/);
+          if (freightMatch) {
+            map[offerId] = { isFreeShipping: false, minFreight: parseFloat(freightMatch[1]) };
+            break;
+          }
+          card = card.parentElement;
+        }
+      });
+    } catch (e) { /* ignore */ }
+    return map;
+  }
+
+  function applyDomFreightFallback(products) {
+    const domMap = scrapeFreightFromDom();
+    const hitCount = Object.keys(domMap).length;
+    if (!hitCount) return products;
+    console.log('[1688采集-邮费] DOM 兜底命中:', hitCount);
+    return products.map((p) => {
+      if (p.isFreeShipping || (p.minFreight && p.minFreight > 0)) return p;
+      const dom = domMap[String(p.offerId)];
+      if (!dom) return p;
+      return { ...p, isFreeShipping: dom.isFreeShipping, minFreight: dom.minFreight };
+    });
+  }
+
+  const interceptBuffer = {
+    data: null,
+    rawJson: null,
+    page: 1,
+    timer: null,
+    flushed: false,
+  };
+
+  function flushInterceptBuffer() {
+    interceptBuffer.timer = null;
+    if (interceptBuffer.flushed || !interceptBuffer.data) return;
+    interceptBuffer.flushed = true;
+
+    const data = interceptBuffer.data;
+    const page = interceptBuffer.page;
+    interceptBuffer.data = null;
+    interceptBuffer.rawJson = null;
+
+    if (!data.data || !data.data.offerExtend) return;
+    const offerList = extractOfferListFromImageSearch(data.data);
+    if (!offerList.length) {
+      console.log('[1688采集] 延迟入库取消: offerList 为空');
+      return;
+    }
+
+    let products = parse1688Data(data);
+    products = applyDomFreightFallback(products);
+    const withFreight = products.filter((p) => p.isFreeShipping || p.minFreight > 0).length;
+    console.log('[1688采集] 延迟入库, 商品数:', products.length, '含邮费:', withFreight, 'page:', page);
+
+    console.log('========== 1688商品数据 ==========');
+    products.forEach((p, idx) => {
+      console.log(`--- 商品 ${idx + 1} --- offerId=${p.offerId} price=${p.price} isFree=${p.isFreeShipping} minFreight=${p.minFreight}`);
+    });
+    console.log('==================================');
+
+    sendProductsToBackend(products, page);
+  }
+
+  function scheduleBufferedSave() {
+    if (interceptBuffer.timer) clearTimeout(interceptBuffer.timer);
+    interceptBuffer.timer = setTimeout(flushInterceptBuffer, 3000);
+  }
+
+  // 从 offerExtend[offerId].deliveryChargeInfo 解析包邮/起邮
+  function parseShippingFromExtend(extendData) {
+    if (!extendData || !extendData.deliveryChargeInfo) {
+      return { hasShipping: false, isFreeShipping: false, minFreight: 0 };
+    }
+    const dci = extendData.deliveryChargeInfo;
+    // templateType=1 是平台包邮模板
+    if (dci.templateType === 1 && !Array.isArray(dci.costs)) {
+      return { hasShipping: true, isFreeShipping: true, minFreight: 0 };
+    }
+    if (Array.isArray(dci.costs) && dci.costs.length > 0) {
+      const totals = dci.costs
+        .map(c => parseFloat(c.totalCost))
+        .filter(v => !isNaN(v));
+      if (totals.length > 0) {
+        const min = Math.min(...totals);
+        return { hasShipping: true, isFreeShipping: min === 0, minFreight: min };
+      }
+    }
+    return { hasShipping: false, isFreeShipping: false, minFreight: 0 };
   }
 
   // 从 offerList 数组中提取 offerId 列表（保持原始顺序）
@@ -106,6 +296,10 @@
     }
 
     const data = responseData.data;
+
+    console.log(data);
+
+
     const products = [];
 
     // 第二页（page > 1）不入库
@@ -115,30 +309,32 @@
       return products;
     }
 
-    // offerList 数组（保持原始页面顺序），含价格/标题/图片
-    const offerList = extractOfferListOrdered(data);
-    // 索引用于给 offerExtend 补充价格/标题/图片
+    // 1) 商品：imageSearchOfferResultViewService → offerList
+    const offerList = extractOfferListFromImageSearch(data);
     const offerListMap = buildOfferListMap(offerList);
 
-    // 详情/插件搜索格式: offerExtend（销量、店铺、好评等），价格需从 offerList 合并
-    if (data.offerExtend) {
-      const offerExtend = data.offerExtend;
-      const offerMember = data.offerMember || {};
+    // 2) 快递：offerExtend[offerId].deliveryChargeInfo
+    if (!data.offerExtend) {
+      console.log('[1688采集] 响应无 offerExtend，无法读取快递信息');
+      return products;
+    }
+    
+    const offerExtend = data.offerExtend;
+    const offerMember = data.offerMember || {};
+    const orderedIds = extractOfferIdsFromList(offerList);
+    const offerIds = orderedIds.length > 0 ? orderedIds : Object.keys(offerExtend);
 
-      // 关键：必须按 offerList 数组的原始顺序遍历，
-      // Object.entries/keys 对数字 key 会按升序排列，会导致顺序错乱
-      const orderedIds = extractOfferIdsFromList(offerList);
-      // 兜底：offerList 为空时退回 offerExtend 的 key
-      const offerIds = orderedIds.length > 0 ? orderedIds : Object.keys(offerExtend);
+    for (const offerId of offerIds) {
+      const extendData = offerExtend[offerId];
+      if (!extendData) continue;
 
-      for (const offerId of offerIds) {
-        const extendData = offerExtend[offerId];
-        if (!extendData) continue; // offerList 里有但 offerExtend 里没有的跳过
+      const saleStats = extendData.saleStatsModel || {};
+      const shopInfo = extendData.shopInfoModel || {};
+      const images = extendData.images || [];
+      const fromList = offerListMap[String(offerId)] || {};
+      const shipping = parseShippingFromExtend(extendData);
 
-        const saleStats = extendData.saleStatsModel || {};
-        const shopInfo = extendData.shopInfoModel || {};
-        const images = extendData.images || [];
-        const fromList = offerListMap[String(offerId)] || {};
+      console.log(`[1688采集-邮费] offerId=${offerId} | hasDCI=${!!extendData.deliveryChargeInfo} | isFree=${shipping.isFreeShipping} | minFreight=${shipping.minFreight}`);
 
         products.push({
           offerId: offerId,
@@ -162,35 +358,9 @@
           shiliType: shopInfo.shiliType || fromList.shiliType || '',
           supportWaybill: (shopInfo.surportWaybill || []).map(w => w.name).join(','),
           companyName: fromList.companyName || '',
+          isFreeShipping: shipping.isFreeShipping,
+          minFreight: shipping.minFreight,
         });
-      }
-      return products;
-    }
-
-    // 纯 offerList 格式（无 offerExtend 时的兜底）
-    for (const item of Object.values(offerListMap)) {
-      products.push({
-        offerId: item.offerId,
-        memberId: '',
-        title: item.title,
-        images: item.images,
-        mainImage: item.mainImage,
-        price: item.price,
-        consignPrice: item.consignPrice,
-        last30DaysSales: '',
-        totalSales: '',
-        last30DaysDropShippingSales: '',
-        goodRates: 0,
-        repurchaseRate: item.repurchaseRate,
-        collectionRate24h: '',
-        earliestListingTime: '',
-        latestUpdateTime: '',
-        freeReturnIn7d: item.freeReturnIn7d,
-        tpYear: item.tpYear,
-        consignmentSales30d: '',
-        shiliType: item.shiliType,
-        supportWaybill: '',
-      });
     }
 
     return products;
@@ -200,59 +370,52 @@
     document.addEventListener('__1688_intercept_data', (e) => {
       const detail = e.detail || {};
       const type = detail.type;
-      const url = detail.url;
+      const rawJson = detail.json || (detail.data ? JSON.stringify(detail.data) : null);
+      const page = detail.page || 1;
 
-      // MAIN 世界以 JSON 字符串形式跨 world 传递数据，这里解析回对象
-      let data = null;
-      try {
-        data = detail.json ? JSON.parse(detail.json) : (detail.data || null);
-      } catch (parseErr) {
-        console.log('[1688采集] 拦截数据 JSON 解析失败:', parseErr.message);
+      if (page > 1) {
+        console.log('[1688采集] 跳过第', page, '页');
         return;
       }
 
-      const hasOfferExtend = data && data.data && data.data.offerExtend;
-      const hasOfferList = data && data.data && data.data.offerList && Array.isArray(data.data.offerList);
-      const hasNestedOfferList = data && data.data && data.data.responseInfo &&
-        typeof data.data.responseInfo.imageSearchOfferResultViewService === 'string';
-      const hitCount = hasOfferExtend ? Object.keys(data.data.offerExtend).length : (hasOfferList ? data.data.offerList.length : 0);
-      const page = detail.page || 1;
-      // 把页码合并到 data.data，parse1688Data 内部通过 data.data.page 读取
-      if (data && data.data) {
-        data.data.page = page;
+      let data = null;
+      try {
+        data = rawJson ? JSON.parse(rawJson) : (detail.data || null);
+      } catch (parseErr) {
+        console.log('[1688采集] JSON 解析失败:', parseErr.message);
+        return;
       }
-      console.log('[1688采集] 收到MAIN世界拦截数据, 请求类型:', type, '商品数:', hitCount, '页码:', page);
 
-      if (hasOfferExtend || hasOfferList || hasNestedOfferList) {
-        const products = parse1688Data(data);
-        console.log('[1688采集] 解析到商品数据, 数量:', products.length);
+      if (!data || !data.data || !data.data.offerExtend) return;
 
-        // 打印所有商品详细信息
-        console.log('========== 1688商品数据 ==========');
-        products.forEach((p, idx) => {
-          console.log(`--- 商品 ${idx + 1} ---`);
-          console.log('  currentTikTokProductId:', currentTikTokProductId);
-          console.log('  offerId:', p.offerId);
-          console.log('  title:', p.title);
-          console.log('  price(代发价优先):', p.price);
-          console.log('  mainImage:', p.mainImage);
-          console.log('  tpYear:', p.tpYear);
-          console.log('  shiliType:', p.shiliType);
-          console.log('  freeReturnIn7d:', p.freeReturnIn7d);
-          console.log('  repurchaseRate:', p.repurchaseRate);
-          console.log('  last30DaysSales:', p.last30DaysSales);
-          console.log('  totalSales:', p.totalSales);
-          console.log('  goodRates:', p.goodRates);
-          console.log('');
-        });
-        console.log('==================================');
+      hydrateOfferExtendDci(data.data, rawJson);
+      data.data.page = page;
 
-        // 直接发送给后台入库；归属商品(product_id/tiktok_product_id)由后台
-        // 从 gp_1688_context 上下文补全，collector 自身不强依赖这两个 ID。
-        sendProductsToBackend(products, page);
-      } else {
-        console.log('[1688采集] 响应数据格式不匹配');
+      const offerList = extractOfferListFromImageSearch(data.data);
+      const dciCount = countDciInPayload(data);
+      console.log('[1688采集] 收到 type=' + type +
+        ' offerList=' + offerList.length +
+        ' offerExtend=' + Object.keys(data.data.offerExtend).length +
+        ' 含DCI=' + dciCount +
+        ' 原文含邮费=' + (rawJson ? rawJson.indexOf('deliveryChargeInfo') !== -1 : false));
+
+      if (!offerList.length) {
+        console.log('[1688采集] offerList 为空，等待后续数据');
+        return;
       }
+
+      // 合并多次拦截（网络响应 / 内存扫描 / JSON.parse 捕获），优先保留有邮费的数据
+      interceptBuffer.flushed = false;
+      interceptBuffer.data = mergePayloadData(interceptBuffer.data, data);
+      if (!interceptBuffer.rawJson || (rawJson && rawJson.indexOf('deliveryChargeInfo') !== -1)) {
+        interceptBuffer.rawJson = rawJson;
+      }
+      if (interceptBuffer.data && interceptBuffer.rawJson) {
+        hydrateOfferExtendDci(interceptBuffer.data.data, interceptBuffer.rawJson);
+      }
+      interceptBuffer.page = page;
+
+      scheduleBufferedSave();
     });
     console.log('[1688采集] MAIN世界数据监听器已注册');
   }

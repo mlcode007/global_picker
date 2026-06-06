@@ -21,6 +21,8 @@ class Alibaba1688ProductItem(BaseModel):
     freeReturnIn7d: str = ""
     supportWaybill: str = ""
     companyName: str = ""
+    isFreeShipping: bool = False
+    minFreight: float = 0
 
 
 class Alibaba1688BatchCreate(BaseModel):
@@ -48,6 +50,8 @@ class Alibaba1688MatchCreate(BaseModel):
     free_return_in7d: Optional[str] = None
     support_waybill: Optional[str] = None
     company_name: Optional[str] = None
+    is_free_shipping: Optional[bool] = None
+    min_freight: Optional[float] = None
     match_source: str = "image_search"
     is_confirmed: int = 0
     is_primary: int = 0
@@ -75,6 +79,8 @@ class Alibaba1688MatchOut(BaseModel):
     free_return_in7d: Optional[str]
     support_waybill: Optional[str]
     company_name: Optional[str]
+    is_free_shipping: Optional[bool] = None
+    min_freight: Optional[float] = None
     price: Decimal
     match_source: str
     is_confirmed: int

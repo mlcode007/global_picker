@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    BigInteger, Column, DateTime, Enum, ForeignKey,
+    BigInteger, Boolean, Column, DateTime, Enum, Float, ForeignKey,
     Integer, Numeric, String,
 )
 from sqlalchemy.dialects.mysql import TINYINT
@@ -26,6 +26,8 @@ class Alibaba1688Match(Base):
     free_return_in7d = Column(String(32), nullable=True)
     support_waybill = Column(String(256), nullable=True)
     company_name = Column(String(128), nullable=True)
+    is_free_shipping = Column(Boolean, nullable=True, default=False)
+    min_freight = Column(Float, nullable=True, default=0.0)
     price = Column(Numeric(12, 2), nullable=False, default=0)
     match_source = Column(
         Enum("image_search", "manual"),

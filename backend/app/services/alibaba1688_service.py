@@ -206,6 +206,11 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             if item.companyName and existing.company_name != item.companyName:
                 existing.company_name = item.companyName
                 changed = True
+            # 包邮字段：始终更新（不依赖 changed 标记）
+            if item.isFreeShipping is not None:
+                existing.is_free_shipping = bool(item.isFreeShipping)
+            if item.minFreight is not None:
+                existing.min_freight = float(item.minFreight)
             if changed:
                 # 若被更新的是主参照，价格变动需同步刷新利润
                 if existing.is_primary == 1 and price > 0:
@@ -228,6 +233,8 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             free_return_in7d=item.freeReturnIn7d or None,
             support_waybill=item.supportWaybill or None,
             company_name=item.companyName or None,
+            is_free_shipping=bool(item.isFreeShipping) if item.isFreeShipping is not None else False,
+            min_freight=float(item.minFreight) if item.minFreight is not None else 0.0,
             price=price,
             match_source="image_search",
             is_confirmed=0,
