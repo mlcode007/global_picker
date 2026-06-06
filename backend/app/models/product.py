@@ -53,8 +53,9 @@ class Product(Base):
         default="pending",
     )
     remark = Column(String(512), nullable=True)
-    estimated_profit = Column(Numeric(12, 2), nullable=True, comment="预估利润(TikTok人民币价-主参照拼多多价)")
+    estimated_profit = Column(Numeric(12, 2), nullable=True, comment="预估利润(TikTok人民币价-主参照价)")
     profit_rate = Column(Numeric(7, 4), nullable=True, comment="利润率")
+    primary_match_score = Column(Numeric(5, 4), nullable=True, comment="主参照商品图片相似度(拼多多或1688)")
     is_deleted = Column(TINYINT(1), nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

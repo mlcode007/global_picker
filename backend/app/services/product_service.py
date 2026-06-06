@@ -329,6 +329,11 @@ def get_products(
     pdd_matched: Optional[bool] = None,
     pdd_match_count_min: Optional[int] = None,
     pdd_match_count_max: Optional[int] = None,
+    alibaba1688_matched: Optional[bool] = None,
+    alibaba1688_match_count_min: Optional[int] = None,
+    alibaba1688_match_count_max: Optional[int] = None,
+    primary_match_score_min: Optional[float] = None,
+    primary_match_score_max: Optional[float] = None,
     created_at_start: Optional[str] = None,
     created_at_end: Optional[str] = None,
     crawl_status: Optional[str] = None,
@@ -380,6 +385,18 @@ def get_products(
             query = query.filter(Product.id.in_(matched_ids))
         else:
             query = query.filter(~Product.id.in_(matched_ids))
+    if alibaba1688_matched is not None:
+        from app.models.alibaba1688_match import Alibaba1688Match
+        matched_ids = (
+            db.query(Alibaba1688Match.product_id)
+            .filter(Alibaba1688Match.product_id.isnot(None))
+            .distinct()
+            .subquery()
+        )
+        if alibaba1688_matched is True:
+            query = query.filter(Product.id.in_(matched_ids))
+        else:
+            query = query.filter(~Product.id.in_(matched_ids))
     if pdd_match_count_min is not None or pdd_match_count_max is not None:
         match_count_subq = (
             db.query(PddMatch.product_id, func.count(PddMatch.id).label("cnt"))
@@ -393,12 +410,30 @@ def get_products(
         if pdd_match_count_max is not None:
             count_query = count_query.filter(match_count_subq.c.cnt <= pdd_match_count_max)
         query = query.filter(Product.id.in_(count_query.subquery()))
+    if alibaba1688_match_count_min is not None or alibaba1688_match_count_max is not None:
+        from app.models.alibaba1688_match import Alibaba1688Match
+        match_count_subq = (
+            db.query(Alibaba1688Match.product_id, func.count(Alibaba1688Match.id).label("cnt"))
+            .filter(Alibaba1688Match.product_id.isnot(None))
+            .group_by(Alibaba1688Match.product_id)
+            .subquery()
+        )
+        count_query = db.query(match_count_subq.c.product_id)
+        if alibaba1688_match_count_min is not None:
+            count_query = count_query.filter(match_count_subq.c.cnt >= alibaba1688_match_count_min)
+        if alibaba1688_match_count_max is not None:
+            count_query = count_query.filter(match_count_subq.c.cnt <= alibaba1688_match_count_max)
+        query = query.filter(Product.id.in_(count_query.subquery()))
     if category1_id:
         query = query.filter(Product.category1_id == category1_id)
     if category2_id:
         query = query.filter(Product.category2_id == category2_id)
     if category3_id:
         query = query.filter(Product.category3_id == category3_id)
+    if primary_match_score_min is not None:
+        query = query.filter(Product.primary_match_score >= primary_match_score_min)
+    if primary_match_score_max is not None:
+        query = query.filter(Product.primary_match_score <= primary_match_score_max)
     if created_at_start:
         try:
             start_dt = datetime.fromisoformat(created_at_start)

@@ -1,0 +1,231 @@
+INFO:     Started server process [12166]
+INFO:     Waiting for application startup.
+2026-06-07 04:46:25,895 INFO app.main: Global Picker API 启动 (env=development)
+2026-06-07 04:46:25,902 INFO app.services.payment_compensation: 支付补偿定时任务已启动，间隔 60 秒
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-07 04:46:25,981 INFO app.workers.pdd_photo.task_scheduler: Task scheduler concurrency set to 50
+2026-06-07 04:46:25,981 INFO app.workers.pdd_photo.task_scheduler: Task scheduler started
+2026-06-07 04:46:25,981 INFO app.workers.pdd_photo.task_scheduler: Task scheduler starting...
+2026-06-07 04:46:25,981 INFO app.workers.pdd_photo.task_scheduler: Scheduler thread started: 6234714112
+2026-06-07 04:46:25,981 INFO app.main: Photo search task scheduler started with concurrency=2
+2026-06-07 04:46:26,093 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:46:26,415 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:26,728 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:27,013 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:27,371 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:27,695 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:28,018 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:28,293 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:28,603 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:28,932 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:46:29,230 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+INFO:     127.0.0.1:55843 - "POST /api/v1/auth/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55845 - "GET /api/v1/products?page=1&page_size=10&order_by=created_at&order_dir=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55850 - "GET /api/v1/pdd/matches/batch?product_ids=14951,12370,5413,5412,5411,5410,5409,5408,5407,5406 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55851 - "GET /api/v1/1688/matches/batch?product_ids=14951,12370,5413,5412,5411,5410,5409,5408,5407,5406 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55852 - "GET /api/v1/pdd/matches/batch?product_ids=14951,12370,5413,5412,5411,5410,5409,5408,5407,5406 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55856 - "GET /api/v1/1688/matches/batch?product_ids=14951,12370,5413,5412,5411,5410,5409,5408,5407,5406 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55843 - "POST /api/v1/auth/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55867 - "POST /api/v1/auth/verify HTTP/1.1" 200 OK
+2026-06-07 04:46:59,859 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:47:00,399 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:00,696 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:00,742 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.0494, combined=0.3385
+2026-06-07 04:47:00,742 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:47:01,208 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:01,504 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_2.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:01,532 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.1088, combined=0.3623
+2026-06-07 04:47:01,533 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433
+2026-06-07 04:47:01,999 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:02,298 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:02,321 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.4844, hist=0.2017, combined=0.3713
+2026-06-07 04:47:02,366 INFO app.services.photo_search_service: Recalculated PDD similarity for product #5413: calculated=3, skipped=0, errors=0
+INFO:     127.0.0.1:55870 - "POST /api/v1/pdd/matches/5413/recalculate-similarity HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55899 - "GET /api/v1/pdd/matches/5413 HTTP/1.1" 200 OK
+2026-06-07 04:47:06,653 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:47:07,154 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:07,443 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:07,465 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.0494, combined=0.3385
+2026-06-07 04:47:07,465 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:47:07,904 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:08,143 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_2.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:08,168 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.1088, combined=0.3623
+2026-06-07 04:47:08,169 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433
+2026-06-07 04:47:08,652 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:47:08,920 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:47:08,945 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.4844, hist=0.2017, combined=0.3713
+2026-06-07 04:47:08,987 INFO app.services.photo_search_service: Recalculated PDD similarity for product #5413: calculated=3, skipped=0, errors=0
+INFO:     127.0.0.1:55920 - "POST /api/v1/pdd/matches/5413/recalculate-similarity HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55951 - "GET /api/v1/pdd/matches/5413 HTTP/1.1" 200 OK
+2026-06-07 04:47:29,270 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:47:29,645 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:29,971 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:30,255 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:30,571 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:30,847 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:31,156 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:31,438 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:31,720 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:32,036 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:47:32,330 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:32,314 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:48:32,604 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:32,976 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:33,355 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:33,701 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:34,080 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:34,430 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:34,766 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:35,145 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:35,523 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:48:35,894 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:35,932 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:49:36,333 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:36,672 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:37,039 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:37,390 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:37,776 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:38,119 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:38,461 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:38,841 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:39,189 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:39,565 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:49:41,905 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:49:42,247 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:49:42,556 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:49:42,605 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.0494, combined=0.3385
+2026-06-07 04:49:42,606 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/
+2026-06-07 04:49:43,057 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:49:43,310 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_2367/product_img_2.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:49:43,345 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.5312, hist=0.1088, combined=0.3623
+2026-06-07 04:49:43,345 INFO app.services.image_similarity_service: Calculating image similarity: url1=https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe60, url2=https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433
+2026-06-07 04:49:43,840 INFO httpx: HTTP Request: GET https://p19-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/01461439ca4f4a428bfe604b4bf491ff~tplv-aphluv4xwc-crop-webp:1080:1080.webp?dr=15592&t=555f072d&ps=933b5bde&shp=8dbd94bf&shcp=e1be8f53&idc=my&from=2378011839 "HTTP/1.1 200 OK"
+2026-06-07 04:49:44,071 INFO httpx: HTTP Request: GET https://global-picker-pdd-image.oss-cn-beijing.aliyuncs.com/pdd_photo/task_13433/product_img_1.jpg "HTTP/1.1 200 OK"
+2026-06-07 04:49:44,093 INFO app.services.image_similarity_service: Image similarity calculated: pHash=0.4844, hist=0.2017, combined=0.3713
+2026-06-07 04:49:44,133 INFO app.services.photo_search_service: Recalculated PDD similarity for product #5413: calculated=3, skipped=0, errors=0
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+Alipay query error: 支付宝业务错误: 交易不存在
+INFO:     127.0.0.1:56508 - "POST /api/v1/pdd/matches/5413/recalculate-similarity HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56526 - "GET /api/v1/pdd/matches/5413 HTTP/1.1" 200 OK
+2026-06-07 04:50:39,607 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:50:40,016 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:40,326 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:40,602 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:40,911 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:41,202 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:41,489 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:41,775 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:42,083 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:42,361 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:50:42,647 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:42,691 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:51:43,011 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:43,358 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:43,724 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:44,065 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:44,441 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:44,776 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:45,152 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:45,500 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:45,878 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:51:46,286 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:46,333 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:52:46,774 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:47,089 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:47,378 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:47,691 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:47,980 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:48,279 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:48,565 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:48,853 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:49,118 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:52:49,406 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:49,449 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:53:49,769 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:50,077 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:50,341 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:50,657 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:50,962 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:51,289 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:51,556 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:51,840 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:52,138 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:53:52,431 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:52,471 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:54:52,772 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:53,131 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:53,497 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:53,862 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:54,228 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:54,608 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:54,964 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:55,356 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:55,734 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:54:56,137 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:56,211 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:55:56,634 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:56,898 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:57,212 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:57,524 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:57,791 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:58,069 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:58,368 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:58,644 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:58,896 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:55:59,234 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:56:59,281 INFO app.services.payment_compensation: 开始补偿扫描，发现 10 个超时pending订单
+2026-06-07 04:56:59,597 ERROR app.services.payment_compensation: 补偿订单 GP20260504140132fe1d2a85 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:56:59,903 ERROR app.services.payment_compensation: 补偿订单 GP202605041403495dcd68eb 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:00,223 ERROR app.services.payment_compensation: 补偿订单 GP202605041406247025635b 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:00,515 ERROR app.services.payment_compensation: 补偿订单 GP20260504143805849dee42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:00,850 ERROR app.services.payment_compensation: 补偿订单 GP20260504144514db0c9b42 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:01,168 ERROR app.services.payment_compensation: 补偿订单 GP20260504231453662e9a5d 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:01,466 ERROR app.services.payment_compensation: 补偿订单 GP20260506073041875ffb20 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:01,760 ERROR app.services.payment_compensation: 补偿订单 GP20260509134832b43242b5 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:02,019 ERROR app.services.payment_compensation: 补偿订单 GP20260511211839bd356b15 失败: 支付宝业务错误: 交易不存在
+2026-06-07 04:57:02,279 ERROR app.services.payment_compensation: 补偿订单 GP202605190104382c364d26 失败: 支付宝业务错误: 交易不存在
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-06-07 04:57:51,124 INFO app.workers.pdd_photo.task_scheduler: Task scheduler stopped
+2026-06-07 04:57:51,125 INFO app.main: Global Picker API 关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12166]

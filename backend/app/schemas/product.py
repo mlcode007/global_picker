@@ -75,6 +75,8 @@ class ProductOut(BaseModel):
     estimated_profit: Optional[Decimal] = None
     profit_rate: Optional[Decimal] = None
     pdd_match_count: int = 0
+    alibaba1688_match_count: int = 0
+    primary_match_score: Optional[Decimal] = None
     created_at: datetime
     updated_at: datetime
 

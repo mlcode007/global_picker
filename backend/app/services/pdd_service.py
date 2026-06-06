@@ -15,8 +15,8 @@ from app.schemas.pdd_match import PddMatchCreate, PddMatchUpdate
 logger = logging.getLogger(__name__)
 
 
-def _update_product_profit(db: Session, product_id: int, pdd_price: Decimal):
-    """根据主参照拼多多价格更新商品的预估利润"""
+def _update_product_profit(db: Session, product_id: int, pdd_price: Decimal, match_score=None):
+    """根据主参照拼多多价格更新商品的预估利润和主参照相似度"""
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product or not product.price_cny or product.price_cny <= 0:
         return
@@ -24,7 +24,9 @@ def _update_product_profit(db: Session, product_id: int, pdd_price: Decimal):
     rate = (profit / product.price_cny).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
     product.estimated_profit = profit
     product.profit_rate = rate
-    logger.info("Product #%d profit updated: %.2f (rate %.4f)", product_id, profit, rate)
+    if match_score is not None:
+        product.primary_match_score = match_score
+    logger.info("Product #%d profit updated: %.2f (rate %.4f, score %s)", product_id, profit, rate, match_score)
 
 
 def refresh_product_profit_from_primary_pdd(db: Session, product_id: int) -> None:
@@ -39,7 +41,7 @@ def refresh_product_profit_from_primary_pdd(db: Session, product_id: int) -> Non
     )
     if not primary:
         return
-    _update_product_profit(db, product_id, primary.pdd_price)
+    _update_product_profit(db, product_id, primary.pdd_price, primary.match_score)
 
 
 def add_pdd_match(db: Session, data: PddMatchCreate) -> PddMatch:
@@ -54,7 +56,7 @@ def add_pdd_match(db: Session, data: PddMatchCreate) -> PddMatch:
     db.flush()
 
     if data.is_primary:
-        _update_product_profit(db, data.product_id, match.pdd_price)
+        _update_product_profit(db, data.product_id, match.pdd_price, match.match_score)
 
     db.commit()
     db.refresh(match)
@@ -85,7 +87,7 @@ def update_pdd_match(db: Session, match_id: int, data: PddMatchUpdate) -> Option
         setattr(match, field, value)
 
     if data.is_primary == 1:
-        _update_product_profit(db, match.product_id, match.pdd_price)
+        _update_product_profit(db, match.product_id, match.pdd_price, match.match_score)
 
     db.commit()
     db.refresh(match)

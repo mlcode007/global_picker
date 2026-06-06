@@ -400,7 +400,7 @@ def save_candidates_to_matches(
         if best_match.pdd_price and best_match.pdd_price > 0:
             best_match.is_primary = 1
             from app.services.pdd_service import _update_product_profit
-            _update_product_profit(db, product_id, best_match.pdd_price)
+            _update_product_profit(db, product_id, best_match.pdd_price, best_match.match_score)
 
     if saved or updated_existing:
         db.commit()
@@ -681,6 +681,9 @@ def recalculate_similarity_for_product(db: Session, product_id: int) -> dict:
             score = calculate_image_similarity(source_image_url, match.pdd_image_url)
             if score is not None:
                 match.match_score = score
+                # 如果是主参照，同步更新 product 表的主参照相似度
+                if match.is_primary == 1:
+                    product.primary_match_score = score
                 calculated += 1
             else:
                 errors += 1
@@ -704,7 +707,7 @@ def recalculate_similarity_for_product(db: Session, product_id: int) -> dict:
         if best_match.pdd_price and best_match.pdd_price > 0:
             best_match.is_primary = 1
             from app.services.pdd_service import _update_product_profit
-            _update_product_profit(db, product_id, best_match.pdd_price)
+            _update_product_profit(db, product_id, best_match.pdd_price, best_match.match_score)
             logger.info(
                 "重新设置主参照: product_id=%d, match_id=%d, score=%.4f, price=%.2f",
                 product_id, best_match.id, best_match.match_score or 0, best_match.pdd_price

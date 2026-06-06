@@ -75,6 +75,11 @@ def list_products(
     pdd_matched: Optional[bool] = Query(None, description="是否已匹配拼多多(True=已匹配/False=未匹配)"),
     pdd_match_count_min: Optional[int] = Query(None, description="拼多多匹配数量下限"),
     pdd_match_count_max: Optional[int] = Query(None, description="拼多多匹配数量上限"),
+    alibaba1688_matched: Optional[bool] = Query(None, description="是否已匹配1688(True=已匹配/False=未匹配)"),
+    alibaba1688_match_count_min: Optional[int] = Query(None, description="1688匹配数量下限"),
+    alibaba1688_match_count_max: Optional[int] = Query(None, description="1688匹配数量上限"),
+    primary_match_score_min: Optional[float] = Query(None, description="主参照图片相似度下限"),
+    primary_match_score_max: Optional[float] = Query(None, description="主参照图片相似度上限"),
     created_at_start: Optional[str] = Query(None, description="导入时间起始(ISO格式,如2026-01-01)"),
     created_at_end: Optional[str] = Query(None, description="导入时间截止(ISO格式,如2026-12-31)"),
     category1_id: Optional[str] = Query(None, description="一级类目ID"),
@@ -93,23 +98,34 @@ def list_products(
         profit_rate_min=profit_rate_min, profit_rate_max=profit_rate_max,
         pdd_matched=pdd_matched,
         pdd_match_count_min=pdd_match_count_min, pdd_match_count_max=pdd_match_count_max,
+        alibaba1688_matched=alibaba1688_matched,
+        alibaba1688_match_count_min=alibaba1688_match_count_min, alibaba1688_match_count_max=alibaba1688_match_count_max,
+        primary_match_score_min=primary_match_score_min, primary_match_score_max=primary_match_score_max,
         created_at_start=created_at_start, created_at_end=created_at_end,
         crawl_status=crawl_status,
         category1_id=category1_id, category2_id=category2_id, category3_id=category3_id,
     )
-    # Attach PDD match counts
+    # Attach PDD and 1688 match counts
     from app.models.pdd_match import PddMatch
+    from app.models.alibaba1688_match import Alibaba1688Match
     from sqlalchemy import func
     if items:
         product_ids = [p.id for p in items]
-        match_counts = dict(
+        pdd_counts = dict(
             db.query(PddMatch.product_id, func.count(PddMatch.id))
             .filter(PddMatch.product_id.in_(product_ids))
             .group_by(PddMatch.product_id)
             .all()
         )
+        alibaba_counts = dict(
+            db.query(Alibaba1688Match.product_id, func.count(Alibaba1688Match.id))
+            .filter(Alibaba1688Match.product_id.in_(product_ids))
+            .group_by(Alibaba1688Match.product_id)
+            .all()
+        )
         for p in items:
-            p.pdd_match_count = match_counts.get(p.id, 0)
+            p.pdd_match_count = pdd_counts.get(p.id, 0)
+            p.alibaba1688_match_count = alibaba_counts.get(p.id, 0)
     return Response(
         data=PagedResponse(
             total=total,

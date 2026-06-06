@@ -121,10 +121,11 @@
         </a-col>
       </a-row>
       <a-row :gutter="[12, 12]" align="middle" style="margin-top: 4px">
+        <!-- 第一行：拼多多匹配 + 1688匹配 -->
         <a-col :span="3">
           <a-select
             v-model:value="store.filters.pdd_matched"
-            placeholder="匹配状态"
+            placeholder="拼多多匹配状态"
             allow-clear
             style="width: 100%"
             @change="onSearch"
@@ -148,6 +149,65 @@
             v-model:value="store.filters.pdd_match_count_max"
             placeholder="匹配数≤"
             :min="0"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+        <a-col :span="3">
+          <a-select
+            v-model:value="store.filters.alibaba1688_matched"
+            placeholder="1688匹配状态"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          >
+            <a-select-option :value="true">已匹配</a-select-option>
+            <a-select-option :value="false">未匹配</a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.alibaba1688_match_count_min"
+            placeholder="1688匹配≥"
+            :min="0"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+        <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.alibaba1688_match_count_max"
+            placeholder="1688匹配≤"
+            :min="0"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+      </a-row>
+      <a-row :gutter="[12, 12]" align="middle" style="margin-top: 4px">
+        <!-- 第二行：相似度 + 类目 -->
+        <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.primary_match_score_min"
+            placeholder="相似度≥"
+            :min="0"
+            :max="1"
+            :step="0.01"
+            allow-clear
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </a-col>
+        <a-col :span="3">
+          <a-input-number
+            v-model:value="store.filters.primary_match_score_max"
+            placeholder="相似度≤"
+            :min="0"
+            :max="1"
+            :step="0.01"
             allow-clear
             style="width: 100%"
             @change="onSearch"
@@ -194,7 +254,7 @@
             </a-select-option>
           </a-select>
         </a-col>
-        <a-col :span="10">
+        <a-col :span="9">
           <div class="date-range-filter">
             <span class="range-label">导入时间</span>
             <a-date-picker
@@ -544,6 +604,21 @@
             </a-button>
           </template>
 
+          <!-- 1688匹配列 -->
+          <template v-else-if="column.key === 'alibaba1688_toggle'">
+            <a-button
+              size="small"
+              type="link"
+              @click.stop="toggleExpand(record.id)"
+            >
+              <template #icon>
+                <DownOutlined v-if="!expandedRowKeys.includes(record.id)" />
+                <UpOutlined v-else />
+              </template>
+              {{ record.alibaba1688_match_count || 0 }} 个匹配
+            </a-button>
+          </template>
+
           <!-- 类目列 -->
           <template v-else-if="column.key === 'category'">
             <div class="category-cell">
@@ -552,6 +627,16 @@
               <a-tag v-if="record.category3_name" color="orange" size="small">{{ record.category3_name }}</a-tag>
               <span v-if="!record.category1_name" class="no-data">—</span>
             </div>
+          </template>
+
+          <!-- 主参照相似度列 -->
+          <template v-else-if="column.key === 'primary_match_score'">
+            <template v-if="record.primary_match_score != null">
+              <span :style="{ color: scoreColor(record.primary_match_score), fontWeight: 600 }">
+                {{ (Number(record.primary_match_score) * 100).toFixed(1) }}%
+              </span>
+            </template>
+            <span v-else class="no-data">—</span>
           </template>
 
           <!-- 预估利润列 -->
@@ -1090,6 +1175,13 @@ function profitColor(val) {
   const v = Number(val)
   if (v >= 20) return '#52c41a'
   if (v >= 0) return '#faad14'
+  return '#ff4d4f'
+}
+
+function scoreColor(val) {
+  const v = Number(val)
+  if (v >= 0.8) return '#52c41a'
+  if (v >= 0.5) return '#faad14'
   return '#ff4d4f'
 }
 
@@ -2379,6 +2471,8 @@ const columns = [
   { title: '评分', dataIndex: 'rating', width: 70 },
   { title: '类目', key: 'category', width: 200 },
   { title: '拼多多匹配', key: 'pdd_toggle', width: 110 },
+  { title: '1688匹配', key: 'alibaba1688_toggle', width: 110 },
+  { title: '主参照相似度', key: 'primary_match_score', width: 120, sorter: true, dataIndex: 'primary_match_score' },
   { title: '预估利润', key: 'profit', width: 100, sorter: true, dataIndex: 'estimated_profit' },
   { title: '预估利润率', key: 'profit_rate', width: 100, sorter: true, dataIndex: 'profit_rate' },
   { title: '选品状态', key: 'status', width: 100 },
