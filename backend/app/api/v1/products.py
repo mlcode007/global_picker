@@ -1,5 +1,7 @@
 from typing import Optional
+import os
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -184,3 +186,27 @@ def delete_product(
     if not ok:
         raise HTTPException(status_code=404, detail="商品不存在")
     return Response(message="删除成功")
+
+
+@router.get("/plugin/download", summary="下载最新插件")
+def download_plugin():
+    """下载 Chrome 插件 ZIP 文件"""
+    # 查找最新的插件 zip 文件
+    ext_dir = os.path.join(os.path.dirname(__file__), "../../../../chrome-extension")
+    if not os.path.isdir(ext_dir):
+        raise HTTPException(status_code=404, detail="插件目录不存在")
+
+    zip_files = [f for f in os.listdir(ext_dir) if f.startswith("global-shop-collector") and f.endswith(".zip")]
+    if not zip_files:
+        raise HTTPException(status_code=404, detail="未找到插件文件")
+
+    # 按版本号排序，取最新的
+    zip_files.sort(reverse=True)
+    latest_zip = zip_files[0]
+    zip_path = os.path.join(ext_dir, latest_zip)
+
+    return FileResponse(
+        path=zip_path,
+        filename=latest_zip,
+        media_type="application/zip",
+    )

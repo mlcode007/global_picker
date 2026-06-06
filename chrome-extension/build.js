@@ -113,7 +113,7 @@ function createZip() {
     console.log('️  创建 ZIP 压缩包...\n');
 
     const version = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8')).version;
-    const zipName = `tiktok-shop-collector-v${version}.zip`;
+    const zipName = `global-shop-collector-v${version}.zip`;
     const zipPath = path.join(SRC_DIR, zipName);
 
     const output = fs.createWriteStream(zipPath);
@@ -166,7 +166,7 @@ async function build() {
   console.log(`\n📁 输出目录: ${DIST_DIR}`);
   if (shouldZip) {
     const version = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8')).version;
-    console.log(`📦 ZIP 文件: tiktok-shop-collector-v${version}.zip`);
+    console.log(` ZIP 文件: global-shop-collector-v${version}.zip`);
   }
   console.log('\n💡 使用方法:');
   console.log('   1. 打开 chrome://extensions/');

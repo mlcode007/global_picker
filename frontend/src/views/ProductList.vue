@@ -426,6 +426,9 @@
             />
             <span>条1688商品</span>
             <span class="toolbar-hint">插件批量入库时，每个商品最多入库的1688匹配数量</span>
+            <a href="/api/v1/products/plugin/download" download class="plugin-download-link">
+              <DownloadOutlined /> 下载最新插件
+            </a>
           </a-space>
         </a-col>
       </a-row>
@@ -2738,6 +2741,23 @@ onBeforeUnmount(() => {
 .toolbar-hint {
   font-size: 12px;
   color: #8c8c8c;
+}
+.plugin-download-link {
+  font-size: 13px;
+  color: #1677ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  padding: 2px 8px;
+  border: 1px solid #1677ff;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.plugin-download-link:hover {
+  color: #4096ff;
+  border-color: #4096ff;
+  background: #e6f4ff;
 }
 .expand-col-title {
   display: flex;
