@@ -39,10 +39,10 @@
     const company = offer.company || {};
     const image = offer.image || {};
 
-    // 代发价(consignPrice)优先，作为比价/利润计算的基准；否则用展示价 price
-    const consignPrice = parseFloat(priceInfo.consignPrice) || 0;
+    // 展示价(price)优先；代发价(consignPrice)作为备用
     const showPrice = parseFloat(priceInfo.price) || 0;
-    const price = consignPrice || showPrice || 0;
+    const consignPrice = parseFloat(priceInfo.consignPrice) || 0;
+    const price = showPrice || consignPrice || 0;
 
     return {
       offerId: String(offer.id || ''),
@@ -330,20 +330,24 @@
 
       const saleStats = extendData.saleStatsModel || {};
       const shopInfo = extendData.shopInfoModel || {};
-      const images = extendData.images || [];
       const fromList = offerListMap[String(offerId)] || {};
       const shipping = parseShippingFromExtend(extendData);
 
       console.log(`[1688采集-邮费] offerId=${offerId} | hasDCI=${!!extendData.deliveryChargeInfo} | isFree=${shipping.isFreeShipping} | minFreight=${shipping.minFreight}`);
 
+        const listImage = fromList.mainImage || '';
+        const listImages = fromList.images || [];
+        const listPrice = fromList.price || 0;
+        const listConsignPrice = fromList.consignPrice || 0;
+
         products.push({
           offerId: offerId,
           memberId: offerMember[offerId] || '',
           title: extendData.title || fromList.title || '',
-          images: images.length ? images : (fromList.images || []),
-          mainImage: images[0] || fromList.mainImage || '',
-          price: fromList.price || 0,
-          consignPrice: fromList.consignPrice || 0,
+          images: listImages.length ? listImages : [],
+          mainImage: listImage,
+          price: listPrice,
+          consignPrice: listConsignPrice,
           last30DaysSales: saleStats.last30DaysSales || '',
           totalSales: saleStats.totalSales || '',
           last30DaysDropShippingSales: saleStats.last30DaysDropShippingSales || '',

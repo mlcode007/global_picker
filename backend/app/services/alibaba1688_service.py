@@ -162,7 +162,7 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
             )
             break
 
-        price_val = item.consignPrice or item.price or 0
+        price_val = item.price or item.consignPrice or 0
         price = Decimal(str(price_val)) if price_val and price_val > 0 else Decimal("0")
         offer_id = item.offerId or None
         good_rates = Decimal(str(item.goodRates)) if item.goodRates else None
