@@ -414,9 +414,8 @@
       updateProductLog(product.id, '采集完成', 'success');
 
       // 通知网页(ProductList)：该商品的1688数据已入库，刷新展示
-      try {
-        window.postMessage({ source: 'gp-extension', type: 'GP_1688_SAVED', productId: product.id }, '*');
-      } catch (e) { /* ignore */ }
+      // 注意：不再在这里直接 postMessage，而是等 background.js 入库成功后通过 chrome.tabs.sendMessage 通知
+      // 这里只更新日志显示
       
       const marketMate = document.getElementById('market-mate-for-1688');
       if (marketMate && marketMate.shadowRoot) {
@@ -726,6 +725,14 @@
   // mousedown 最早触发、最不易被插件吞掉；click 兜底
   document.addEventListener('mousedown', handleCompareTrigger, true);
   document.addEventListener('click', handleCompareTrigger, true);
+
+  // 接收 background.js 发来的 1688 入库成功通知，转发给网页
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'GP_1688_SAVED' && message.data && message.data.productId) {
+      console.log('[1688采集] 收到入库成功通知，productId:', message.data.productId);
+      window.postMessage({ source: 'gp-extension', type: 'GP_1688_SAVED', productId: message.data.productId }, '*');
+    }
+  });
 
   console.log('[同步注入] 已启动，监听登录状态变化');
 })();

@@ -434,6 +434,22 @@ class V2Crawler(BaseCrawler):
 
         real_region = remix_data.get("region_info", {}).get("real_region")
 
+        # 提取第一个销售属性的第一个SKU图
+        first_sku_image = None
+        sale_properties = pm.get("sale_properties") or []
+        if sale_properties and isinstance(sale_properties, list):
+            for prop in sale_properties:
+                if isinstance(prop, dict) and prop.get("has_image"):
+                    prop_values = prop.get("property_values") or []
+                    if prop_values and isinstance(prop_values, list):
+                        pv = prop_values[0]
+                        if isinstance(pv, dict):
+                            img = pv.get("image") or {}
+                            url_list = img.get("url_list") or []
+                            if url_list:
+                                first_sku_image = url_list[0]
+                                break
+
         result = {
             "product_id": pm.get("product_id"),
             "title": pm.get("name"),
@@ -462,6 +478,7 @@ class V2Crawler(BaseCrawler):
             "category3_name": category_levels.get("category3_name"),
             "category3_name_en": category_levels.get("category3_name_en"),
             "region": real_region,
+            "first_sku_image": first_sku_image,
         }
         return result
 
@@ -726,6 +743,8 @@ def _save_to_database(
         if images:
             product.main_image_url = images[0]
             product.image_urls = images[:20]
+
+        product.first_sku_image = product_data.get("first_sku_image")
 
         from app.services.exchange_rate_service import convert_to_cny
         if product.price and product.currency:

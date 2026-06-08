@@ -59,6 +59,7 @@ class ProductOut(BaseModel):
     delivery_days_min: Optional[int] = None
     delivery_days_max: Optional[int] = None
     main_image_url: Optional[str]
+    first_sku_image: Optional[str]
     image_urls: Optional[list]
     category: Optional[str]
     category1_id: Optional[str] = None

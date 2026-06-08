@@ -772,6 +772,20 @@ const BackgroundService = {
       }
 
       Logger.info('1688数据入库成功');
+
+      // 通知网页(ProductList)：该商品的1688数据已入库，刷新展示
+      try {
+        const tabs = await chrome.tabs.query({ url: '*://localhost/*' });
+        for (const tab of tabs) {
+          try {
+            await chrome.tabs.sendMessage(tab.id, {
+              type: 'GP_1688_SAVED',
+              data: { productId },
+            });
+          } catch (e) { /* tab may not have content script */ }
+        }
+      } catch (e) { /* ignore */ }
+
       sendResponse({ success: true, data: result.data });
     } catch (e) {
       Logger.error('保存1688数据失败:', e);

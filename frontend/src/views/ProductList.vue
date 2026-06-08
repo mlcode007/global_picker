@@ -443,7 +443,14 @@
 
     <!-- 数据表格 -->
     <a-card :bordered="false" style="margin-top: 12px">
-      <div style="margin-bottom: 12px;">
+      <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+        <a-segmented
+          v-model:value="imageDisplayMode"
+          :options="[
+            { label: '主图', value: 'main' },
+            { label: 'SKU图', value: 'sku' },
+          ]"
+        />
         <a-tag color="blue">已选 {{ selectedRowKeys.length }} 个</a-tag>
       </div>
       <a-table
@@ -474,21 +481,23 @@
           <!-- 商品信息列 -->
           <template v-if="column.key === 'product'">
             <div class="product-cell">
-              <ImageMagnifier
-                v-if="record.main_image_url"
-                :src="record.main_image_url"
-                :preview-size="400"
-              >
-                <a-image
-                  :src="record.main_image_url"
-                  :width="180"
-                  :height="180"
-                  style="object-fit:cover;border-radius:8px;flex-shrink:0"
-                  :preview="true"
-                  :fallback="fallbackImg"
-                />
-              </ImageMagnifier>
-              <div v-else class="img-placeholder"><PictureOutlined /></div>
+              <div class="product-image-wrapper">
+                <ImageMagnifier
+                  v-if="displayImageUrl(record)"
+                  :src="displayImageUrl(record)"
+                  :preview-size="400"
+                >
+                  <a-image
+                    :src="displayImageUrl(record)"
+                    :width="180"
+                    :height="180"
+                    style="object-fit:cover;border-radius:8px;flex-shrink:0"
+                    :preview="true"
+                    :fallback="fallbackImg"
+                  />
+                </ImageMagnifier>
+                <div v-else class="img-placeholder"><PictureOutlined /></div>
+              </div>
               <div class="product-info">
                 <span
                   class="product-title"
@@ -1173,6 +1182,21 @@ function clearDateRange() {
 }
 
 const fallbackImg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjZjBmMGYwIi8+PC9zdmc+'
+
+// --- 图片显示模式切换（主图 / 第一SKU图）---
+const LS_IMAGE_DISPLAY_MODE = 'gp_image_display_mode'
+const imageDisplayMode = ref(localStorage.getItem(LS_IMAGE_DISPLAY_MODE) || 'main')
+
+watch(imageDisplayMode, (v) => {
+  try { localStorage.setItem(LS_IMAGE_DISPLAY_MODE, v) } catch { /* ignore */ }
+})
+
+function displayImageUrl(record) {
+  if (imageDisplayMode.value === 'sku' && record.first_sku_image) {
+    return record.first_sku_image
+  }
+  return record.main_image_url
+}
 
 function profitColor(val) {
   const v = Number(val)
@@ -1968,7 +1992,8 @@ async function refreshProductRow(productId) {
     const updated = await productApi.get(productId)
     const index = store.list.findIndex(p => p.id === productId)
     if (index !== -1) {
-      store.list[index] = updated
+      // 用 splice 替换触发 Vue 响应式更新，确保表格重新渲染
+      store.list.splice(index, 1, updated)
     }
   } catch (e) {
     console.error('刷新商品行失败', productId, e)
@@ -2803,7 +2828,7 @@ onBeforeUnmount(() => {
 }
 .range-sep { color: #ccc; }
 
-.product-cell { display: flex; align-items: center; gap: 12px; }
+.product-cell { display: flex; align-items: flex-start; gap: 12px; }
 .category-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .img-placeholder {
   width: 150px; height: 150px; background: #f5f5f5; border-radius: 6px;

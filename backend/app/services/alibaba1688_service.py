@@ -275,7 +275,7 @@ def batch_create_from_plugin(db: Session, data: Alibaba1688BatchCreate) -> int:
         )
         if best_match.price and best_match.price > 0:
             best_match.is_primary = 1
-            _update_product_profit(db, product_id, best_match.price)
+            _update_product_profit(db, product_id, best_match.price, best_match.match_score)
 
     if created or updated_existing:
         db.commit()

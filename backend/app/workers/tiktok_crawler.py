@@ -534,6 +534,22 @@ def _parse_remix_component_data(raw: dict) -> dict:
 
         category_levels = _parse_category_from_recommended_categories(categories)
 
+        # 提取第一个销售属性的第一个SKU图
+        first_sku_image = None
+        sale_properties = pm.get("sale_properties") or []
+        if sale_properties and isinstance(sale_properties, list):
+            for prop in sale_properties:
+                if isinstance(prop, dict) and prop.get("has_image"):
+                    prop_values = prop.get("property_values") or []
+                    if prop_values and isinstance(prop_values, list):
+                        pv = prop_values[0]
+                        if isinstance(pv, dict):
+                            img = pv.get("image") or {}
+                            url_list = img.get("url_list") or []
+                            if url_list:
+                                first_sku_image = url_list[0]
+                                break
+
         result = {
             "title": pm.get("name"),
             "images": image_urls,
@@ -561,6 +577,7 @@ def _parse_remix_component_data(raw: dict) -> dict:
             "category3_name": category_levels.get("category3_name"),
             "category3_name_en": category_levels.get("category3_name_en"),
             "region": real_region,
+            "first_sku_image": first_sku_image,
             "_source": "remix_component_data",
         }
         return {k: v for k, v in result.items() if v is not None}
@@ -836,6 +853,11 @@ def _apply_product_data(product: Product, data: dict, db: "Session | None" = Non
             product.main_image_url = urls[0]
             product.image_urls = urls
             updated = True
+
+    first_sku_image = data.get("first_sku_image")
+    if first_sku_image and not product.first_sku_image:
+        product.first_sku_image = str(first_sku_image)[:1024]
+        updated = True
 
     category = (
         data.get("category") or data.get("categoryName")

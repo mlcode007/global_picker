@@ -36,6 +36,7 @@ class Product(Base):
     delivery_days_min = Column(Integer, nullable=True)
     delivery_days_max = Column(Integer, nullable=True)
     main_image_url = Column(String(1024), nullable=True)
+    first_sku_image = Column(String(1024), nullable=True, comment="第一个销售属性SKU图（用于1688匹配）")
     image_urls = Column(JSON, nullable=True)
     category = Column(String(128), nullable=True)
     category1_id = Column(String(64), nullable=True, comment="一级类目ID")
