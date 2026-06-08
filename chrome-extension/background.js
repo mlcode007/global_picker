@@ -774,15 +774,33 @@ const BackgroundService = {
       Logger.info('1688数据入库成功');
 
       // 通知网页(ProductList)：该商品的1688数据已入库，刷新展示
+      // 主站可能在多种 host 下打开（localhost/127.0.0.1/globalpicker.com/47.238.72.198），
+      // 因此遍历所有可能的 host patterns，确保主站列表页一定能收到通知
+      const HOST_PATTERNS = [
+        '*://localhost/*',
+        '*://localhost:*/*',
+        '*://127.0.0.1/*',
+        '*://globalpicker.com/*',
+        '*://www.globalpicker.com/*',
+        '*://47.238.72.198/*',
+      ];
       try {
-        const tabs = await chrome.tabs.query({ url: '*://localhost/*' });
-        for (const tab of tabs) {
-          try {
-            await chrome.tabs.sendMessage(tab.id, {
-              type: 'GP_1688_SAVED',
-              data: { productId },
-            });
-          } catch (e) { /* tab may not have content script */ }
+        const sentTabIds = new Set();
+        for (const url of HOST_PATTERNS) {
+          const tabs = await chrome.tabs.query({ url });
+          for (const tab of tabs) {
+            if (sentTabIds.has(tab.id)) continue;
+            sentTabIds.add(tab.id);
+            try {
+              await chrome.tabs.sendMessage(tab.id, {
+                type: 'GP_1688_SAVED',
+                data: { productId },
+              });
+              Logger.info('[GP_1688_SAVED] 已通知主站 tabId=', tab.id, 'productId=', productId);
+            } catch (e) {
+              // 该 tab 可能没有 content script，忽略
+            }
+          }
         }
       } catch (e) { /* ignore */ }
 

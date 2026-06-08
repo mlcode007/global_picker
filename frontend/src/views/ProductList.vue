@@ -1104,6 +1104,15 @@
         </a-row>
       </a-checkbox-group>
     </a-modal>
+
+    <!-- 回到顶部按钮 -->
+    <div
+      v-if="showBackToTop"
+      class="back-to-top-btn"
+      @click="scrollToTop"
+    >
+      <UpOutlined />
+    </div>
   </div>
 </template>
 
@@ -1134,6 +1143,17 @@ const recrawlingIds = ref(new Set())
 const dateStart = ref(null)
 const dateEnd = ref(null)
 const pddLayoutMode = ref('card')
+
+// --- 回到顶部 ---
+const showBackToTop = ref(false)
+
+function handleScroll() {
+  showBackToTop.value = window.scrollY > 400
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 function onDateChange() {
   store.filters.created_at_start = dateStart.value || undefined
@@ -1990,13 +2010,17 @@ function resolvePhotoMaxCandidates() {
 async function refreshProductRow(productId) {
   try {
     const updated = await productApi.get(productId)
+    console.log('[refreshProductRow] 拉取 product', productId, '响应:', updated)
     const index = store.list.findIndex(p => p.id === productId)
     if (index !== -1) {
       // 用 splice 替换触发 Vue 响应式更新，确保表格重新渲染
       store.list.splice(index, 1, updated)
+      console.log('[refreshProductRow] 已替换 store.list[', index, '] alibaba1688_match_count=', updated.alibaba1688_match_count, 'pdd_match_count=', updated.pdd_match_count)
+    } else {
+      console.warn('[refreshProductRow] store.list 中找不到 productId=', productId)
     }
   } catch (e) {
-    console.error('刷新商品行失败', productId, e)
+    console.error('[refreshProductRow] 刷新商品行失败', productId, e)
   }
 }
 
@@ -2718,6 +2742,7 @@ onMounted(async () => {
   // 不再恢复ERP进度，刷新页面后清除所有进度显示
   // restoreErpProgress()
   window.addEventListener('message', handleExtensionMessage)
+  window.addEventListener('scroll', handleScroll)
   await store.fetchList()
   if (store.list.length) {
     const ids = store.list.map(p => p.id)
@@ -2728,6 +2753,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('message', handleExtensionMessage)
+  window.removeEventListener('scroll', handleScroll)
   if (erpCountdownTimer) {
     clearInterval(erpCountdownTimer)
     erpCountdownTimer = null
@@ -3069,6 +3095,31 @@ a.alibaba1688-card-title {
 a.alibaba1688-card-title:hover {
   color: #4096ff;
   text-decoration: underline;
+}
+
+/* 回到顶部按钮 */
+.back-to-top-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+  z-index: 100;
+  transition: all 0.3s;
+}
+.back-to-top-btn:hover {
+  background: #1677ff;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.3);
 }
 .alibaba1688-card-company {
   font-size: 11px; color: #666; margin-top: 2px;
