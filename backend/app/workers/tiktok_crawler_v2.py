@@ -26,6 +26,7 @@ import re
 import shutil
 import sys
 import tempfile
+import time
 from abc import ABC, abstractmethod
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -48,6 +49,18 @@ _UA_DESKTOP = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/120.0.0.0 Safari/537.36"
 )
+
+# TikTok 商品 API 关键字（与 tiktok_crawler.py 保持一致）
+_API_KEYWORDS = [
+    "api/v1/product", "api/v2/product",
+    "pdp/item_data", "item/detail", "product/detail",
+    "item_data", "product_info",
+    "__loader=",  # SSR loader 数据
+]
+
+
+def _is_product_api(url: str) -> bool:
+    return any(kw in url for kw in _API_KEYWORDS)
 
 
 def _update_task_status(task_id: Optional[int], status_detail: str) -> None:
@@ -160,8 +173,10 @@ class V2Crawler(BaseCrawler):
         if "shop.tiktok.com/view/product/" in url and "locale=" not in url:
             url = f"{url}&locale=zh-CN" if "?" in url else f"{url}?locale=zh-CN"
 
-        intercepted_data = None
-        data_ready = asyncio.Event()
+        # intercepted_data: 最近一次拦截到的原始 JSON（用于回退解析）
+        # product_result : 已验证可解析出商品的结果（命中即视为成功）
+        intercepted_data: Optional[Dict[str, Any]] = None
+        product_result: Optional[Dict[str, Any]] = None
 
         _update_task_status(task_id, "正在启动浏览器...")
         async with async_playwright() as pw:
@@ -191,123 +206,177 @@ class V2Crawler(BaseCrawler):
             page = await context.new_page()
             await Stealth().apply_stealth_async(page)
 
-            async def on_request(request):
-                nonlocal intercepted_data
-                if "__loader=" in request.url and "__ssrDirect=true" in request.url:
-                    logger.info("拦截到目标请求: %s", request.url[:100])
+            async def on_response(response):
+                nonlocal intercepted_data, product_result
+                # 已经拿到有效商品数据后无需再处理
+                if product_result is not None:
+                    return
+                if not _is_product_api(response.url):
+                    return
+                logger.info("拦截到目标响应: %s", response.url[:100])
+                json_data: Optional[Dict[str, Any]] = None
+                try:
+                    json_data = await response.json()
+                except Exception:
+                    # 回退：尝试读取 body 并提取 remixContext
                     try:
-                        response = await request.response()
-                        if response:
-                            body = await response.body()
-                            body_str = body.decode("utf-8", errors="ignore")
-                            logger.info("响应体长度: %d 字符", len(body_str))
-                            try:
-                                json_data = json.loads(body_str)
-                                if isinstance(json_data, dict):
-                                    intercepted_data = json_data
-                                    logger.info("成功解析 JSON 响应, keys: %s", list(intercepted_data.keys())[:10])
-                                    _update_task_status(task_id, "成功拦截到商品数据")
-                                    data_ready.set()
-                                    return
-                            except json.JSONDecodeError:
-                                pass
-                            intercepted_data = self._extract_remix_context(body_str)
-                            if intercepted_data:
-                                logger.info("从 HTML 中提取 remixContext, keys: %s", list(intercepted_data.keys())[:10])
-                                _update_task_status(task_id, "从页面中提取到商品数据")
-                                data_ready.set()
-                            else:
-                                logger.warning("未能提取任何数据")
-                    except Exception as e:
-                        logger.warning("拦截处理失败: %s", e, exc_info=True)
+                        body = await response.body()
+                        body_str = body.decode("utf-8", errors="ignore")
+                        json_data = self._extract_remix_context(body_str)
+                    except Exception as e2:
+                        logger.warning("读取响应体失败: %s", e2)
+                        return
+                if not isinstance(json_data, dict):
+                    return
+                intercepted_data = json_data
+                logger.info("成功解析 JSON 响应, keys: %s", list(json_data.keys())[:10])
+                # 关键：只有真正能解析出商品才算成功，否则可能只是风控/验证码挑战页
+                parsed = self._parse_product_data(json_data)
+                if parsed and parsed.get("product_id"):
+                    product_result = parsed
+                    logger.info("成功拦截到有效商品数据: product_id=%s", parsed.get("product_id"))
+                    _update_task_status(task_id, "成功拦截到商品数据")
+                else:
+                    logger.info("响应中暂无有效商品数据（可能为验证码/风控页），继续等待...")
 
-            page.on("request", on_request)
+            page.on("response", on_response)
 
             _update_task_status(task_id, "正在打开 TikTok 商品页面...")
             try:
                 await page.goto(url, wait_until="domcontentloaded", timeout=60000)
             except PwTimeout:
-                logger.warning("页面加载超时")
-                _update_task_status(task_id, "页面加载超时")
+                logger.warning("页面加载超时，继续后续流程")
+                _update_task_status(task_id, "页面加载超时，继续处理")
             except Exception as e:
-                logger.warning("页面加载异常: %s", e)
-                _update_task_status(task_id, "页面加载异常")
-            
-            if intercepted_data:
-                logger.info("数据已在页面加载时拦截成功，直接退出")
-                _update_task_status(task_id, "商品数据已获取")
-                await browser.close()
-            else:
-                _update_task_status(task_id, "页面已加载，等待数据请求...")
-                try:
-                    await asyncio.wait_for(data_ready.wait(), timeout=15)
-                    logger.info("数据拦截成功，提前退出")
-                    _update_task_status(task_id, "商品数据已获取")
-                except asyncio.TimeoutError:
-                    logger.warning("等待数据超时，检查页面状态")
-                    
-                    title = await page.title()
-                    title_lower = title.lower()
-                    
-                    if "security" in title_lower or "captcha" in title_lower:
-                        logger.warning("触发验证码")
-                        _update_task_status(task_id, "触发验证码，正在处理...")
-                        for attempt in range(2):
-                            logger.info("自动处理验证码 %d/2", attempt + 1)
-                            _update_task_status(task_id, f"正在处理验证码 ({attempt + 1}/2)...")
-                            if await self._solve_captcha(page, context):
-                                logger.info("验证码通过，等待数据...")
-                                _update_task_status(task_id, "验证码通过，等待数据...")
-                                try:
-                                    await asyncio.wait_for(data_ready.wait(), timeout=15)
-                                    _update_task_status(task_id, "商品数据已获取")
-                                    break
-                                except asyncio.TimeoutError:
-                                    logger.warning("验证码后等待数据超时")
-                            if attempt < 1:
-                                try:
-                                    await page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                                except Exception:
-                                    await asyncio.sleep(2)
-                        else:
-                            if not headless:
-                                logger.warning("等待手动完成验证码（60s）")
-                                _update_task_status(task_id, "等待手动完成验证码（60秒）...")
-                                try:
-                                    await page.wait_for_function(
-                                        """() => {
-                                            const t = document.title.toLowerCase();
-                                            return !t.includes('security') && !t.includes('captcha') && t.length > 0;
-                                        }""",
-                                        timeout=60000,
-                                    )
-                                except PwTimeout:
-                                    await browser.close()
-                                    raise RuntimeError("验证码超时")
-                            else:
-                                await browser.close()
-                                raise RuntimeError("验证码未通过")
-                    else:
-                        logger.info("页面标题: %s，未检测到验证码", title)
-                        await asyncio.sleep(2)
-                
-                await browser.close()
+                logger.warning("页面加载异常: %s，继续后续流程", e)
+                _update_task_status(task_id, "页面加载异常，继续处理")
 
-        if intercepted_data:
+            # 统一等待循环：拿到有效商品数据即结束；遇到验证码则处理后刷新重试；
+            # 整体设置预算时间，避免无限卡住。
+            captcha_encountered = False
+            captcha_attempts = 0
+            max_captcha_attempts = 2
+            deadline = time.monotonic() + 240
+
+            while product_result is None and time.monotonic() < deadline:
+                # 给拦截回调留出处理时间
+                await asyncio.sleep(2)
+                if product_result is not None:
+                    break
+
+                # 页面 / 浏览器是否已关闭
+                try:
+                    title_lower = (await page.title()).lower()
+                except Exception:
+                    logger.warning("页面已关闭，停止等待")
+                    break
+
+                is_captcha = (
+                    "security" in title_lower
+                    or "captcha" in title_lower
+                    or await self._is_captcha_visible(page)
+                )
+
+                if is_captcha:
+                    if captcha_attempts >= max_captcha_attempts:
+                        if not headless:
+                            logger.warning("自动验证码均失败，等待人工完成（90s）")
+                            _update_task_status(task_id, "请手动完成验证码（90秒）...")
+                            try:
+                                await page.wait_for_function(
+                                    """() => {
+                                        const t = document.title.toLowerCase();
+                                        return !t.includes('security') && !t.includes('captcha') && t.length > 0;
+                                    }""",
+                                    timeout=90000,
+                                )
+                                logger.info("人工验证码通过，刷新页面")
+                                intercepted_data = None
+                                try:
+                                    await page.reload(wait_until="domcontentloaded", timeout=30000)
+                                except Exception:
+                                    pass
+                            except Exception:
+                                logger.warning("人工验证码等待超时")
+                                break
+                            continue
+                        else:
+                            logger.warning("无头模式自动验证码均失败，放弃")
+                            break
+
+                    captcha_encountered = True
+                    captcha_attempts += 1
+                    logger.info("自动处理验证码 %d/%d", captcha_attempts, max_captcha_attempts)
+                    _update_task_status(task_id, f"正在处理验证码 ({captcha_attempts}/{max_captcha_attempts})...")
+                    solved = False
+                    try:
+                        solved = await self._solve_captcha(page, context)
+                    except Exception as e:
+                        logger.warning("验证码处理异常: %s", e)
+
+                    # 无论自动是否成功，都清空旧的挑战页数据并刷新，触发真实商品 loader 响应
+                    if product_result is None:
+                        if solved:
+                            logger.info("验证码通过，刷新页面获取真实商品数据")
+                            _update_task_status(task_id, "验证码通过，正在加载商品数据...")
+                        intercepted_data = None
+                        try:
+                            await page.wait_for_load_state("networkidle", timeout=10000)
+                        except Exception:
+                            pass
+                        try:
+                            await page.reload(wait_until="domcontentloaded", timeout=30000)
+                        except Exception as e:
+                            logger.warning("刷新页面失败: %s", e)
+                            try:
+                                await page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                            except Exception:
+                                break
+                else:
+                    # 没有验证码：若 loader 已返回但无法解析出商品，则不再反复刷新
+                    if intercepted_data is not None:
+                        logger.warning("已拦截响应但无法解析出商品，停止重试")
+                        break
+                    # 还没有任何响应，刷新触发 loader
+                    logger.info("未检测到验证码且暂无响应，刷新页面重试")
+                    try:
+                        await page.reload(wait_until="domcontentloaded", timeout=30000)
+                    except Exception:
+                        logger.warning("刷新页面失败，停止等待")
+                        break
+
+            # 回写 Cookie：验证码通过或成功拿到数据，且有 user_id（保证下次少触发验证码）
+            if (captcha_encountered or product_result is not None) and user_id:
+                try:
+                    await self._persist_cookies(user_id, context)
+                except Exception as e:
+                    logger.warning("回写 Cookie 失败: %s", e)
+
+            try:
+                await browser.close()
+            except Exception:
+                pass
+
+        # 解析并返回
+        if product_result is not None:
+            logger.info("解析成功: %s", product_result.get("title", "")[:50])
+            _update_task_status(task_id, "商品数据解析成功")
+            return product_result
+
+        if intercepted_data is not None:
             _update_task_status(task_id, "正在解析商品数据...")
-            logger.info("开始解析商品数据")
+            logger.info("开始解析最近一次拦截数据")
             product_data = self._parse_product_data(intercepted_data)
             if product_data:
                 logger.info("解析成功: %s", product_data.get("title", "")[:50])
                 _update_task_status(task_id, "商品数据解析成功")
                 return product_data
-            else:
-                logger.warning("解析失败: remixContext 中未找到商品信息")
-                _update_task_status(task_id, "解析失败：未找到商品信息")
+            logger.warning("解析失败: 未找到商品信息（可能仍停留在验证码/风控页）")
+            _update_task_status(task_id, "解析失败：未找到商品信息")
         else:
             logger.warning("未拦截到任何数据")
             _update_task_status(task_id, "未拦截到任何数据")
-        
+
         return None
 
     def _parse_cookies(self, raw: str) -> List[Dict[str, str]]:
@@ -505,6 +574,19 @@ class V2Crawler(BaseCrawler):
 
         return result
 
+    async def _is_captcha_visible(self, page) -> bool:
+        """通过 DOM 判断验证码是否仍然存在（标题判断的补充）"""
+        try:
+            el = await page.query_selector(
+                "#captcha-verify-image, .captcha_verify_container, "
+                ".secsdk-captcha-drag-icon, .captcha-verify-container"
+            )
+            if not el:
+                return False
+            return await el.is_visible()
+        except Exception:
+            return False
+
     async def _solve_captcha(self, page, context) -> bool:
         try:
             root = Path(__file__).resolve().parent.parent / "spider" / "tiktok_product"
@@ -549,13 +631,13 @@ class V2Crawler(BaseCrawler):
                             if (document.querySelector('.secsdk-captcha-drag-success')) return true;
                             return !t.includes('security') && !t.includes('captcha') && t.length > 0;
                         }""",
-                        timeout=90000,
+                        timeout=30000,
                     )
                 except PwTimeout:
                     logger.warning("验证码通过超时")
 
                 try:
-                    await page.wait_for_load_state("networkidle", timeout=25000)
+                    await page.wait_for_load_state("networkidle", timeout=15000)
                 except PwTimeout:
                     pass
 
@@ -594,6 +676,8 @@ class V2Crawler(BaseCrawler):
             logger.info("浏览器中无 TikTok 相关 Cookie，跳过回写用户表")
             return
 
+        logger.info("从浏览器提取到 %d 个 TikTok Cookie: %s", len(new_kv), list(new_kv.keys()))
+
         db = SessionLocal()
         try:
             cfg = db.query(UserCrawlConfig).filter(UserCrawlConfig.user_id == user_id).first()
@@ -612,7 +696,7 @@ class V2Crawler(BaseCrawler):
             else:
                 db.add(UserCrawlConfig(user_id=user_id, tiktok_cookies=merged))
             db.commit()
-            logger.info("已合并并更新用户 %d 的 tiktok_cookies（共 %d 个键）", user_id, len(json.loads(merged)))
+            logger.info("已合并并更新用户 %d 的 tiktok_cookies（共 %d 个键）: %s", user_id, len(json.loads(merged)), list(json.loads(merged).keys()))
         except Exception as e:
             logger.warning("写入 user_crawl_configs.tiktok_cookies 失败: %s", e)
             db.rollback()
