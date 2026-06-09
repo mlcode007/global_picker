@@ -211,62 +211,113 @@
     // allLogs.forEach(log => log.remove());
   }
 
+  const LOG_COLOR_MAP = {
+    info: '#666',
+    success: '#52c41a',
+    warning: '#faad14',
+    error: '#f5222d',
+    step: '#1890ff',
+  };
+  const LOG_ICON_MAP = { info: '•', success: '✓', warning: '⚠', error: '✗', step: '▸' };
+
+  function getOrCreateLogContainer(row) {
+    let logContainer = row.querySelector('.gp-1688-product-log');
+    if (logContainer) return logContainer;
+
+    logContainer = document.createElement('div');
+    logContainer.className = 'gp-1688-product-log';
+    logContainer.style.cssText = `
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.7;
+      font-family: 'Menlo', 'Monaco', monospace;
+    `;
+
+    const existingBatch = row.querySelector('.erp-batch-row, .photo-batch-row');
+    if (existingBatch) {
+      existingBatch.appendChild(logContainer);
+    } else {
+      let titleContainer = row.querySelector('.product-title, .product-name, td:nth-child(2) a, [class*="title"]')?.closest('td, div');
+
+      if (!titleContainer) {
+        const cells = row.querySelectorAll('td');
+        for (const cell of cells) {
+          const hasLink = cell.querySelector('a[href]');
+          const hasLongText = cell.textContent.length > 30;
+          if (hasLink && hasLongText) {
+            titleContainer = cell;
+            break;
+          }
+        }
+      }
+
+      if (titleContainer) {
+        titleContainer.appendChild(logContainer);
+      }
+    }
+    return logContainer;
+  }
+
   function updateProductLog(productId, message, type) {
     const row = document.querySelector(`tr[data-product-id="${productId}"], tr[data-id="${productId}"]`);
     if (!row) return;
 
-    let logContainer = row.querySelector('.gp-1688-product-log');
-    
-    if (!logContainer) {
-      logContainer = document.createElement('div');
-      logContainer.className = 'gp-1688-product-log';
-      logContainer.style.cssText = `
-        margin-top: 4px;
-        font-size: 12px;
-        line-height: 1.7;
-        font-family: 'Menlo', 'Monaco', monospace;
-      `;
+    const logContainer = getOrCreateLogContainer(row);
+    if (!logContainer) return;
 
-      const existingBatch = row.querySelector('.erp-batch-row, .photo-batch-row');
-      if (existingBatch) {
-        existingBatch.appendChild(logContainer);
-      } else {
-        let titleContainer = row.querySelector('.product-title, .product-name, td:nth-child(2) a, [class*="title"]')?.closest('td, div');
-        
-        if (!titleContainer) {
-          const cells = row.querySelectorAll('td');
-          for (const cell of cells) {
-            const hasLink = cell.querySelector('a[href]');
-            const hasLongText = cell.textContent.length > 30;
-            if (hasLink && hasLongText) {
-              titleContainer = cell;
-              break;
-            }
-          }
-        }
-
-        if (titleContainer) {
-          titleContainer.appendChild(logContainer);
-        }
-      }
-    }
-
-    const colorMap = {
-      info: '#666',
-      success: '#52c41a',
-      warning: '#faad14',
-      error: '#f5222d',
-      step: '#1890ff',
-    };
-    const color = colorMap[type] || colorMap.info;
-    const iconMap = { info: '•', success: '✓', warning: '⚠', error: '✗', step: '▸' };
-    const icon = iconMap[type] || '•';
+    const color = LOG_COLOR_MAP[type] || LOG_COLOR_MAP.info;
+    const icon = LOG_ICON_MAP[type] || '•';
 
     const line = document.createElement('div');
     line.style.color = color;
     line.textContent = `${icon} ${message}`;
 
     logContainer.appendChild(line);
+  }
+
+  /**
+   * 按 key 原地更新一行日志（与前端"批量采集"一致：同一行进度文案不断刷新，而非追加多行）。
+   * 同一个 key 反复调用只会更新同一行的文字与颜色。
+   */
+  function setProductLogLine(productId, key, message, type) {
+    const row = document.querySelector(`tr[data-product-id="${productId}"], tr[data-id="${productId}"]`);
+    if (!row) return;
+
+    const logContainer = getOrCreateLogContainer(row);
+    if (!logContainer) return;
+
+    const color = LOG_COLOR_MAP[type] || LOG_COLOR_MAP.info;
+    const icon = LOG_ICON_MAP[type] || '•';
+
+    let line = logContainer.querySelector(`[data-log-key="${key}"]`);
+    if (!line) {
+      line = document.createElement('div');
+      line.setAttribute('data-log-key', key);
+      logContainer.appendChild(line);
+    }
+    line.style.color = color;
+    line.textContent = `${icon} ${message}`;
+  }
+
+  /**
+   * 采集任务状态 → 单行描述（与前端 utils/crawlTask.js 的 formatCrawlTaskLine 保持一致）
+   */
+  function formatCrawlTaskLine(task) {
+    if (!task) return '准备中…';
+    if (task.status === 'running' && task.status_detail) {
+      return task.status_detail;
+    }
+    const labelMap = { pending: '等待调度', running: '采集中', done: '完成', failed: '失败' };
+    const base = labelMap[task.status] || task.status;
+    if (task.status === 'failed' && task.error_msg) {
+      const msg = String(task.error_msg).trim();
+      const short = msg.length > 120 ? `${msg.slice(0, 120)}…` : msg;
+      return `${base}：${short}`;
+    }
+    if (task.status === 'running') return `${base} · 抓取 TikTok 商品页`;
+    if (task.status === 'pending') return `${base} · 队列中`;
+    if (task.status === 'done') return '采集完成，数据已更新';
+    return base;
   }
 
   function getProductInfo(productId) {
@@ -351,102 +402,6 @@
   }
 
   /**
-   * 点击前端"批量采集"按钮触发批量采集
-   * 复用前端的完整轮询、刷新、错误处理逻辑
-   * 返回 true 表示成功点击，false 表示按钮未找到或已禁用
-   */
-  function clickFrontendBatchCrawlButton() {
-    console.log('[1688采集] 查找前端"批量采集"按钮…');
-    
-    // Ant Design 按钮 + 文本匹配
-    const allButtons = document.querySelectorAll('button.ant-btn');
-    for (const btn of allButtons) {
-      const text = btn.textContent.trim();
-      // 排除其他按钮（"批量删除"、"批量导入"等）
-      if (text === '批量采集' || (text.includes('批量采集') && !text.includes('删除') && !text.includes('导入'))) {
-        if (btn.disabled || btn.classList.contains('ant-btn-disabled')) {
-          console.warn('[1688采集] "批量采集"按钮被禁用');
-          return false;
-        }
-        console.log('[1688采集] 找到"批量采集"按钮，模拟点击');
-        btn.click();
-        return true;
-      }
-    }
-    
-    // Fallback: 文本搜索
-    const buttonsByText = document.querySelectorAll('button');
-    for (const btn of buttonsByText) {
-      if (btn.textContent.trim() === '批量采集') {
-        if (btn.disabled || btn.classList.contains('ant-btn-disabled')) {
-          console.warn('[1688采集] "批量采集"按钮被禁用');
-          return false;
-        }
-        btn.click();
-        return true;
-      }
-    }
-    
-    console.warn('[1688采集] 未找到"批量采集"按钮');
-    return false;
-  }
-
-  /**
-   * 检测前端是否正在执行批量采集（通过观察按钮的 loading 状态）
-   * 返回 Promise，在批量采集完成后 resolve
-   */
-  function waitFrontendBatchCrawlDone(maxWaitMs = 300000) {
-    return new Promise((resolve, reject) => {
-      const startTime = Date.now();
-      let wasLoading = false;
-      
-      const check = () => {
-        // 查找"批量采集"按钮
-        const allButtons = document.querySelectorAll('button.ant-btn');
-        let batchBtn = null;
-        for (const btn of allButtons) {
-          const text = btn.textContent.trim();
-          if (text === '批量采集' || (text.includes('批量采集') && !text.includes('删除') && !text.includes('导入'))) {
-            batchBtn = btn;
-            break;
-          }
-        }
-        
-        const isLoading = batchBtn && (
-          batchBtn.classList.contains('ant-btn-loading') || 
-          batchBtn.querySelector('.ant-btn-loading-icon') !== null
-        );
-        
-        if (isLoading) {
-          wasLoading = true;
-          // 批量采集中，继续等待
-          if (Date.now() - startTime > maxWaitMs) {
-            reject(new Error('前端批量采集超时（5分钟）'));
-            return;
-          }
-          setTimeout(check, 1000);
-        } else {
-          if (wasLoading) {
-            // 已经进入 loading 状态，又退出了，说明批量采集已完成
-            console.log('[1688采集] 前端批量采集已完成');
-            resolve();
-          } else {
-            // 还没进入 loading 状态，可能是按钮被点了但还没开始
-            if (Date.now() - startTime > 30000) {
-              // 30秒都没进入 loading 状态，认为可能失败了
-              reject(new Error('前端批量采集未启动（30秒未进入 loading 状态）'));
-              return;
-            }
-            setTimeout(check, 500);
-          }
-        }
-      };
-      
-      check();
-    });
-  }
-
-  /**
    * 轮询等待采集完成
    */
   async function waitForCollectionDone(crawlTaskId, productId, maxWaitMs = 300000) {
@@ -470,11 +425,15 @@
           const result = await response.json();
           const task = result.data || result;
           console.log(`[1688采集] 轮询任务 #${crawlTaskId} 状态: ${task.status}`);
-          updateProductLog(productId, `采集状态: ${task.status}`, 'info');
-          
+          // 与"批量采集"一致：同一行进度文案不断刷新
+          const type = task.status === 'done' ? 'success'
+            : (task.status === 'failed' || task.status === 'error') ? 'error'
+            : 'info';
+          setProductLogLine(productId, 'crawl-progress', formatCrawlTaskLine(task), type);
+
           if (task.status === 'done') return task;
           if (task.status === 'failed' || task.status === 'error') {
-            throw new Error(`采集失败: ${task.error_msg || '未知错误'}`);
+            throw new Error(formatCrawlTaskLine(task));
           }
         }
       } catch (e) {
@@ -558,7 +517,82 @@
     console.log('[1688采集] 锁定归属商品 productId=' + productId + ', tiktokProductId=' + ctx.tiktokProductId + ', syncLimit=' + syncLimit);
   }
 
-  function trigger1688ImageSearch(productInfo) {
+  /**
+   * 请求前端同步（重渲染）指定商品行。
+   * 待抓取行没有 <img>（前端是占位 div），插件无法自己塞图片；
+   * 必须让前端重新拉取该商品并替换 store.list，使 <a-image> 真正渲染出来，
+   * 1688 同款比价才能拿到真实商品图。
+   */
+  function requestFrontendRowRefresh(productId) {
+    window.postMessage({ source: 'gp-extension', type: 'GP_REFRESH_PRODUCT', productId: productId }, '*');
+  }
+
+  /**
+   * 等待前端同步后该商品行出现真实主图（<img> 已加载完成），最长 maxWaitMs。
+   * 返回加载好的 img 元素；超时返回 null。
+   */
+  function waitRowImageReady(productId, maxWaitMs = 8000) {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const timer = setInterval(() => {
+        const row = document.querySelector(`tr[data-product-id="${productId}"], tr[data-id="${productId}"]`);
+        const img = row && (row.querySelector('.product-image-wrapper img') || row.querySelector('img'));
+        if (img && img.complete && img.naturalWidth > 0) {
+          clearInterval(timer);
+          resolve(img);
+        } else if (Date.now() - start > maxWaitMs) {
+          clearInterval(timer);
+          resolve(null);
+        }
+      }, 250);
+    });
+  }
+
+  /**
+   * 等待 <img> 真正加载完成（complete 且有像素），最长 maxWaitMs。
+   * 刚采集完把图片写回行后，必须等它加载好，1688 同款比价才能拿到真实图。
+   */
+  function waitImageLoaded(imageEl, maxWaitMs = 6000) {
+    return new Promise((resolve) => {
+      if (imageEl && imageEl.complete && imageEl.naturalWidth > 0) {
+        resolve(true);
+        return;
+      }
+      const start = Date.now();
+      const timer = setInterval(() => {
+        if (imageEl && imageEl.complete && imageEl.naturalWidth > 0) {
+          clearInterval(timer);
+          resolve(true);
+        } else if (Date.now() - start > maxWaitMs) {
+          clearInterval(timer);
+          resolve(false);
+        }
+      }, 200);
+    });
+  }
+
+  /** 在指定区域 hover 触发"同款比价"按钮出现 */
+  function hoverImage(imageEl) {
+    const rect = imageEl.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    ['mousemove', 'mouseenter', 'mouseover'].forEach((type) => {
+      imageEl.dispatchEvent(new MouseEvent(type, {
+        bubbles: true, cancelable: true, clientX: centerX, clientY: centerY, view: window,
+      }));
+    });
+  }
+
+  /** 轮询查找"同款比价"按钮，最多尝试 attempts 次 */
+  function findCompareButton() {
+    const allSpans = document.querySelectorAll('span');
+    for (const span of allSpans) {
+      if (span.textContent.trim() === '同款比价') return span;
+    }
+    return null;
+  }
+
+  async function trigger1688ImageSearch(productInfo) {
     const row = document.querySelector(`tr[data-product-id="${productInfo.id}"]`);
     if (!row) {
       console.error('[1688采集] 找不到商品行:', productInfo.id);
@@ -568,73 +602,46 @@
     // 触发比价前先锁定归属商品（覆盖任何残留上下文）
     set1688Context(productInfo.id, productInfo.tiktokProductId);
 
-    const imageEl = row.querySelector('img');
+    const imageEl = row.querySelector('.product-image-wrapper img') || row.querySelector('img');
     if (!imageEl) {
       console.error('[1688采集] 找不到商品图片');
+      updateProductLog(productInfo.id, '未找到商品图片，无法发起1688比价', 'error');
       return;
     }
 
-    const rect = imageEl.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    // 等待图片加载完成（刚采集回来的图可能还在加载）
+    const loaded = await waitImageLoaded(imageEl);
+    if (!loaded) {
+      console.warn('[1688采集] 商品图片未加载完成，仍尝试触发比价');
+    }
 
-    const mouseMove = new MouseEvent('mousemove', {
-      bubbles: true,
-      cancelable: true,
-      clientX: centerX,
-      clientY: centerY,
-      view: window,
-    });
-    imageEl.dispatchEvent(mouseMove);
+    // hover 触发同款比价按钮出现，并轮询查找按钮（最多 ~3s）
+    let targetBtn = null;
+    for (let i = 0; i < 6 && !targetBtn; i++) {
+      hoverImage(imageEl);
+      await new Promise((r) => setTimeout(r, 500));
+      targetBtn = findCompareButton();
+    }
 
-    const mouseEnter = new MouseEvent('mouseenter', {
-      bubbles: true,
-      cancelable: true,
-      clientX: centerX,
-      clientY: centerY,
-      view: window,
-    });
-    imageEl.dispatchEvent(mouseEnter);
+    if (targetBtn) {
+      console.log('[1688采集] 找到同款比价按钮，点击');
+      updateProductLog(productInfo.id, '点击同款比价按钮', 'success');
+      targetBtn.click();
 
-    const mouseOver = new MouseEvent('mouseover', {
-      bubbles: true,
-      cancelable: true,
-      clientX: centerX,
-      clientY: centerY,
-      view: window,
-    });
-    imageEl.dispatchEvent(mouseOver);
-
-    setTimeout(() => {
-      const allSpans = document.querySelectorAll('span');
-      let targetBtn = null;
-      
-      allSpans.forEach(span => {
-        if (!targetBtn && span.textContent.trim() === '同款比价') {
-          targetBtn = span;
-        }
-      });
-      
-      if (targetBtn) {
-        console.log('[1688采集] 找到同款比价按钮，点击');
-        updateProductLog(productInfo.id, '点击同款比价按钮', 'success');
-        targetBtn.click();
-
-        // 主动通知后台：插件即将在页内打开 iframe，请枚举注入拦截脚本（含延时重试）
-        // 注意：丝滑流程走页内 iframe 比价，不再新开 1688 标签页（OPEN_1688_TAB）
-        chrome.runtime.sendMessage({
-          type: 'INJECT_1688_NOW',
-          data: {
-            tiktokProductId: productInfo.tiktokProductId,
-            productId: productInfo.id,
-            syncLimit: readSyncLimitFromPage(),
-          },
-        }, () => { void chrome.runtime.lastError; });
-      } else {
-        console.error('[1688采集] 未找到同款比价按钮');
-        updateProductLog(productInfo.id, '未找到同款比价按钮', 'error');
-      }
-    }, 500);
+      // 主动通知后台：插件即将在页内打开 iframe，请枚举注入拦截脚本（含延时重试）
+      // 注意：丝滑流程走页内 iframe 比价，不再新开 1688 标签页（OPEN_1688_TAB）
+      chrome.runtime.sendMessage({
+        type: 'INJECT_1688_NOW',
+        data: {
+          tiktokProductId: productInfo.tiktokProductId,
+          productId: productInfo.id,
+          syncLimit: readSyncLimitFromPage(),
+        },
+      }, () => { void chrome.runtime.lastError; });
+    } else {
+      console.error('[1688采集] 未找到同款比价按钮');
+      updateProductLog(productInfo.id, '未找到同款比价按钮', 'error');
+    }
   }
 
   async function processNextProduct() {
@@ -659,84 +666,72 @@
       },
     });
 
-    // ── 步骤 1: 检查商品是否已采集，未采集则先触发批量采集 ──
+    // ── 步骤 1: 检查商品是否已采集，未采集则【仅对当前这一个商品】触发采集 ──
+    // 逐个商品判断、逐个采集：不点击前端"批量采集"按钮（那会一次性采集所有勾选项），
+    // 而是直接对当前商品调用 retry + 轮询 + 刷新——与批量采集内部对每个商品做的事完全一致。
     if (needsCollection(product)) {
-      console.log('[1688采集] 商品未采集，先执行批量采集:', product);
-      updateProductLog(product.id, '检测到商品未采集，先执行批量采集…', 'warning');
-      
-      // 找到未采集的商品，记录其原始索引
-      const uncollectedIndices = [];
-      for (let i = 0; i < selectedProducts.length; i++) {
-        if (needsCollection(selectedProducts[i])) {
-          uncollectedIndices.push(i);
+      console.log('[1688采集] 当前商品未采集，单独触发采集:', product);
+      updateProductLog(product.id, '检测到商品未采集，开始单独采集…', 'warning');
+
+      try {
+        // crawl_task_id 兜底：DOM 行属性可能未携带，先查商品详情补全
+        if (!product.crawlTaskId) {
+          updateProductLog(product.id, '获取采集任务信息…', 'info');
+          const info = await refreshProductInfo(product);
+          if (info.crawlTaskId) {
+            Object.assign(product, info);
+            selectedProducts[currentIndex] = product;
+          }
         }
-      }
-      
-      console.log(`[1688采集] 共 ${uncollectedIndices.length} 个未采集商品`);
-      updateProductLog(product.id, `共 ${uncollectedIndices.length} 个未采集商品，先批量采集…`, 'warning');
-      
-      // 点击前端"批量采集"按钮
-      const clicked = clickFrontendBatchCrawlButton();
-      if (!clicked) {
-        updateProductLog(product.id, '⚠ 未找到前端"批量采集"按钮，尝试单独触发采集', 'error');
-        
-        // Fallback: 单独触发采集
-        try {
-          if (!product.crawlTaskId) {
-            updateProductLog(product.id, '⚠ 商品无 crawl_task_id，跳过', 'error');
-            currentIndex++;
-            setTimeout(() => processNextProduct(), 1000);
-            return;
-          }
-          
-          await triggerCollection(product);
-          await waitForCollectionDone(product.crawlTaskId, product.id);
-          const refreshedInfo = await refreshProductInfo(product);
-          if (refreshedInfo.title) {
-            selectedProducts[currentIndex] = refreshedInfo;
-            product.title = refreshedInfo.title;
-            product.image = refreshedInfo.image;
-            product.crawlTaskId = refreshedInfo.crawlTaskId;
-          }
-        } catch (err) {
-          updateProductLog(product.id, `采集失败: ${err.message}`, 'error');
+
+        if (!product.crawlTaskId) {
+          updateProductLog(product.id, '⚠ 商品无 crawl_task_id，跳过', 'error');
           currentIndex++;
-          setTimeout(() => processNextProduct(), 2000);
+          setTimeout(() => processNextProduct(), 1000);
           return;
         }
-      } else {
-        // 等待前端批量采集完成
-        try {
-          updateProductLog(product.id, '等待前端批量采集完成…', 'info');
-          await waitFrontendBatchCrawlDone();
-          updateProductLog('__all__', '前端批量采集已完成', 'success');
-          
-          // 批量采集完成后，重新拉取所有未采集商品的信息
-          for (const idx of uncollectedIndices) {
-            const p = selectedProducts[idx];
-            const refreshed = await refreshProductInfo(p);
-            if (refreshed.title) {
-              selectedProducts[idx] = refreshed;
-              console.log(`[1688采集] 商品 ${p.id} 信息已刷新: ${refreshed.title}`);
-              updateProductLog(p.id, `商品信息已刷新: ${refreshed.title.substring(0, 30)}`, 'success');
-            }
-          }
-          
-          // 重新读取当前商品的最新信息
-          const currentProduct = selectedProducts[currentIndex];
-          Object.assign(product, currentProduct);
-        } catch (err) {
-          updateProductLog('__all__', `前端批量采集异常: ${err.message}`, 'error');
-          // 继续执行1688采集
+
+        // 提交采集任务（与批量采集一致：tasks/{id}/retry）
+        setProductLogLine(product.id, 'crawl-progress', '提交采集任务…', 'info');
+        await triggerCollection(product);
+
+        // 轮询等待该商品采集完成（与批量采集一致：轮询任务状态直到 done）
+        await waitForCollectionDone(product.crawlTaskId, product.id);
+
+        // 采集完成后刷新当前商品信息（拿到最新 crawl_task_id/标题/主图）
+        const refreshedInfo = await refreshProductInfo(product);
+        if (refreshedInfo.title || refreshedInfo.image) {
+          selectedProducts[currentIndex] = refreshedInfo;
+          Object.assign(product, refreshedInfo);
+          console.log(`[1688采集] 商品 ${product.id} 信息已刷新: ${refreshedInfo.title}`);
         }
+
+        // 关键：请求前端同步该行并等待真实主图渲染出来。
+        // 待抓取行只有占位 div、没有 <img>，必须让前端重渲染，
+        // 否则下一步 1688 同款比价检测不到图片。
+        setProductLogLine(product.id, 'crawl-progress', '采集完成，正在同步列表…', 'info');
+        requestFrontendRowRefresh(product.id);
+        const readyImg = await waitRowImageReady(product.id);
+        if (readyImg) {
+          setProductLogLine(product.id, 'crawl-progress', '采集完成，列表已同步', 'success');
+        } else {
+          setProductLogLine(product.id, 'crawl-progress', '采集完成，但同步后仍未检测到商品图片', 'warning');
+        }
+      } catch (err) {
+        updateProductLog(product.id, `采集失败: ${err.message}`, 'error');
+        currentIndex++;
+        setTimeout(() => processNextProduct(), 2000);
+        return;
       }
     } else {
-      console.log('[1688采集] 商品已采集，跳过批量采集');
+      console.log('[1688采集] 商品已采集，跳过采集');
       updateProductLog(product.id, '商品已采集', 'info');
     }
 
     // ── 步骤 2: 执行1688采集 ──
-    trigger1688ImageSearch(product);
+    // await：等图片加载好并真正点开"同款比价"后，再开始等待 1688 比价的计时，
+    // 避免比价还没打开就被下面的关闭逻辑提前关掉。
+    await trigger1688ImageSearch(product);
 
     updateProductLog(product.id, '已打开1688比价', 'success');
     

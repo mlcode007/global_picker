@@ -463,6 +463,7 @@
         :custom-row="(record) => ({
           'data-product-id': record.id,
           'data-tiktok-product-id': record.tiktok_product_id || '',
+          'data-crawl-task-id': record.crawl_task_id || '',
         })"
         :scroll="{ x: 1400 }"
         :row-selection="rowSelection"
@@ -2731,7 +2732,18 @@ async function recrawl(record) {
 function handleExtensionMessage(event) {
   if (event.source !== window) return
   const data = event.data
-  if (!data || data.source !== 'gp-extension' || data.type !== 'GP_1688_SAVED') return
+  if (!data || data.source !== 'gp-extension') return
+
+  // TikTok 采集完成后，扩展请求同步该商品行（拉取最新数据并重渲染，
+  // 让待抓取行从占位图变成真实主图，1688 同款比价才能拿到图片）
+  if (data.type === 'GP_REFRESH_PRODUCT') {
+    const productId = Number(data.productId)
+    if (!productId) return
+    refreshProductRow(productId)
+    return
+  }
+
+  if (data.type !== 'GP_1688_SAVED') return
   const productId = Number(data.productId)
   if (!productId) return
   loadAlibaba1688Matches(productId)
