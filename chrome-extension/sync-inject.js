@@ -412,6 +412,7 @@
     const pollInterval = 2000;
     
     while (Date.now() - startTime < maxWaitMs) {
+      let task = null;
       try {
         const response = await fetch(`/api/v1/tasks/${crawlTaskId}`, {
           method: 'GET',
@@ -420,26 +421,34 @@
             'Content-Type': 'application/json',
           },
         });
-        
+
         if (response.ok) {
           const result = await response.json();
-          const task = result.data || result;
-          console.log(`[1688采集] 轮询任务 #${crawlTaskId} 状态: ${task.status}`);
-          // 与"批量采集"一致：同一行进度文案不断刷新
-          const type = task.status === 'done' ? 'success'
-            : (task.status === 'failed' || task.status === 'error') ? 'error'
-            : 'info';
-          setProductLogLine(productId, 'crawl-progress', formatCrawlTaskLine(task), type);
-
-          if (task.status === 'done') return task;
-          if (task.status === 'failed' || task.status === 'error') {
-            throw new Error(formatCrawlTaskLine(task));
-          }
+          task = result.data || result;
         }
       } catch (e) {
-        console.warn('[1688采集] 轮询异常:', e.message);
+        // 仅"网络/请求异常"在此忽略并继续轮询重试；
+        // 任务本身的 failed/error 终态不在这里抛出，避免被本 catch 吞掉。
+        console.warn('[1688采集] 轮询请求异常，稍后重试:', e.message);
       }
-      
+
+      if (task) {
+        console.log(`[1688采集] 轮询任务 #${crawlTaskId} 状态: ${task.status}`);
+        // 与"批量采集"一致：同一行进度文案不断刷新
+        const type = task.status === 'done' ? 'success'
+          : (task.status === 'failed' || task.status === 'error') ? 'error'
+          : 'info';
+        setProductLogLine(productId, 'crawl-progress', formatCrawlTaskLine(task), type);
+
+        if (task.status === 'done') return task;
+        // 任务终态失败（如商品下架"所有采集器均未采集到商品数据"）：
+        // 立即抛出，由 processNextProduct 的 catch 跳过该商品、继续下一个，
+        // 不再傻等到 5 分钟超时而卡住整个队列。
+        if (task.status === 'failed' || task.status === 'error') {
+          throw new Error(formatCrawlTaskLine(task));
+        }
+      }
+
       await new Promise(resolve => setTimeout(resolve, pollInterval));
     }
     
