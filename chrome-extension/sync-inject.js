@@ -1043,6 +1043,15 @@
 
     if (!pathHitsCompare(e)) return;
 
+    // 批量采集进行中：归属已由 processNextProduct/trigger1688ImageSearch 精确锁定，
+    // 而本处点击是插件【代码触发】的 targetBtn.click()。此时绝不能再用 lastHovered 兜底覆盖，
+    // 否则会把当前商品搜到的 1688 结果挂到鼠标恰好停留的其它商品上（导致商品错位）。
+    if (isCollecting1688) {
+      console.log('[1688调试] 批量采集中，跳过手动兜底归属覆盖，沿用已锁定的商品上下文');
+      // alert('批量采集中，跳过手动兜底归属覆盖，沿用已锁定的商品上下文');
+      return;
+    }
+
     const ctx = lastHoveredProduct;
     if (!ctx || !ctx.productId) {
       // alert('[1688调试] 点中同款比价插件，但未捕获到归属商品（请先把鼠标移到某个商品图片上）lastHovered=' + JSON.stringify(ctx));
