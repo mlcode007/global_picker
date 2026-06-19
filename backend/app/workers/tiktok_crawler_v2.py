@@ -201,7 +201,7 @@ class V2Crawler(BaseCrawler):
             # )
 
             browser = await pw.chromium.launch(
-                headless=False,
+                headless=headless,
                 slow_mo=200,
                 args=fp.launch_args(),
             )
