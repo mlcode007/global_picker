@@ -27,6 +27,14 @@
           <template #icon><PhoneOutlined /></template>
           云手机管理
         </a-menu-item>
+        <a-menu-item key="Membership">
+          <template #icon><CrownOutlined /></template>
+          会员中心
+        </a-menu-item>
+        <a-menu-item v-if="isAdmin" key="DiscountCodes">
+          <template #icon><TagOutlined /></template>
+          折扣码管理
+        </a-menu-item>
         <a-menu-item key="ExchangeRate">
           <template #icon><DollarOutlined /></template>
           汇率管理
@@ -88,6 +96,8 @@ import {
   UnorderedListOutlined,
   ImportOutlined,
   PhoneOutlined,
+  CrownOutlined,
+  TagOutlined,
   DollarOutlined,
   UserOutlined,
   DownOutlined,
@@ -110,6 +120,8 @@ onUnmounted(() => {
   authStore.stopAutoRefresh()
 })
 
+const isAdmin = computed(() => authStore.user?.role === 'admin')
+
 const avatarText = computed(() => {
   const name = authStore.displayName
   return name ? name.charAt(0).toUpperCase() : 'U'
@@ -125,6 +137,8 @@ function handleMenuClick({ key }) {
   console.log('Menu clicked:', key)
   if (key === 'CloudPhone') {
     router.push('/cloud-phone')
+  } else if (key === 'Membership') {
+    router.push('/membership')
   } else if (key === 'ExchangeRate') {
     router.push('/exchange-rate')
   } else if (key === 'Profile') {

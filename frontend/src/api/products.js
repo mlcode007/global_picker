@@ -192,6 +192,9 @@ export const settingsApi = {
   updateCookies: (cookies) => http.post('/settings/crawl/cookies', { tiktok_cookies: cookies }),
   updateProxy: (proxy) => http.post('/settings/crawl/proxy', { tiktok_proxy: proxy }),
   clearCookies: () => http.delete('/settings/crawl/cookies'),
+  // 分国家代理：key 为 region code（PH/MY/TH/SG/ID/VN），value 为代理地址
+  getRegionProxies: () => http.get('/settings/crawl/region-proxies'),
+  updateRegionProxies: (regionProxies) => http.post('/settings/crawl/region-proxies', { region_proxies: regionProxies }),
 }
 
 export const dashboardApi = {

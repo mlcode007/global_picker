@@ -1,6 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.models.points import UserPoints, PointsTransaction
+from app.core.membership import CLOUD_PHONE_MAX
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +98,8 @@ class PointsManager:
         return transactions
 
     def get_user_phone_limit(self, user_id: int) -> int:
-        """获取用户云手机数量限制"""
-        # 默认限制为1台
-        return 1
+        """获取用户云手机数量上限（按有效订阅数，最多 CLOUD_PHONE_MAX 台）"""
+        from app.services.cloud_phone_service import CloudPhoneManager
+
+        active_count = CloudPhoneManager(self.db)._count_active_subscriptions(user_id)
+        return min(active_count, CLOUD_PHONE_MAX)

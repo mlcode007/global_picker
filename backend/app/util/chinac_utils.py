@@ -24,7 +24,17 @@ def cloud_phone_get_phone_pageUrl(Id="cp-bn15bs1p5aglj39w"):
         "AllowGroupControl": True,
     })
     res = api.do()
-    return json.loads(res['Info'])['data']['Url']
+    info = json.loads(res['Info'])
+    data = info.get('data', {})
+    url = data.get('Url')
+    if url:
+        return url
+    # 检查是否有错误码
+    resp_code = data.get('ResponseCode')
+    resp_msg = data.get('ResponseMsg', '')
+    if resp_code and resp_code != 0:
+        raise Exception(f"云手机API错误 [{resp_code}]: {resp_msg}")
+    return None
 
 
 """
@@ -199,8 +209,10 @@ def cloud_phone_describe_phone(id):
         'Id': f'{id}'
     })
     res = api.do()
-    print(json.dumps(json.loads(res['Info'])['data'], indent=2, ensure_ascii=False))
-    return json.loads(res['Info'])
+    info = json.loads(res['Info'])
+    if logger.isEnabledFor(logging.DEBUG) and isinstance(info.get('data'), dict):
+        logger.debug("DescribeCloudPhone %s: %s", id, json.dumps(info['data'], ensure_ascii=False))
+    return info
 
 def get_current_id():
     return requests.get('https://httpbin.org/ip').json()['origin']
@@ -231,7 +243,29 @@ def _adb_port_present(adb_host_port) -> bool:
     return bool(s)
 
 
-def cloud_phone_check_status(id):
+def is_cloud_phone_not_found(info) -> bool:
+    """DescribeCloudPhone 返回是否表示云端无此设备。"""
+    if not info or not isinstance(info, dict):
+        return True
+    for key in ("Code", "ErrorCode", "ResponseCode", "ResponseMsg"):
+        val = info.get(key)
+        if val in ("CloudPhoneNotFound", "3200", 170002, "资源不存在"):
+            return True
+        if isinstance(val, str) and "不存在" in val:
+            return True
+    data = info.get("data")
+    if not isinstance(data, dict):
+        return True
+    for key in ("Code", "ErrorCode", "ResponseCode", "ResponseMsg"):
+        val = data.get(key)
+        if val in ("CloudPhoneNotFound", "3200", 170002, "资源不存在"):
+            return True
+        if isinstance(val, str) and "不存在" in val:
+            return True
+    return "BasicInfo" not in data
+
+
+def cloud_phone_check_status(id, device_info=None):
     """
     检查云手机状态
     
@@ -252,14 +286,15 @@ def cloud_phone_check_status(id):
         return basic.get("AdbHostPort"), basic.get("AdbStatus"), basic
 
     try:
-        device_info = cloud_phone_describe_phone(id)
-        adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
-        # 检查返回格式
-        if "data" not in device_info:
+        if device_info is None:
+            device_info = cloud_phone_describe_phone(id)
+        if is_cloud_phone_not_found(device_info):
+            logger.info("设备 %s 在云端不存在，跳过 ADB 检查", id)
             return {
                 "code": -1,
-                "message": "设备不存在或返回格式错误",
+                "message": "设备不存在",
             }
+        adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
 
         # AdbStatus 为 CLOSE，或尚未下发 AdbHostPort 时，调用云端开通 ADB
         need_create_adb = (adb_status == "CLOSE") or not _adb_port_present(adb_host_port)
@@ -282,12 +317,12 @@ def cloud_phone_check_status(id):
                 else:
                     time.sleep(0.6)
                 device_info = cloud_phone_describe_phone(id)
-                adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
-                if "data" not in device_info:
+                if is_cloud_phone_not_found(device_info):
                     return {
                         "code": -1,
-                        "message": "设备不存在或返回格式错误",
+                        "message": "设备不存在",
                     }
+                adb_host_port, adb_status, _ = _read_adb_from_describe(device_info)
                 if _adb_port_present(adb_host_port):
                     break
                 logger.debug(

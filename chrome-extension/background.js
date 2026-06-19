@@ -5,7 +5,6 @@
 
 const CONFIG = {
   apiBaseUrl: 'https://www.globalpicker.com/api/v1',
-  dailyCollectionLimit: 10000,
   authCheckInterval: 5 * 60 * 1000,
   requestTimeout: 10000,
   retryCount: 3,
@@ -226,10 +225,16 @@ const Validator = {
       return { success: false, error: { code: 'AUTH_NOT_LOGGED_IN', message: '未登录' } };
     }
 
-    const todayCount = await StorageManager.getTodayCount();
-    const dailyLimit = CONFIG.dailyCollectionLimit;
+    const result = await ApiClient.getQuotaStatus(token);
+    if (!result.success) {
+      return result;
+    }
 
-    if (todayCount >= dailyLimit) {
+    const { today_count: todayCount = 0, daily_limit: dailyLimit = 0, remaining = 0 } = result.data || {};
+    await StorageManager.set(STORAGE_KEYS.TODAY_COUNT, todayCount);
+    await StorageManager.set(STORAGE_KEYS.QUOTA_DATE, new Date().toISOString().slice(0, 10));
+
+    if (remaining <= 0) {
       return {
         success: false,
         error: {
@@ -241,7 +246,7 @@ const Validator = {
 
     return {
       success: true,
-      data: { todayCount, dailyLimit, remaining: dailyLimit - todayCount },
+      data: { todayCount, dailyLimit, remaining },
     };
   },
 
@@ -623,7 +628,13 @@ const BackgroundService = {
 
       const result = await ApiClient.recordCollection(token);
       if (result.success) {
-        await StorageManager.incrementTodayCount();
+        const todayCount = result.data?.today_count;
+        if (typeof todayCount === 'number') {
+          await StorageManager.set(STORAGE_KEYS.TODAY_COUNT, todayCount);
+          await StorageManager.set(STORAGE_KEYS.QUOTA_DATE, new Date().toISOString().slice(0, 10));
+        } else {
+          await StorageManager.incrementTodayCount();
+        }
       }
 
       sendResponse(result);
@@ -652,8 +663,24 @@ const BackgroundService = {
       const token = await StorageManager.get(STORAGE_KEYS.TOKEN);
       const user = await StorageManager.get(STORAGE_KEYS.USER);
       const points = await StorageManager.get(STORAGE_KEYS.POINTS);
-      const todayCount = await StorageManager.getTodayCount();
       const lastSync = await StorageManager.get(STORAGE_KEYS.LAST_SYNC);
+
+      let todayCount = await StorageManager.getTodayCount();
+      let dailyLimit = 0;
+      let remaining = 0;
+      let tier = 'free';
+
+      if (token) {
+        const quotaResult = await ApiClient.getQuotaStatus(token);
+        if (quotaResult.success && quotaResult.data) {
+          todayCount = quotaResult.data.today_count ?? todayCount;
+          dailyLimit = quotaResult.data.daily_limit ?? 0;
+          remaining = quotaResult.data.remaining ?? 0;
+          tier = quotaResult.data.tier ?? tier;
+          await StorageManager.set(STORAGE_KEYS.TODAY_COUNT, todayCount);
+          await StorageManager.set(STORAGE_KEYS.QUOTA_DATE, new Date().toISOString().slice(0, 10));
+        }
+      }
 
       sendResponse({
         success: true,
@@ -662,7 +689,9 @@ const BackgroundService = {
           user: user || null,
           points: points || 0,
           todayCount,
-          dailyLimit: CONFIG.dailyCollectionLimit,
+          dailyLimit,
+          remaining,
+          tier,
           lastSync: lastSync || null,
         },
       });

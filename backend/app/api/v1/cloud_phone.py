@@ -2,16 +2,20 @@
 云手机管理 API
 """
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from typing import List
 
 from app.database import get_db
 from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 from app.models.user import User
-from app.services.cloud_phone_service import CloudPhoneManager
+from app.services.cloud_phone_service import CloudPhoneManager, CloudPhoneQuotaExceeded, CloudPhoneProvisionRateLimited
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["cloud-phone"])
+
+
+class ScaleRequest(BaseModel):
+    count: int = Field(default=1, ge=1, le=5)
 
 
 @router.get("/cloud-phone/pool/stats")
@@ -95,13 +99,16 @@ async def get_pool_stats(
             maintenance = db.execute(text(maintenance_sql)).scalar() or 0
         
         # 构建统计结果
+        manager = CloudPhoneManager(db)
+        quota = manager.get_subscription_quota(current_user.id) if has_created_by else {}
         stats = {
             "total": total,
             "available": available,
             "bound": bound,
             "offline": offline,
             "maintenance": maintenance,
-            "available_rate": available / total if total > 0 else 0
+            "available_rate": available / total if total > 0 else 0,
+            **quota,
         }
         
         return {
@@ -130,6 +137,7 @@ async def get_pool_stats(
 @router.get("/cloud-phone/pool/list")
 async def list_pool(
     status: str = None,
+    search: str = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     page: int = 1,
@@ -137,6 +145,10 @@ async def list_pool(
 ):
     """获取云手机池列表"""
     try:
+        from app.services.cloud_phone_expiry_service import expire_due_subscriptions
+
+        expire_due_subscriptions(db, user_id=current_user.id)
+
         # 检查数据库表结构是否包含 created_by 字段
         from sqlalchemy import inspect
         inspector = inspect(CloudPhonePool)
@@ -158,6 +170,11 @@ async def list_pool(
         if status:
             where_clause.append("status = :status")
             params["status"] = status
+
+        # 按手机 ID 模糊搜索
+        if search and search.strip():
+            where_clause.append("phone_id LIKE :search")
+            params["search"] = f"%{search.strip()}%"
         
         # 构建 WHERE 子句
         where_sql = " WHERE " + " AND ".join(where_clause) if where_clause else ""
@@ -229,25 +246,15 @@ async def list_pool(
                 "adb_host_port": None  # 默认值
             }
             
-            # 优先从数据库中读取 adb_host_port 字段
+            # 从数据库中读取 adb_host_port 字段
             if has_adb_host_port:
-                # 重新查询数据库，获取 adb_host_port 字段
-                phone = db.query(CloudPhonePool).filter(CloudPhonePool.phone_id == item.phone_id).first()
+                phone = db.query(CloudPhonePool).filter(CloudPhonePool.phone_id == phone_id).first()
                 if phone and hasattr(phone, 'adb_host_port'):
                     item_data["adb_host_port"] = phone.adb_host_port
             
-            # 如果数据库中没有 adb_host_port 字段，或者值为 None，再从云服务提供商的 API 获取
-            if not item_data["adb_host_port"]:
-                try:
-                    # 获取云手机详细信息
-                    device_info = cloud_phone_describe_phone(item.phone_id)
-                    if 'data' in device_info and 'BasicInfo' in device_info['data']:
-                        adb_host_port = device_info['data']['BasicInfo'].get('AdbHostPort')
-                        item_data["adb_host_port"] = adb_host_port
-                except Exception as e:
-                    pass
-            
             result_items.append(item_data)
+
+        CloudPhoneManager(db).attach_pool_expiry_info(current_user.id, result_items)
         
         return {
             "code": 0,
@@ -275,19 +282,40 @@ async def list_pool(
         }
 
 
-@router.post("/cloud-phone/pool/scale")
-async def manual_scale(
-    count: int = 1,
+@router.get("/cloud-phone/quota")
+async def get_cloud_phone_quota(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    """手动扩容云手机"""
+    """获取当前用户云手机订阅额度与已开通数。"""
     manager = CloudPhoneManager(db)
-    new_phones = manager.manual_scale(count, current_user.id)
     return {
         "code": 0,
-        "msg": f"成功扩容 {len(new_phones)} 台云手机",
-        "data": [p.phone_id for p in new_phones]
+        "msg": "success",
+        "data": manager.get_subscription_quota(current_user.id),
+    }
+
+
+@router.post("/cloud-phone/pool/scale")
+async def manual_scale(
+    request: ScaleRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """开通云手机（消耗订阅额度，不扣积分）。"""
+    manager = CloudPhoneManager(db)
+    try:
+        new_phones = manager.provision_phones(request.count, current_user.id)
+    except CloudPhoneProvisionRateLimited as e:
+        raise HTTPException(status_code=429, detail=str(e))
+    except CloudPhoneQuotaExceeded as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    if not new_phones:
+        raise HTTPException(status_code=500, detail="云手机开通失败，请稍后重试")
+    return {
+        "code": 0,
+        "msg": f"成功开通 {len(new_phones)} 台云手机",
+        "data": [p.phone_id for p in new_phones],
     }
 
 
@@ -323,7 +351,7 @@ async def acquire_phone(
     else:
         return {
             "code": -1,
-            "msg": "获取云手机失败，可用设备不足",
+            "msg": "获取云手机失败，请确认已购买云手机订阅且有空闲订阅额度",
             "data": None
         }
 
@@ -334,19 +362,19 @@ async def remove_phone(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """从云手机池中删除设备"""
+    """从云手机池中删除设备（软删除，仍占用订阅额度）。"""
     manager = CloudPhoneManager(db)
-    success = manager.remove_from_pool(phone_id)
+    success = manager.remove_from_pool(phone_id, current_user.id)
     if success:
         return {
             "code": 0,
-            "msg": "删除设备成功",
+            "msg": "设备已标记删除",
             "data": None
         }
     else:
         return {
             "code": -1,
-            "msg": "设备不存在或删除失败",
+            "msg": "设备不存在、无权限或删除失败",
             "data": None
         }
 
@@ -504,7 +532,8 @@ async def check_phone_health(
     manager = CloudPhoneManager(db)
     is_healthy = manager.check_phone_health(phone_id)
 
-    status = phone.status if phone else "unknown"
+    db.refresh(phone)
+    status = phone.status
     
     return {
         "code": 0,

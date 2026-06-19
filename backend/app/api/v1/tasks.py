@@ -66,6 +66,25 @@ def retry_task(
         raise HTTPException(status_code=404, detail="任务不存在")
     if task.status == "running":
         raise HTTPException(status_code=400, detail="任务正在采集中，请稍后")
+
+    product = (
+        db.query(Product)
+        .filter(Product.crawl_task_id == task_id, Product.user_id == current_user.id)
+        .first()
+    )
+    if product:
+        from app.services.quota_service import QuotaManager
+        quota_mgr = QuotaManager(db)
+        if not quota_mgr.check_quota(current_user.id):
+            status = quota_mgr.get_quota_status(current_user.id)
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "code": "QUOTA_EXCEEDED",
+                    "message": f"今日采集配额已用完（{status['today_count']}/{status['daily_limit']}）",
+                },
+            )
+
     task.status = "pending"
     task.error_msg = None
     db.commit()

@@ -160,7 +160,7 @@
       <!-- 采集配置 -->
       <a-card title="采集配置" :bordered="false" style="margin-top:16px">
         <a-alert
-          v-if="!hasCookies && !hasProxy"
+          v-if="!hasCookies && !hasProxy && !hasRegionProxy"
           type="warning"
           show-icon
           message="未配置 Cookie 或代理，TikTok 可能拦截采集请求"
@@ -173,12 +173,19 @@
           message="Cookie 已配置"
           style="margin-bottom:12px;font-size:12px"
         />
+        <a-alert
+          v-else-if="hasRegionProxy"
+          type="success"
+          show-icon
+          :message="`已配置 ${Object.values(regionProxies).filter(v => v && v.trim()).length} 个国家的专属代理`"
+          style="margin-bottom:12px;font-size:12px"
+        />
         <a-space direction="vertical" style="width:100%">
           <a-button block @click="showCookieModal = true">
             <KeyOutlined /> 配置 TikTok Cookie
           </a-button>
           <a-button block @click="showProxyModal = true">
-            <GlobalOutlined /> 配置代理
+            <GlobalOutlined /> 配置代理（按国家）
           </a-button>
         </a-space>
       </a-card>
@@ -214,21 +221,41 @@
       <!-- 代理配置弹窗 -->
       <a-modal
         v-model:open="showProxyModal"
-        title="配置代理"
+        title="配置代理（按 TikTok 国家）"
         @ok="saveProxy"
         :confirm-loading="proxySaving"
         ok-text="保存"
+        width="640px"
       >
         <a-alert
           type="info" show-icon style="margin-bottom:12px"
           message="需要住宅代理（Residential Proxy）才能绕过 IP 封锁"
         />
-        <a-form-item label="代理地址">
+        <a-alert
+          type="success" show-icon style="margin-bottom:12px;font-size:12px"
+          message="批量导入时，系统会自动按链接中的 region 选择对应国家的代理；未配置的国家将使用默认代理"
+        />
+        <a-form-item label="默认代理（未配置国家的回退）">
           <a-input
             v-model:value="proxyInput"
             placeholder="http://user:pass@host:port 或 socks5://host:port，留空清除"
           />
         </a-form-item>
+        <a-divider style="margin:8px 0">分国家代理</a-divider>
+        <div
+          v-for="(name, code) in REGION_MAP"
+          :key="code"
+          style="display:flex;align-items:center;gap:8px;margin-bottom:8px"
+        >
+          <a-tag color="blue" style="width:80px;text-align:center;flex-shrink:0">
+            {{ code }} - {{ name }}
+          </a-tag>
+          <a-input
+            v-model:value="regionProxies[code]"
+            :placeholder="`${code} 专用代理，留空则使用默认代理`"
+            allow-clear
+          />
+        </div>
       </a-modal>
 
       <!-- 使用说明 -->
@@ -495,10 +522,15 @@ const showCookieModal = ref(false)
 const showProxyModal = ref(false)
 const cookieInput = ref('')
 const proxyInput = ref('')
+const regionProxies = reactive({})  // {PH: '...', MY: '...', ...}
 const cookieSaving = ref(false)
 const proxySaving = ref(false)
+
 const hasCookies = ref(false)
 const hasProxy = ref(false)
+const hasRegionProxy = computed(() =>
+  Object.values(regionProxies).some(v => v && v.trim())
+)
 
 async function loadConfig() {
   try {
@@ -506,6 +538,13 @@ async function loadConfig() {
     hasCookies.value = !!cfg.tiktok_cookies
     hasProxy.value = !!cfg.tiktok_proxy
     proxyInput.value = cfg.tiktok_proxy || ''
+  } catch (_) {}
+  // 加载分国家代理
+  try {
+    const { region_proxies: rp = {} } = await settingsApi.getRegionProxies()
+    for (const code of Object.keys(REGION_MAP)) {
+      regionProxies[code] = rp[code] || ''
+    }
   } catch (_) {}
 }
 
@@ -532,10 +571,24 @@ async function clearCookies() {
 async function saveProxy() {
   proxySaving.value = true
   try {
+    // 1) 保存默认代理
     await settingsApi.updateProxy(proxyInput.value)
     hasProxy.value = !!proxyInput.value
+    // 2) 保存分国家代理（去掉空值）
+    const cleaned = {}
+    for (const code of Object.keys(REGION_MAP)) {
+      const v = (regionProxies[code] || '').trim()
+      if (v) cleaned[code] = v
+    }
+    await settingsApi.updateRegionProxies(cleaned)
     showProxyModal.value = false
-    message.success(proxyInput.value ? '代理已保存' : '代理已清除')
+    const regionCount = Object.keys(cleaned).length
+    const msg = regionCount > 0
+      ? `代理已保存：默认 + ${regionCount} 个国家专属代理`
+      : (proxyInput.value ? '默认代理已保存' : '代理已清除（直连模式）')
+    message.success(msg)
+  } catch (_) {
+    // request.js 已统一提示
   } finally {
     proxySaving.value = false
   }

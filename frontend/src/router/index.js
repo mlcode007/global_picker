@@ -24,6 +24,8 @@ const routes = [
       { path: 'products/:id', name: 'ProductDetail', component: () => import('@/views/ProductDetail.vue'), meta: { title: '商品详情' } },
       { path: 'import', name: 'BatchImport', component: () => import('@/views/BatchImport.vue'), meta: { title: '批量导入' } },
       { path: 'cloud-phone', name: 'CloudPhone', component: () => import('@/views/CloudPhone.vue'), meta: { title: '云手机管理' } },
+      { path: 'membership', name: 'Membership', component: () => import('@/views/Membership.vue'), meta: { title: '会员中心' } },
+      { path: 'discount-codes', name: 'DiscountCodes', component: () => import('@/views/DiscountCodes.vue'), meta: { title: '折扣码管理', requiresAdmin: true } },
       { path: 'exchange-rate', name: 'ExchangeRate', component: () => import('@/views/ExchangeRate.vue'), meta: { title: '汇率管理' } },
       { path: 'profile', name: 'Profile', component: () => import('@/views/Profile.vue'), meta: { title: '个人主页' } },
     ],
@@ -35,12 +37,28 @@ const router = createRouter({
   routes,
 })
 
+function getCurrentRole() {
+  try {
+    const user = JSON.parse(localStorage.getItem('gp_user') || 'null')
+    return user?.role || null
+  } catch {
+    return null
+  }
+}
+
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('gp_token')
 
   if (to.meta.requiresAuth || to.matched.some(r => r.meta.requiresAuth)) {
     if (!token) {
       return next({ path: '/login', query: { redirect: to.fullPath } })
+    }
+  }
+
+  // 仅管理员可访问的页面
+  if (to.matched.some(r => r.meta.requiresAdmin)) {
+    if (getCurrentRole() !== 'admin') {
+      return next('/dashboard')
     }
   }
 

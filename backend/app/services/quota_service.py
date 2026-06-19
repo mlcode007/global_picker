@@ -1,11 +1,14 @@
 import logging
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, timedelta, date
 from sqlalchemy.orm import Session
 from app.models.quota import UserQuota, CollectionHistory
+from app.models.user import User
+from app.core.membership import TIER_LIMITS, QUOTA_TIMEZONE
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DAILY_LIMIT = 10000
+# 北京时间 UTC+8
+_BJ_TZ = timezone(timedelta(hours=8))
 
 
 class QuotaManager:
@@ -15,10 +18,26 @@ class QuotaManager:
         self.db = db
 
     def _get_today(self) -> date:
-        return datetime.now(timezone.utc).date()
+        """按北京时间获取当天日期"""
+        return datetime.now(_BJ_TZ).date()
+
+    def _get_user_tier(self, user_id: int) -> str:
+        """获取用户有效会员等级（检查是否过期）"""
+        user = self.db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return "free"
+        tier = user.membership_tier or "free"
+        # 检查会员是否过期
+        if tier != "free" and user.membership_expires_at:
+            if datetime.now(timezone.utc) > user.membership_expires_at.replace(tzinfo=timezone.utc):
+                tier = "free"
+        return tier
 
     def _get_or_create_quota(self, user_id: int) -> UserQuota:
         today = self._get_today()
+        tier = self._get_user_tier(user_id)
+        daily_limit = TIER_LIMITS[tier]["daily_collect"]
+
         quota = self.db.query(UserQuota).filter(
             UserQuota.user_id == user_id,
             UserQuota.quota_date == today,
@@ -28,11 +47,16 @@ class QuotaManager:
             quota = UserQuota(
                 user_id=user_id,
                 quota_date=today,
-                daily_limit=DEFAULT_DAILY_LIMIT,
+                daily_limit=daily_limit,
             )
             self.db.add(quota)
             self.db.commit()
             self.db.refresh(quota)
+        else:
+            # 如果会员等级变化导致限额不同，更新限额
+            if quota.daily_limit != daily_limit:
+                quota.daily_limit = daily_limit
+                self.db.commit()
 
         return quota
 
@@ -40,10 +64,12 @@ class QuotaManager:
         """获取用户今日配额状态"""
         quota = self._get_or_create_quota(user_id)
         remaining = quota.daily_limit - quota.used_count
+        tier = self._get_user_tier(user_id)
         return {
             "today_count": quota.used_count,
             "daily_limit": quota.daily_limit,
             "remaining": max(0, remaining),
+            "tier": tier,
         }
 
     def check_quota(self, user_id: int) -> bool:
@@ -61,7 +87,7 @@ class QuotaManager:
                 "success": False,
                 "error": {
                     "code": "QUOTA_EXCEEDED",
-                    "message": f"今日采集配额已用完（{quota.daily_limit}/{quota.daily_limit}）",
+                    "message": f"今日采集配额已用完（{quota.used_count}/{quota.daily_limit}）",
                 },
             }
 

@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 import re
 
@@ -97,7 +98,16 @@ class UserOut(BaseModel):
     target_regions: Optional[list] = None
     avatar: Optional[str] = None
     role: str
+    membership_tier: str = "free"
+    membership_expires_at: Optional[str] = None
     is_active: int
+
+    @field_validator("membership_expires_at", mode="before")
+    @classmethod
+    def format_expires_at(cls, v):
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
 
     model_config = {"from_attributes": True}
 

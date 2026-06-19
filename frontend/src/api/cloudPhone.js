@@ -6,6 +6,7 @@ const CP_MEDIUM_MS = 120000
 
 export const cloudPhoneApi = {
   getPoolStats: () => http.get('/cloud-phone/pool/stats'),
+  getQuota: () => http.get('/cloud-phone/quota'),
   listPool: (params) => http.get('/cloud-phone/pool/list', { params }),
   manualScale: (count) =>
     http.post('/cloud-phone/pool/scale', { count }, { timeout: CP_LONG_MS }),

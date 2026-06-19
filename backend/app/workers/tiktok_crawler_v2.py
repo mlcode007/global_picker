@@ -41,6 +41,7 @@ from app.database import SessionLocal
 from app.models.product import Product
 from app.models.user_crawl_config import UserCrawlConfig
 from app.models.crawl_task import CrawlTask
+from app.services.quota_service import QuotaManager
 from app.workers.fingerprint import apply_fingerprint, build_fingerprint
 
 logger = logging.getLogger(__name__)
@@ -979,6 +980,17 @@ async def run_crawl_task(task_id: int) -> None:
         old_price = product.price
         old_price_cny = product.price_cny
 
+        quota_mgr = QuotaManager(db)
+        if not quota_mgr.check_quota(product.user_id):
+            quota_status = quota_mgr.get_quota_status(product.user_id)
+            task.status = "failed"
+            task.error_msg = (
+                f"今日采集配额已用完（{quota_status['today_count']}/{quota_status['daily_limit']}）"
+            )
+            task.status_detail = None
+            db.commit()
+            return
+
         try:
             result = await crawl_tiktok_product(
                 url=task.url,
@@ -987,6 +999,17 @@ async def run_crawl_task(task_id: int) -> None:
             )
 
             if result["success"]:
+                record_result = quota_mgr.record_collection(
+                    user_id=product.user_id,
+                    product_url=task.url,
+                    product_id=product.id,
+                )
+                if not record_result["success"]:
+                    logger.warning(
+                        "crawl task %d done but quota record failed: %s",
+                        task_id,
+                        record_result.get("error"),
+                    )
                 task.status = "done"
                 task.error_msg = None
                 logger.info("crawl task %d done (product_id=%s, user_id=%s)", 

@@ -64,6 +64,8 @@ async def lifespan(app: FastAPI):
     threading.Thread(target=_start_scheduler, daemon=True).start()
     from app.services.payment_compensation import start_compensation_scheduler
     start_compensation_scheduler()
+    from app.services.cloud_phone_expiry_service import start_expiry_scheduler
+    start_expiry_scheduler()
     yield
     from app.workers.pdd_photo.task_scheduler import stop_scheduler
     stop_scheduler()

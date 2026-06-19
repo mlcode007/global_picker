@@ -42,12 +42,27 @@ function updatePoints(points) {
   pointsEl.textContent = points != null ? points : '-';
 }
 
-function updateQuota(todayCount, dailyLimit) {
-  const remaining = dailyLimit - todayCount;
-  const percentage = (todayCount / dailyLimit) * 100;
+function formatCollectLimit(val) {
+  return (!val || val >= 999999) ? '不限' : val;
+}
 
-  quotaTextEl.textContent = `${todayCount} / ${dailyLimit}`;
-  remainingQuotaEl.textContent = remaining;
+function updateQuota(todayCount, dailyLimit, remaining) {
+  const isUnlimited = !dailyLimit || dailyLimit >= 999999;
+  const limitLabel = formatCollectLimit(dailyLimit);
+  const remain = remaining != null
+    ? remaining
+    : (isUnlimited ? null : Math.max(0, dailyLimit - todayCount));
+
+  quotaTextEl.textContent = `${todayCount} / ${limitLabel}`;
+  remainingQuotaEl.textContent = isUnlimited ? '不限' : remain;
+
+  if (isUnlimited) {
+    quotaBarEl.style.width = '0%';
+    quotaBarEl.className = 'progress-fill';
+    return;
+  }
+
+  const percentage = dailyLimit > 0 ? (todayCount / dailyLimit) * 100 : 0;
   quotaBarEl.style.width = `${Math.min(percentage, 100)}%`;
 
   if (percentage >= 90) {
@@ -126,7 +141,7 @@ async function loadStatus() {
       if (data.isLoggedIn && data.user) {
         updatePoints(data.points);
       }
-      updateQuota(data.todayCount, data.dailyLimit);
+      updateQuota(data.todayCount, data.dailyLimit, data.remaining);
     }
   });
 }

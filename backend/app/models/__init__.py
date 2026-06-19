@@ -12,6 +12,8 @@ from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 from app.models.points import UserPoints, PointsTransaction
 from app.models.quota import UserQuota, CollectionHistory
 from app.models.payment import PaymentOrder
+from app.models.cloud_phone_subscription import CloudPhoneSubscription
+from app.models.discount_code import DiscountCode
 
 __all__ = [
     "CrawlTask",
@@ -32,4 +34,6 @@ __all__ = [
     "UserQuota",
     "CollectionHistory",
     "PaymentOrder",
+    "CloudPhoneSubscription",
+    "DiscountCode",
 ]

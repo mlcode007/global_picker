@@ -22,6 +22,8 @@ class User(Base):
     target_regions = Column(JSON, nullable=True)
     avatar = Column(String(512), nullable=True)
     role = Column(Enum("admin", "editor", "viewer"), nullable=False, default="editor")
+    membership_tier = Column(Enum("free", "basic", "pro"), nullable=False, default="free", comment="会员等级")
+    membership_expires_at = Column(DateTime, nullable=True, comment="会员到期时间")
     is_active = Column(TINYINT(1), nullable=False, default=1)
     last_login = Column(DateTime, nullable=True)
     preferences = Column(JSON, nullable=True, comment="用户偏好 JSON，如导出列配置")

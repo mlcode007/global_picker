@@ -8,19 +8,32 @@
 from __future__ import annotations
 
 import logging
+import math
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func, or_
 
 from app.models.cloud_phone import CloudPhonePool, UserCloudPhone
 from app.models.user import User
+from app.models.cloud_phone_subscription import CloudPhoneSubscription
 from app.util.chinac.chinac_open_api import ChinacOpenApi
 from app.util.chinac_utils import cloud_phone_create
-from app.services.points_service import PointsManager
+from app.core.membership import CLOUD_PHONE_MAX, CLOUD_PHONE_PRICE, CLOUD_PHONE_PERIOD_DAYS, CLOUD_PHONE_RENEW_WARN_DAYS
 
 logger = logging.getLogger(__name__)
+
+
+class CloudPhoneQuotaExceeded(Exception):
+    """云手机订阅额度不足或开通受限。"""
+    pass
+
+
+class CloudPhoneProvisionRateLimited(CloudPhoneQuotaExceeded):
+    """开通操作过于频繁。"""
+    pass
 
 
 class CloudPhoneManager:
@@ -30,10 +43,26 @@ class CloudPhoneManager:
     MIN_AVAILABLE_POOL = 3  # 最小可用池数量
     MAX_AUTO_SCALE = 10     # 最大自动扩容数量
     AUTO_SCALE_THRESHOLD = 0.3  # 自动扩容触发阈值（可用率低于30%）
+    MIN_PROVISION_INTERVAL_SEC = 60  # 同一用户两次开通最小间隔（秒）
     
     def __init__(self, db: Session):
         self.db = db
         self.api = ChinacOpenApi()
+
+    @staticmethod
+    def _utc_now_naive() -> datetime:
+        return datetime.now(timezone.utc).replace(tzinfo=None)
+
+    @staticmethod
+    def _active_subscription_filter(now: datetime):
+        """有效订阅：active 且未到期（空位 expires_at 为 NULL）。"""
+        return (
+            CloudPhoneSubscription.status == "active",
+            or_(
+                CloudPhoneSubscription.expires_at.is_(None),
+                CloudPhoneSubscription.expires_at > now,
+            ),
+        )
     
     # ── 云手机池管理 ──────────────────────────────────────────
     
@@ -54,15 +83,22 @@ class CloudPhoneManager:
         logger.info("Cloud phone %s added to pool", phone_id)
         return phone
     
-    def remove_from_pool(self, phone_id: str) -> bool:
-        """从资源池移除云手机（永久删除）"""
+    def remove_from_pool(self, phone_id: str, user_id: int) -> bool:
+        """从资源池软删除云手机（仅标记 deleted，仍占用订阅额度）。"""
         phone = self.db.query(CloudPhonePool).filter(CloudPhonePool.phone_id == phone_id).first()
-        if phone:
-            self.db.delete(phone)
-            self.db.commit()
-            logger.info("Cloud phone %s removed from pool", phone_id)
-            return True
-        return False
+        if not phone:
+            return False
+        if phone.created_by is not None and phone.created_by != user_id:
+            logger.warning(
+                "User %d denied remove phone %s (owner=%s)",
+                user_id, phone_id, phone.created_by,
+            )
+            return False
+        phone.status = "deleted"
+        phone.updated_at = datetime.now()
+        self.db.commit()
+        logger.info("Cloud phone %s marked deleted by user %d", phone_id, user_id)
+        return True
     
     def update_pool_status(self, phone_id: str, status: str) -> bool:
         """更新云手机在池中的状态"""
@@ -189,6 +225,13 @@ class CloudPhoneManager:
         if not phone:
             logger.error("Cloud phone %s not found in pool", phone_id)
             return None
+
+        if phone.created_by is not None and phone.created_by != user_id:
+            logger.warning(
+                "User %d cannot bind phone %s (owner=%s)",
+                user_id, phone_id, phone.created_by,
+            )
+            return None
         
         if phone.status != "available":
             logger.error("Cloud phone %s is not available (status: %s)", phone_id, phone.status)
@@ -276,7 +319,7 @@ class CloudPhoneManager:
         为用户分配云手机（核心方法）
         策略：
         1. 检查用户是否已有云手机，如果有则返回错误
-        2. 检查用户积分是否足够
+        2. 检查用户是否有活跃的云手机订阅
         3. 从资源池分配空闲云手机
         4. 触发自动扩容（如果需要）
         """
@@ -286,44 +329,44 @@ class CloudPhoneManager:
             logger.warning("User %d already has cloud phone: %s, cannot acquire another one", user_id, existing.phone_id)
             return None
         
-        # 检查用户积分是否足够
-        points_manager = PointsManager(self.db)
-        if not points_manager.deduct_points(user_id, 100, "获取云手机"):
-            logger.warning("User %d has insufficient points to acquire cloud phone", user_id)
+        # 检查用户是否有有效云手机订阅（订阅制，不再扣积分）
+        active_count = self._count_active_subscriptions(user_id)
+        bound_count = self.db.query(UserCloudPhone).filter(
+            UserCloudPhone.user_id == user_id,
+        ).count()
+        
+        if bound_count >= active_count:
+            logger.warning("User %d has no spare subscription (active=%d, bound=%d)", user_id, active_count, bound_count)
             return None
         
-        # 从资源池分配
-        available = self._try_acquire_from_pool()
+        # 从当前用户的资源池分配
+        available = self._try_acquire_from_pool(user_id)
         if available:
             binding = self.bind_to_user(user_id, available.phone_id)
             if binding:
                 return binding
             else:
-                # 绑定失败，退还积分
-                points_manager.add_points(user_id, 100, "绑定云手机失败，退还积分")
+                logger.warning("Failed to bind cloud phone to user %d", user_id)
                 return None
         
-        # 触发自动扩容
-        if self._should_auto_scale():
-            new_phones = self._auto_scale(1, user_id)  # 只创建1台
+        # 触发自动扩容（消耗订阅额度）
+        try:
+            new_phones = self.provision_phones(1, user_id)
             if new_phones:
-                # 等待云手机状态就绪
-                time.sleep(2)  # 短暂延迟，确保云手机状态更新
+                time.sleep(2)
                 binding = self.bind_to_user(user_id, new_phones[0].phone_id)
                 if binding:
                     return binding
-                else:
-                    # 绑定失败，退还积分
-                    points_manager.add_points(user_id, 100, "绑定云手机失败，退还积分")
-                    return None
+                logger.warning("Failed to bind auto-scaled phone to user %d", user_id)
+        except CloudPhoneQuotaExceeded:
+            logger.warning("User %d has no subscription slot for auto provision", user_id)
         
-        # 没有可用云手机，退还积分
-        points_manager.add_points(user_id, 100, "获取云手机失败，退还积分")
+        # 没有可用云手机
         logger.warning("No available cloud phone for user %d", user_id)
         return None
     
-    def _try_acquire_from_pool(self) -> Optional[CloudPhonePool]:
-        """尝试从资源池获取可用云手机"""
+    def _try_acquire_from_pool(self, user_id: int) -> Optional[CloudPhonePool]:
+        """尝试从当前用户的资源池获取可用云手机。"""
         from sqlalchemy.orm import load_only
         from sqlalchemy import inspect
         inspector = inspect(CloudPhonePool)
@@ -350,7 +393,8 @@ class CloudPhoneManager:
         phone = self.db.query(CloudPhonePool).options(
             load_only(*load_fields)
         ).filter(
-            CloudPhonePool.status == "available"
+            CloudPhonePool.status == "available",
+            CloudPhonePool.created_by == user_id,
         ).with_for_update(skip_locked=True).first()
         
         if phone:
@@ -381,15 +425,6 @@ class CloudPhoneManager:
         if count <= 0:
             logger.warning("Invalid scale count: %d", count)
             return []
-        
-        # 安全检查：防止频繁调用
-        if hasattr(self, '_last_scale_time'):
-            time_since_last = time.time() - self._last_scale_time
-            if time_since_last < 60:  # 限制1分钟内只能调用一次
-                logger.warning("Scale rate limit exceeded: %s seconds", time_since_last)
-                return []
-        
-        self._last_scale_time = time.time()
         
         created = []
         for i in range(count):
@@ -479,78 +514,78 @@ class CloudPhoneManager:
     def check_phone_health(self, phone_id: str) -> bool:
         """检查云手机健康状态"""
         try:
-            # 先尝试开启ADB权限
-            from app.util.chinac_utils import cloud_phone_create_adb, cloud_phone_check_status, cloud_phone_describe_phone
-            # 然后使用chinac_utils中的check_phone_status方法检查ADB连接
-            adb_status = cloud_phone_check_status(phone_id)
+            from app.util.chinac_utils import (
+                cloud_phone_check_status,
+                cloud_phone_describe_phone,
+                is_cloud_phone_not_found,
+            )
+
+            # 先查云端是否存在，不存在则直接标记离线，跳过 ADB 慢路径
+            try:
+                device_info = cloud_phone_describe_phone(phone_id)
+            except Exception as describe_err:
+                logger.warning("DescribeCloudPhone 失败 %s: %s", phone_id, describe_err)
+                device_info = None
+
+            if device_info is not None and is_cloud_phone_not_found(device_info):
+                logger.info("Cloud phone %s not found in cloud, mark deleted", phone_id)
+                self._apply_health_status(phone_id, "deleted", adb_host_port=None)
+                return False
+
+            adb_status = cloud_phone_check_status(phone_id, device_info=device_info)
             logger.info(f"ADB status check result: {adb_status}")
-            
-            # 直接查询整个对象，因为我们已经添加了 adb_host_port 字段到数据库表中
-            phone = self.db.query(CloudPhonePool).filter(
-                CloudPhonePool.phone_id == phone_id
-            ).first()
-            
-            if phone:
-                try:
-                    adb_host_port = None
-                    # 只有当设备存在时，才获取设备详细信息
-                    if adb_status['code'] != -1:
-                        # 获取设备详细信息
-                        device_info = cloud_phone_describe_phone(phone_id)
-                        if 'data' in device_info and 'BasicInfo' in device_info['data']:
-                            basic_info = device_info['data']['BasicInfo']
-                            # 尝试从不同位置获取ADB端口信息
-                            adb_host_port = basic_info.get('AdbHostPort')
-                            
-                            # 如果没有直接的AdbHostPort字段，尝试从其他地方获取
-                            if not adb_host_port and 'NetInfo' in device_info['data']:
-                                net_info = device_info['data']['NetInfo']
-                                outer_ip = net_info.get('OuterIp')
-                                # 假设ADB端口是固定的，或者从其他地方获取
-                                if outer_ip:
-                                    adb_host_port = f"{outer_ip}:5555"  # 假设ADB默认端口是5555
-                        
-                    # 只有当 adb_host_port 字段存在时才更新
-                    from sqlalchemy import inspect
-                    inspector = inspect(CloudPhonePool)
-                    has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
-                    
-                    if has_adb_host_port and adb_host_port:
-                        phone.adb_host_port = adb_host_port
-                    
-                    # 根据ADB连接状态更新设备状态
-                    if adb_status['code'] == 0:
-                        # ADB连接成功，设备状态为可用
-                        phone.status = "available"
-                        logger.info(f"Updated cloud phone {phone_id} status to available and synced ADB port: {adb_host_port}")
-                    elif adb_status['code'] == -1:
-                        # 设备不存在或获取信息失败，设备状态为已删除
-                        phone.status = "deleted"
-                        logger.info(f"Updated cloud phone {phone_id} status to deleted due to device not found: {adb_status['message']}")
-                    elif adb_status['code'] == -3:
-                        # ADB连接超时，设备状态为超时
-                        phone.status = "timeo"
-                        logger.info(f"Updated cloud phone {phone_id} status to timeo due to ADB connection timeout: {adb_status['message']}")
-                    else:
-                        # 其他ADB连接失败，设备状态为离线
-                        phone.status = "offline"
-                        logger.info(f"Updated cloud phone {phone_id} status to offline due to ADB connection failure: {adb_status['message']}")
-                    
-                    phone.updated_at = datetime.now()
-                    self.db.commit()
-                except Exception as db_error:
-                    logger.error(f"Failed to update cloud phone {phone_id} in database: {db_error}")
-                    # 回滚事务，避免影响其他操作
-                    self.db.rollback()
-            
-            # 根据ADB连接状态返回健康状态
+
+            adb_host_port = None
+            if adb_status['code'] != -1 and device_info and 'data' in device_info:
+                basic_info = device_info['data'].get('BasicInfo') or {}
+                adb_host_port = basic_info.get('AdbHostPort')
+                if not adb_host_port and 'NetInfo' in device_info['data']:
+                    outer_ip = device_info['data']['NetInfo'].get('OuterIp')
+                    if outer_ip:
+                        adb_host_port = f"{outer_ip}:5555"
+
+            if adb_status['code'] == 0:
+                self._apply_health_status(phone_id, "available", adb_host_port)
+            elif adb_status['code'] == -1:
+                self._apply_health_status(phone_id, "deleted", adb_host_port)
+            elif adb_status['code'] == -3:
+                self._apply_health_status(phone_id, "timeo", adb_host_port)
+            else:
+                self._apply_health_status(phone_id, "offline", adb_host_port)
+
             is_healthy = adb_status['code'] == 0
-            logger.info(f"Cloud phone {phone_id} health check result: {'healthy' if is_healthy else 'unhealthy'} (ADB status: {adb_status['message']})")
+            logger.info(
+                "Cloud phone %s health check result: %s (ADB status: %s)",
+                phone_id,
+                'healthy' if is_healthy else 'unhealthy',
+                adb_status['message'],
+            )
             return is_healthy
-            
+
         except Exception as e:
             logger.error("Failed to check cloud phone %s health: %s", phone_id, str(e))
             return False
+
+    def _apply_health_status(self, phone_id: str, status: str, adb_host_port: Optional[str] = None) -> None:
+        """根据健康检查结果更新池内设备状态。"""
+        phone = self.db.query(CloudPhonePool).filter(
+            CloudPhonePool.phone_id == phone_id
+        ).first()
+        if not phone:
+            return
+        try:
+            from sqlalchemy import inspect
+            inspector = inspect(CloudPhonePool)
+            has_adb_host_port = 'adb_host_port' in [c.name for c in inspector.columns]
+            if has_adb_host_port and adb_host_port:
+                phone.adb_host_port = adb_host_port
+            phone.status = status
+            phone.updated_at = datetime.now()
+            self.db.commit()
+            logger.info("Updated cloud phone %s status to %s", phone_id, status)
+        except Exception as db_error:
+            logger.error("Failed to update cloud phone %s in database: %s", phone_id, db_error)
+            self.db.rollback()
     
     def recover_offline_phones(self) -> int:
         """恢复离线云手机"""
@@ -621,28 +656,234 @@ class CloudPhoneManager:
         }
     
     # ── 扩容接口（供外部调用）──────────────────────────────────────
-    
+
+    def _count_provisioned_active(self, user_id: int) -> int:
+        """展示用已开通数：不含 deleted。"""
+        from sqlalchemy import func
+        return self.db.query(func.count(CloudPhonePool.id)).filter(
+            CloudPhonePool.created_by == user_id,
+            CloudPhonePool.status != "deleted",
+        ).scalar() or 0
+
+    def _count_provisioned_total(self, user_id: int) -> int:
+        """额度占用总数：含 deleted，防止标记删除后重复开通。"""
+        from sqlalchemy import func
+        return self.db.query(func.count(CloudPhonePool.id)).filter(
+            CloudPhonePool.created_by == user_id,
+        ).scalar() or 0
+
+    def _count_active_subscriptions(self, user_id: int) -> int:
+        now = self._utc_now_naive()
+        status_filter, expiry_filter = self._active_subscription_filter(now)
+        return self.db.query(func.count(CloudPhoneSubscription.id)).filter(
+            CloudPhoneSubscription.user_id == user_id,
+            status_filter,
+            expiry_filter,
+        ).scalar() or 0
+
+    def _count_unbound_slots(self, user_id: int) -> int:
+        """可开通空位数：已购未绑定且未写 expires_at。"""
+        now = self._utc_now_naive()
+        status_filter, expiry_filter = self._active_subscription_filter(now)
+        return self.db.query(func.count(CloudPhoneSubscription.id)).filter(
+            CloudPhoneSubscription.user_id == user_id,
+            status_filter,
+            expiry_filter,
+            CloudPhoneSubscription.device_id.is_(None),
+            CloudPhoneSubscription.expires_at.is_(None),
+        ).scalar() or 0
+
+    def _build_quota(
+        self,
+        subscription_count: int,
+        provisioned_active: int,
+        provisioned_total: int,
+        unbound_slots: int,
+    ) -> Dict[str, Any]:
+        capped_subscription = min(subscription_count, CLOUD_PHONE_MAX)
+        available_slots = min(unbound_slots, max(0, CLOUD_PHONE_MAX - provisioned_active))
+        return {
+            "subscription_count": subscription_count,
+            "provisioned_count": provisioned_active,
+            "provisioned_total": provisioned_total,
+            "available_slots": available_slots,
+            "max": CLOUD_PHONE_MAX,
+            "price": CLOUD_PHONE_PRICE,
+            "period_days": CLOUD_PHONE_PERIOD_DAYS,
+            "renew_warn_days": CLOUD_PHONE_RENEW_WARN_DAYS,
+            "over_limit": provisioned_active > subscription_count,
+        }
+
+    def get_subscription_quota(self, user_id: int) -> Dict[str, Any]:
+        """订阅额度：查询前懒处理到期订阅。"""
+        from app.services.cloud_phone_expiry_service import expire_due_subscriptions
+
+        expire_due_subscriptions(self.db, user_id=user_id)
+        subscription_count = self._count_active_subscriptions(user_id)
+        provisioned_active = self._count_provisioned_active(user_id)
+        provisioned_total = self._count_provisioned_total(user_id)
+        unbound_slots = self._count_unbound_slots(user_id)
+        return self._build_quota(
+            subscription_count, provisioned_active, provisioned_total, unbound_slots
+        )
+
+    def _assert_provision_allowed(self, user_id: int, count: int) -> Dict[str, Any]:
+        """在事务锁内校验开通额度与频率。"""
+        last = (
+            self.db.query(CloudPhonePool)
+            .filter(CloudPhonePool.created_by == user_id)
+            .order_by(CloudPhonePool.created_at.desc())
+            .first()
+        )
+        if last and last.created_at:
+            created_ts = last.created_at.timestamp() if hasattr(last.created_at, 'timestamp') else 0
+            elapsed = time.time() - created_ts
+            if elapsed < self.MIN_PROVISION_INTERVAL_SEC:
+                wait = int(self.MIN_PROVISION_INTERVAL_SEC - elapsed)
+                raise CloudPhoneProvisionRateLimited(f"操作过于频繁，请 {max(wait, 1)} 秒后再试")
+
+        subscription_count = self._count_active_subscriptions(user_id)
+        provisioned_active = self._count_provisioned_active(user_id)
+        provisioned_total = self._count_provisioned_total(user_id)
+        unbound_slots = self._count_unbound_slots(user_id)
+        quota = self._build_quota(
+            subscription_count, provisioned_active, provisioned_total, unbound_slots
+        )
+
+        if count > quota["available_slots"]:
+            raise CloudPhoneQuotaExceeded(
+                f"可开通额度不足：已订阅 {subscription_count} 台，"
+                f"已开通 {provisioned_active} 台，可开通 {quota['available_slots']} 台"
+            )
+        if provisioned_active + count > CLOUD_PHONE_MAX:
+            raise CloudPhoneQuotaExceeded(f"每用户最多开通 {CLOUD_PHONE_MAX} 台云手机")
+        return quota
+
+    def _bind_subscriptions_to_phones(self, user_id: int, phones: List[CloudPhonePool]) -> None:
+        """将新开通实例关联到尚未绑定设备的活跃空位订阅，并写入到期时间。"""
+        if not phones:
+            return
+        now = self._utc_now_naive()
+        expires_at = now + timedelta(days=CLOUD_PHONE_PERIOD_DAYS)
+        unbound = (
+            self.db.query(CloudPhoneSubscription)
+            .filter(
+                CloudPhoneSubscription.user_id == user_id,
+                CloudPhoneSubscription.status == "active",
+                CloudPhoneSubscription.device_id.is_(None),
+                CloudPhoneSubscription.expires_at.is_(None),
+            )
+            .order_by(CloudPhoneSubscription.id)
+            .limit(len(phones))
+            .all()
+        )
+        for phone, sub in zip(phones, unbound):
+            sub.device_id = phone.id
+            sub.started_at = now
+            sub.expires_at = expires_at
+        if unbound:
+            self.db.commit()
+
+    def attach_pool_expiry_info(self, user_id: int, items: List[Dict[str, Any]]) -> None:
+        """为池列表项附加到期/续费信息。"""
+        if not items:
+            return
+        phone_ids = [item["phone_id"] for item in items if item.get("phone_id")]
+        if not phone_ids:
+            return
+
+        pools = (
+            self.db.query(CloudPhonePool)
+            .filter(
+                CloudPhonePool.phone_id.in_(phone_ids),
+                CloudPhonePool.created_by == user_id,
+            )
+            .all()
+        )
+        pool_by_phone = {p.phone_id: p for p in pools}
+        pool_ids = [p.id for p in pools]
+        if not pool_ids:
+            return
+
+        subs = (
+            self.db.query(CloudPhoneSubscription)
+            .filter(
+                CloudPhoneSubscription.user_id == user_id,
+                CloudPhoneSubscription.device_id.in_(pool_ids),
+            )
+            .order_by(CloudPhoneSubscription.id.desc())
+            .all()
+        )
+        sub_by_device: Dict[int, CloudPhoneSubscription] = {}
+        for sub in subs:
+            if sub.device_id not in sub_by_device:
+                sub_by_device[sub.device_id] = sub
+
+        now = self._utc_now_naive()
+        for item in items:
+            pool = pool_by_phone.get(item.get("phone_id"))
+            if not pool:
+                continue
+            sub = sub_by_device.get(pool.id)
+            if not sub:
+                item.update({
+                    "expires_at": None,
+                    "days_remaining": None,
+                    "renewable": False,
+                    "subscription_status": None,
+                })
+                continue
+
+            item["subscription_status"] = sub.status
+            if sub.expires_at:
+                item["expires_at"] = sub.expires_at.isoformat()
+                delta_sec = (sub.expires_at - now).total_seconds()
+                item["days_remaining"] = max(0, math.ceil(delta_sec / 86400))
+                item["renewable"] = (
+                    sub.status == "active"
+                    and sub.expires_at > now
+                    and item.get("status") != "deleted"
+                )
+            else:
+                item["expires_at"] = None
+                item["days_remaining"] = None
+                item["renewable"] = False
+
+    def provision_phones(self, count: int = 1, user_id: int = None) -> List[CloudPhonePool]:
+        """消耗订阅额度开通云手机实例（带行锁，防并发超开）。"""
+        if user_id is None:
+            raise ValueError("user_id is required")
+        if count < 1:
+            return []
+
+        try:
+            self.db.query(CloudPhoneSubscription).filter(
+                CloudPhoneSubscription.user_id == user_id,
+                CloudPhoneSubscription.status == "active",
+            ).with_for_update().all()
+            self.db.query(CloudPhonePool).filter(
+                CloudPhonePool.created_by == user_id,
+            ).with_for_update().all()
+
+            self._assert_provision_allowed(user_id, count)
+        except (CloudPhoneQuotaExceeded, CloudPhoneProvisionRateLimited):
+            self.db.rollback()
+            raise
+
+        phones = self._auto_scale(count, user_id)
+        if not phones:
+            raise CloudPhoneQuotaExceeded("云手机开通失败，请稍后重试")
+        if len(phones) < count:
+            raise CloudPhoneQuotaExceeded(
+                f"仅成功开通 {len(phones)}/{count} 台，请稍后重试"
+            )
+
+        self._bind_subscriptions_to_phones(user_id, phones)
+        return phones
+
     def manual_scale(self, count: int = 1, user_id: int = None) -> List[CloudPhonePool]:
-        """手动扩容云手机"""
-        points_manager = None
-        required_points = 0
-        
-        # 检查用户积分是否足够
-        if user_id:
-            points_manager = PointsManager(self.db)
-            required_points = 100 * count
-            if not points_manager.deduct_points(user_id, required_points, f"手动扩容{count}台云手机"):
-                logger.warning("User %d has insufficient points to scale cloud phones: required %d", user_id, required_points)
-                return []
-        
-        new_phones = self._auto_scale(count, user_id)
-        
-        if not new_phones and user_id and points_manager:
-            # 扩容失败，退还积分
-            points_manager.add_points(user_id, required_points, f"手动扩容{count}台云手机失败，退还积分")
-            logger.info("Refunded %d points to user %d due to scale failure", required_points, user_id)
-        
-        return new_phones
+        """开通云手机（消耗订阅额度，不再扣积分）。"""
+        return self.provision_phones(count, user_id)
     
     def ensure_pool_size(self, min_size: int = None) -> int:
         """确保资源池最小大小"""

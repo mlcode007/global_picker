@@ -2,11 +2,25 @@
   <div class="cloud-phone">
     <a-page-header title="云手机管理" ghost>
       <template #extra>
-        <a-tag color="blue" style="margin-right: 16px;">积分: {{ userPoints }}</a-tag>
-        <a-button v-if="myPhone" @click="showReleaseDialog = true" danger>释放云手机</a-button>
-        <a-button @click="refresh" :loading="refreshing">刷新</a-button>
+        <a-space wrap>
+          <a-tag color="blue">订阅 {{ phoneQuota.subscription_count || 0 }} 台</a-tag>
+          <a-tag color="green">已开通 {{ phoneQuota.provisioned_count || 0 }} 台</a-tag>
+          <a-tag :color="(phoneQuota.available_slots || 0) > 0 ? 'processing' : 'default'">
+            可开通 {{ phoneQuota.available_slots || 0 }} 台
+          </a-tag>
+          <a-button v-if="myPhone" @click="showReleaseDialog = true" danger>释放云手机</a-button>
+          <a-button @click="refresh" :loading="refreshing">刷新</a-button>
+        </a-space>
       </template>
     </a-page-header>
+
+    <a-alert
+      v-if="phoneQuota.over_limit"
+      type="warning"
+      show-icon
+      style="margin-top: 16px"
+      message="已开通设备数超过当前订阅额度，请购买订阅或联系管理员处理历史数据"
+    />
 
     <!-- 统计卡片 -->
     <a-row :gutter="[16, 16]" style="margin-top: 16px">
@@ -63,8 +77,16 @@
 
       <!-- 无设备 -->
       <div v-else-if="poolList.length === 0" class="live-empty">
-        <a-empty description="暂无云手机设备">
-          <a-button type="primary" @click="manualScale(1)">创建云手机</a-button>
+        <a-empty :description="emptyPoolDescription">
+          <a-space>
+            <a-button v-if="canProvision" type="primary" @click="provisionPhone(1)" :loading="provisioning">
+              开通云手机
+            </a-button>
+            <a-button v-else-if="canBuySubscription" type="primary" @click="openBuySubscription">
+              购买订阅
+            </a-button>
+            <a-button v-else disabled>已达上限 {{ phoneQuota.max || 5 }} 台</a-button>
+          </a-space>
         </a-empty>
       </div>
 
@@ -150,8 +172,30 @@
     <a-card title="云手机池" class="pool-list-card" style="margin-top: 16px">
       <template #extra>
         <a-space>
-          <a-input-search v-model:value="poolSearch" placeholder="搜索手机ID" style="width: 200px" />
-          <a-button type="primary" @click="manualScale(1)">扩容1台</a-button>
+          <a-input-search
+            v-model:value="poolSearch"
+            placeholder="搜索手机ID"
+            style="width: 200px"
+            allow-clear
+            @search="onPoolSearch"
+          />
+          <a-button
+            v-if="canProvision"
+            type="primary"
+            @click="provisionPhone(1)"
+            :loading="provisioning"
+          >
+            开通云手机
+          </a-button>
+          <a-button
+            v-else-if="canBuySubscription"
+            type="primary"
+            @click="openBuySubscription"
+          >
+            购买订阅
+          </a-button>
+          <a-button v-else disabled>已达上限</a-button>
+          <a-button type="link" @click="router.push('/membership')">会员中心</a-button>
         </a-space>
       </template>
 
@@ -163,6 +207,7 @@
         :scroll="{ x: 800 }"
         row-key="phone_id"
         size="middle"
+        @change="handlePoolTableChange"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'status'">
@@ -173,8 +218,38 @@
           <template v-if="column.key === 'created_at'">
             {{ formatTime(record.created_at) }}
           </template>
+          <template v-if="column.key === 'expires_at'">
+            <template v-if="record.subscription_status === 'expired'">
+              <a-tag color="error">已到期</a-tag>
+            </template>
+            <template v-else-if="record.expires_at">
+              {{ formatTime(record.expires_at) }}
+            </template>
+            <span v-else>-</span>
+          </template>
+          <template v-if="column.key === 'days_remaining'">
+            <template v-if="record.subscription_status === 'expired'">
+              <span style="color: #cf1322">已到期</span>
+            </template>
+            <template v-else-if="record.days_remaining != null">
+              <a-tag
+                :color="record.days_remaining <= (phoneQuota.renew_warn_days || 7) ? 'warning' : 'default'"
+              >
+                剩余 {{ record.days_remaining }} 天
+              </a-tag>
+            </template>
+            <span v-else>-</span>
+          </template>
           <template v-if="column.key === 'action'">
             <a-space>
+              <a-button
+                v-if="record.renewable"
+                type="link"
+                size="small"
+                @click="openRenewPayment(record.phone_id)"
+              >
+                续费
+              </a-button>
               <a-button
                 type="link"
                 size="small"
@@ -246,26 +321,81 @@
         <a-spin tip="检查中..." />
       </div>
     </a-modal>
+
+    <!-- 购买云手机订阅 -->
+    <a-modal
+      v-model:open="showCloudPhoneBuy"
+      title="购买云手机订阅"
+      @ok="handleBuyCloudPhone"
+      :confirm-loading="buyingCloudPhone"
+    >
+      <a-form layout="vertical">
+        <a-form-item label="购买数量">
+          <a-input-number v-model:value="cloudPhoneQuantity" :min="1" :max="maxBuyQuantity" />
+          <div style="margin-top: 8px; color: #999; font-size: 12px">
+            ¥{{ phoneQuota.price || 100 }}/月/台（开通后起算 {{ phoneQuota.period_days || 30 }} 天），当前已订阅 {{ phoneQuota.subscription_count || 0 }} 台，最多 {{ phoneQuota.max || 5 }} 台
+          </div>
+        </a-form-item>
+        <a-form-item label="应付金额">
+          <span style="font-size: 24px; color: #1677ff; font-weight: bold">
+            ¥{{ (phoneQuota.price || 100) * cloudPhoneQuantity }}
+          </span>
+          <span style="color: #999; margin-left: 8px">/月</span>
+        </a-form-item>
+      </a-form>
+      <div style="margin-top: 8px">
+        <a @click="router.push('/membership')">也可前往会员中心购买</a>
+      </div>
+    </a-modal>
+
+    <!-- 支付宝扫码 -->
+    <a-modal
+      v-model:open="showPaymentModal"
+      :title="paymentModalTitle"
+      :footer="null"
+      @cancel="cancelPayment"
+      width="500px"
+    >
+      <div v-if="!qrCodeUrl" class="payment-loading">
+        <a-spin tip="生成支付二维码..." />
+      </div>
+      <div v-else class="qr-code-container">
+        <div class="qr-code-header">
+          <h3>请使用支付宝扫码支付</h3>
+          <div class="payment-info">
+            <span class="payment-amount">¥{{ paymentInfo.amount }}</span>
+          </div>
+        </div>
+        <div class="qr-code-wrapper">
+          <qrcode-vue :value="qrCodeUrl" :size="240" level="H" />
+        </div>
+        <a-alert
+          :message="paymentStatusText"
+          :type="paymentStatusType"
+          show-icon
+          style="margin-top: 16px"
+        />
+      </div>
+    </a-modal>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   PhoneOutlined,
   CheckCircleOutlined,
-  CheckCircleFilled,
   FireOutlined,
   DesktopOutlined,
   ReloadOutlined,
-  QuestionCircleOutlined,
   ExpandOutlined,
   ExclamationCircleOutlined,
-  MobileOutlined,
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import QrcodeVue from 'qrcode.vue'
 import { cloudPhoneApi } from '@/api/cloudPhone'
-import { pointsApi } from '@/api/points'
+import { membershipApi } from '@/api/membership'
 import {
   loadChinacJsSdk,
   createSdkInstance,
@@ -273,6 +403,8 @@ import {
   destroyChinacSdk,
   initChinacPlayer,
 } from '@/utils/chinacWebSdk'
+
+const router = useRouter()
 
 /** 每设备独立 SDK 实例；全局 XingJieSdk 单例只能绑一个 iframe */
 const previewSdks = new Map()
@@ -300,10 +432,20 @@ function destroyModalSdkOnly() {
 }
 
 const stats = ref({})
+const phoneQuota = ref({
+  subscription_count: 0,
+  provisioned_count: 0,
+  available_slots: 0,
+  max: 5,
+  price: 100,
+  period_days: 30,
+  renew_warn_days: 7,
+  over_limit: false,
+})
 const myPhone = ref(null)
 const poolList = ref([])
-const userPoints = ref(0)
 const poolLoading = ref(false)
+const provisioning = ref(false)
 const poolSearch = ref('')
 const poolPagination = ref({
   current: 1,
@@ -327,7 +469,47 @@ const enlargeOpening = ref(false)
 const openingPhoneId = ref(null)
 const closeEnlargeBusy = ref(false)
 
+const showCloudPhoneBuy = ref(false)
+const showPaymentModal = ref(false)
+const qrCodeUrl = ref('')
+const paymentInfo = ref({ amount: 0, out_trade_no: '' })
+const paymentStatus = ref('pending')
+const buyingCloudPhone = ref(false)
+const renewingPhoneId = ref(null)
+const cloudPhoneQuantity = ref(1)
+const paymentModalTitle = ref('云手机订阅支付')
+let paymentQueryTimer = null
+
 let pollingInterval = null
+
+const canProvision = computed(() => (phoneQuota.value.available_slots || 0) > 0)
+const canBuySubscription = computed(() => {
+  const max = phoneQuota.value.max || 5
+  const subs = phoneQuota.value.subscription_count || 0
+  return subs < max
+})
+const maxBuyQuantity = computed(() => {
+  const max = phoneQuota.value.max || 5
+  const current = phoneQuota.value.subscription_count || 0
+  return Math.max(0, max - current)
+})
+const emptyPoolDescription = computed(() => {
+  if ((phoneQuota.value.subscription_count || 0) === 0) {
+    return '暂无云手机，请先购买订阅（¥100/月/台）'
+  }
+  if (canProvision.value) {
+    return `您有 ${phoneQuota.value.available_slots} 台订阅额度未开通`
+  }
+  return '暂无云手机设备'
+})
+const paymentStatusText = computed(() => {
+  const map = { pending: '等待支付中...', paid: '支付成功！', closed: '订单已关闭', failed: '支付失败' }
+  return map[paymentStatus.value] || '等待支付中...'
+})
+const paymentStatusType = computed(() => {
+  const map = { pending: 'info', paid: 'success', closed: 'warning', failed: 'error' }
+  return map[paymentStatus.value] || 'info'
+})
 
 const availableDevices = computed(() =>
   poolList.value.filter((p) => isAvailableStatus(p.status)),
@@ -336,10 +518,12 @@ const availableDevices = computed(() =>
 const poolColumns = [
   { title: '手机ID', dataIndex: 'phone_id', key: 'phone_id', width: 180 },
   { title: '状态', key: 'status', width: 100 },
+  { title: '到期时间', key: 'expires_at', width: 160 },
+  { title: '剩余', key: 'days_remaining', width: 120 },
   { title: '实例类型', dataIndex: 'instance_type', key: 'instance_type', width: 120 },
   { title: 'ADB端口', dataIndex: 'adb_host_port', key: 'adb_host_port', width: 150 },
   { title: '创建时间', key: 'created_at', width: 180 },
-  { title: '操作', key: 'action', width: 120, fixed: 'right' },
+  { title: '操作', key: 'action', width: 160, fixed: 'right' },
 ]
 
 function formatTime(iso) {
@@ -377,12 +561,13 @@ function getStatusText(status) {
 }
 
 async function fetchPoolListOnly() {
+  poolLoading.value = true
   try {
     const params = {
       page: poolPagination.value.current,
       page_size: poolPagination.value.pageSize,
     }
-    if (poolSearch.value) params.search = poolSearch.value
+    if (poolSearch.value?.trim()) params.search = poolSearch.value.trim()
 
     const response = await cloudPhoneApi.listPool(params)
     if (response && response.items) {
@@ -391,7 +576,20 @@ async function fetchPoolListOnly() {
     }
   } catch (e) {
     console.error('加载云手机池列表失败:', e)
+  } finally {
+    poolLoading.value = false
   }
+}
+
+async function handlePoolTableChange(pagination) {
+  poolPagination.value.current = pagination.current
+  poolPagination.value.pageSize = pagination.pageSize
+  await fetchPoolListOnly()
+}
+
+async function onPoolSearch() {
+  poolPagination.value.current = 1
+  await fetchPoolListOnly()
 }
 
 async function hydrateLiveUrls() {
@@ -639,22 +837,36 @@ async function closeEnlarge() {
   }
 }
 
+async function fetchQuota() {
+  try {
+    const data = await cloudPhoneApi.getQuota()
+    if (data) phoneQuota.value = { ...phoneQuota.value, ...data }
+  } catch (e) {
+    console.error('加载云手机额度失败:', e)
+  }
+}
+
 async function fetchStats() {
   try {
-    const [statsRes, myPhoneRes, pointsRes] = await Promise.allSettled([
+    const [statsRes, myPhoneRes, quotaRes] = await Promise.allSettled([
       cloudPhoneApi.getPoolStats(),
       cloudPhoneApi.getMyPhone(),
-      pointsApi.getPoints(),
+      cloudPhoneApi.getQuota(),
     ])
 
-    if (statsRes.status === 'fulfilled') stats.value = statsRes.value || {}
+    if (statsRes.status === 'fulfilled') {
+      stats.value = statsRes.value || {}
+      if (statsRes.value?.subscription_count !== undefined) {
+        phoneQuota.value = { ...phoneQuota.value, ...statsRes.value }
+      }
+    }
     if (myPhoneRes.status === 'fulfilled' && myPhoneRes.value?.phone_id) {
       myPhone.value = myPhoneRes.value
     } else {
       myPhone.value = null
     }
-    if (pointsRes.status === 'fulfilled' && pointsRes.value?.points !== undefined) {
-      userPoints.value = pointsRes.value.points
+    if (quotaRes.status === 'fulfilled' && quotaRes.value) {
+      phoneQuota.value = { ...phoneQuota.value, ...quotaRes.value }
     }
   } catch (e) {
     console.error('加载统计数据失败:', e)
@@ -708,21 +920,130 @@ async function checkPhoneHealth(phoneId) {
   }
 }
 
-async function manualScale(count) {
-  const requiredPoints = 100 * count
-  if (userPoints.value < requiredPoints) {
-    message.warning(`积分不足，扩容 ${count} 台云手机需要 ${requiredPoints} 积分`)
+async function provisionPhone(count = 1) {
+  if (!canProvision.value) {
+    if (canBuySubscription.value) {
+      openBuySubscription()
+    } else {
+      message.warning('订阅额度已满，无法继续开通')
+    }
     return
   }
 
+  provisioning.value = true
   try {
     await cloudPhoneApi.manualScale(count)
-    message.success(`成功扩容 ${count} 台云手机，已扣除 ${requiredPoints} 积分`)
+    message.success(`成功开通 ${count} 台云手机`)
     await refresh()
   } catch (e) {
-    console.error('扩容云手机失败:', e)
-    message.error('扩容云手机失败')
+    console.error('开通云手机失败:', e)
+    const detail = e.response?.data?.detail
+    if (e.response?.status === 403) {
+      message.warning(detail || '订阅额度不足，请先购买云手机订阅')
+      if (canBuySubscription.value) openBuySubscription()
+    } else if (e.response?.status === 429) {
+      message.warning(detail || '操作过于频繁，请稍后再试')
+    } else {
+      message.error(detail || '开通云手机失败')
+    }
+  } finally {
+    provisioning.value = false
   }
+}
+
+function openBuySubscription() {
+  if (!canBuySubscription.value) {
+    message.warning(`最多订阅 ${phoneQuota.value.max || 5} 台云手机`)
+    return
+  }
+  cloudPhoneQuantity.value = 1
+  showCloudPhoneBuy.value = true
+}
+
+async function handleBuyCloudPhone() {
+  if (cloudPhoneQuantity.value < 1) {
+    message.warning('请选择购买数量')
+    return
+  }
+
+  buyingCloudPhone.value = true
+  try {
+    paymentModalTitle.value = '云手机订阅支付'
+    const data = await membershipApi.createCloudPhonePayment(cloudPhoneQuantity.value)
+    showCloudPhoneBuy.value = false
+    showPaymentModal.value = true
+    qrCodeUrl.value = data.qr_code
+    paymentInfo.value = { amount: data.amount, out_trade_no: data.out_trade_no }
+    paymentStatus.value = 'pending'
+    startPaymentQuery(data.out_trade_no, 'purchase')
+  } catch (e) {
+    console.error('创建云手机订单失败:', e)
+    message.error('创建订单失败')
+  } finally {
+    buyingCloudPhone.value = false
+  }
+}
+
+async function openRenewPayment(phoneId) {
+  renewingPhoneId.value = phoneId
+  try {
+    paymentModalTitle.value = `云手机续费 — ${phoneId}`
+    const data = await membershipApi.renewCloudPhonePayment(phoneId)
+    showPaymentModal.value = true
+    qrCodeUrl.value = data.qr_code
+    paymentInfo.value = { amount: data.amount, out_trade_no: data.out_trade_no }
+    paymentStatus.value = 'pending'
+    startPaymentQuery(data.out_trade_no, 'renew')
+  } catch (e) {
+    console.error('创建续费订单失败:', e)
+    const detail = e.response?.data?.detail
+    message.error(detail || '创建续费订单失败')
+  } finally {
+    renewingPhoneId.value = null
+  }
+}
+
+function startPaymentQuery(outTradeNo, mode = 'purchase') {
+  stopPaymentQuery()
+  paymentQueryTimer = setInterval(async () => {
+    try {
+      const data = await membershipApi.queryPayment(outTradeNo)
+      if (data.status === 'paid') {
+        paymentStatus.value = 'paid'
+        stopPaymentQuery()
+        if (mode === 'renew') {
+          message.success('续费成功！')
+        } else {
+          message.success('购买成功！请开通云手机实例')
+        }
+        setTimeout(async () => {
+          cancelPayment()
+          await fetchQuota()
+          await fetchStats()
+          await fetchPoolListOnly()
+        }, 1500)
+      } else if (data.status === 'TRADE_CLOSED') {
+        paymentStatus.value = 'closed'
+        stopPaymentQuery()
+      }
+    } catch (e) {
+      console.error('查询支付状态失败:', e)
+    }
+  }, 3000)
+}
+
+function stopPaymentQuery() {
+  if (paymentQueryTimer) {
+    clearInterval(paymentQueryTimer)
+    paymentQueryTimer = null
+  }
+}
+
+function cancelPayment() {
+  stopPaymentQuery()
+  showPaymentModal.value = false
+  qrCodeUrl.value = ''
+  paymentStatus.value = 'pending'
 }
 
 onMounted(async () => {
@@ -747,6 +1068,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (pollingInterval) clearInterval(pollingInterval)
+  stopPaymentQuery()
   destroyAllPreviewSdks()
   destroyModalSdkOnly()
   destroyChinacSdk()
@@ -994,5 +1316,31 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   padding: 48px;
+}
+
+.payment-loading {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.qr-code-container {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.qr-code-header {
+  margin-bottom: 16px;
+}
+
+.payment-amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1677ff;
+}
+
+.qr-code-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
 }
 </style>

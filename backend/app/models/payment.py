@@ -12,6 +12,12 @@ class PaymentOrder(Base):
     out_trade_no = Column(String(64), nullable=False, unique=True, comment='商户订单号')
     trade_no = Column(String(64), nullable=True, comment='支付宝交易号')
     payment_method = Column(String(32), nullable=False, default='alipay', comment='支付方式')
+    order_type = Column(
+        Enum("points", "membership", "cloud_phone"),
+        nullable=False,
+        default="points",
+        comment='订单类型：积分充值/会员购买/云手机购买'
+    )
     amount = Column(Numeric(10, 2), nullable=False, comment='支付金额（元）')
     points = Column(Integer, nullable=False, comment='获得积分数量')
     status = Column(
@@ -21,6 +27,7 @@ class PaymentOrder(Base):
         comment='订单状态'
     )
     subject = Column(String(256), nullable=False, comment='订单标题')
+    discount_code = Column(String(64), nullable=True, comment='使用的折扣码（会员购买时）')
     qr_code = Column(Text, nullable=True, comment='二维码内容')
     paid_at = Column(DateTime, nullable=True, comment='支付完成时间')
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
