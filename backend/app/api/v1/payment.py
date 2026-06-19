@@ -89,13 +89,21 @@ def _fulfill_order(db: Session, order: PaymentOrder):
         tier_map = {"基础版": "basic", "专业版": "pro"}
         tier_key = tier_map.get(tier, "free")
 
+        # 会员时长：默认 1 个月；折扣码可指定（如 1 / 3 个月）
+        duration_months = 1
+        if getattr(order, "discount_code", None):
+            from app.models.discount_code import DiscountCode
+            dc = db.query(DiscountCode).filter(DiscountCode.code == order.discount_code).first()
+            if dc and dc.duration_months:
+                duration_months = dc.duration_months
+
         user = db.query(User).filter(User.id == order.user_id).first()
         if user:
             user.membership_tier = tier_key
-            # 会员有效期1个月，如果当前未过期则在当前到期时间上续费
+            # 如果当前未过期则在当前到期时间上续费
             now = datetime.now(timezone.utc)
             base = user.membership_expires_at.replace(tzinfo=timezone.utc) if user.membership_expires_at and user.membership_expires_at.replace(tzinfo=timezone.utc) > now else now
-            user.membership_expires_at = base + timedelta(days=30)
+            user.membership_expires_at = base + timedelta(days=30 * duration_months)
 
         # 使用了折扣码则计数 +1
         if getattr(order, "discount_code", None):

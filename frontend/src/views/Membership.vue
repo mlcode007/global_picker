@@ -143,7 +143,7 @@
             <a-button :loading="validatingCode" @click="applyDiscountCode">应用</a-button>
           </a-space-compact>
           <div v-if="discountApplied" style="margin-top: 8px; color: #52c41a; font-size: 13px">
-            ✓ 折扣码已应用，专属价 ¥{{ discountApplied.price }}
+            ✓ 折扣码已应用，专属价 ¥{{ discountApplied.price }}，会员有效期 {{ discountApplied.duration_months || 1 }} 个月
           </div>
         </a-form-item>
         <a-form-item label="应付金额">
@@ -157,7 +157,9 @@
             <span style="font-size: 24px; color: #1677ff; font-weight: bold">
               ¥{{ finalPrice }}
             </span>
-            <span style="color: #999; margin-left: 8px">/月</span>
+            <span style="color: #999; margin-left: 8px">
+              {{ discountApplied ? `/ ${discountApplied.duration_months || 1} 个月` : '/月' }}
+            </span>
           </div>
         </a-form-item>
       </a-form>

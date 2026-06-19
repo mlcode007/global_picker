@@ -47,6 +47,7 @@ def _serialize(d: DiscountCode) -> dict:
         "code": d.code,
         "tier": d.tier,
         "price": float(d.price) if d.price is not None else None,
+        "duration_months": d.duration_months or 1,
         "is_active": bool(d.is_active),
         "status": d.status,
         "max_uses": d.max_uses,
@@ -87,6 +88,7 @@ def validate_code(
         "tier": discount.tier,
         "price": float(discount.price),
         "original_price": float(MEMBERSHIP_PRICES[request.tier]),
+        "duration_months": discount.duration_months or 1,
     })
 
 
@@ -95,6 +97,7 @@ def validate_code(
 class CreateDiscountRequest(BaseModel):
     tier: str
     price: float
+    duration_months: int = 1
     code: Optional[str] = None
     max_uses: Optional[int] = None
     expires_at: Optional[datetime] = None
@@ -115,9 +118,17 @@ class CreateDiscountRequest(BaseModel):
             raise ValueError("价格不能为负")
         return v
 
+    @field_validator("duration_months")
+    @classmethod
+    def validate_duration(cls, v: int) -> int:
+        if v < 1 or v > 36:
+            raise ValueError("会员有效期月数需在 1-36 之间")
+        return v
+
 
 class UpdateDiscountRequest(BaseModel):
     price: Optional[float] = None
+    duration_months: Optional[int] = None
     max_uses: Optional[int] = None
     expires_at: Optional[datetime] = None
     remark: Optional[str] = None
@@ -129,6 +140,13 @@ class UpdateDiscountRequest(BaseModel):
     def validate_price(cls, v):
         if v is not None and v < 0:
             raise ValueError("价格不能为负")
+        return v
+
+    @field_validator("duration_months")
+    @classmethod
+    def validate_duration(cls, v):
+        if v is not None and (v < 1 or v > 36):
+            raise ValueError("会员有效期月数需在 1-36 之间")
         return v
 
     @field_validator("status")
@@ -169,6 +187,7 @@ def create_code(
         code=code,
         tier=request.tier,
         price=Decimal(str(request.price)),
+        duration_months=request.duration_months,
         is_active=1 if request.is_active else 0,
         max_uses=request.max_uses,
         used_count=0,
@@ -195,6 +214,8 @@ def update_code(
 
     if request.price is not None:
         discount.price = Decimal(str(request.price))
+    if request.duration_months is not None:
+        discount.duration_months = request.duration_months
     if request.max_uses is not None:
         discount.max_uses = request.max_uses
     if request.expires_at is not None:

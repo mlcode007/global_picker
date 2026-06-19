@@ -16,6 +16,7 @@ class DiscountCode(Base):
         comment='适用会员等级：基础版/专业版',
     )
     price = Column(Numeric(10, 2), nullable=False, comment='使用折扣码后的价格（元/月）')
+    duration_months = Column(Integer, nullable=False, default=1, comment='使用后会员有效期（月）')
     is_active = Column(TINYINT(1), nullable=False, default=1, comment='是否启用')
     status = Column(
         Enum("unused", "used"),

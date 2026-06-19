@@ -37,6 +37,9 @@
           <template v-else-if="column.key === 'price'">
             ¥{{ record.price }}
           </template>
+          <template v-else-if="column.key === 'duration_months'">
+            {{ record.duration_months || 1 }} 个月
+          </template>
           <template v-else-if="column.key === 'is_active'">
             <a-tag :color="record.is_active ? 'success' : 'default'">
               {{ record.is_active ? '启用' : '停用' }}
@@ -95,19 +98,31 @@
             <a-select-option value="pro">专业版（原价 ¥{{ originalPrice('pro') }}）</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="折扣价（元/月）" required>
+        <a-form-item label="折扣价（元）" required>
           <a-input-number v-model:value="form.price" :min="0" :precision="2" style="width: 100%" />
           <div style="margin-top: 4px; color: #999; font-size: 12px">
             折扣码为一次性，被成功使用后将自动置为「已使用」且不可再次使用
           </div>
         </a-form-item>
-        <a-form-item label="有效期">
+        <a-form-item label="使用后会员有效期" required>
+          <a-select v-model:value="form.duration_months">
+            <a-select-option :value="1">1 个月</a-select-option>
+            <a-select-option :value="3">3 个月</a-select-option>
+          </a-select>
+          <div style="margin-top: 4px; color: #999; font-size: 12px">
+            使用此折扣码购买后，会员有效期延长的时长
+          </div>
+        </a-form-item>
+        <a-form-item label="折扣码有效期">
           <a-date-picker
             v-model:value="form.expires_at"
             show-time
             style="width: 100%"
             placeholder="留空表示长期有效"
           />
+          <div style="margin-top: 4px; color: #999; font-size: 12px">
+            留空表示长期有效，填写时间则到该时间后失效
+          </div>
         </a-form-item>
         <a-form-item label="备注">
           <a-input v-model:value="form.remark" placeholder="可选" />
@@ -133,6 +148,7 @@ const columns = [
   { title: '折扣码', dataIndex: 'code', key: 'code', width: 140 },
   { title: '等级', key: 'tier', width: 90 },
   { title: '折扣价', key: 'price', width: 100 },
+  { title: '会员时长', key: 'duration_months', width: 90 },
   { title: '启用', key: 'is_active', width: 80 },
   { title: '使用状态', key: 'usage', width: 100 },
   { title: '有效期', key: 'expires_at', width: 170 },
@@ -154,6 +170,7 @@ const form = ref({
   code: '',
   tier: 'basic',
   price: null,
+  duration_months: 1,
   expires_at: null,
   remark: '',
   is_active: true,
@@ -199,6 +216,7 @@ function openCreate() {
     code: '',
     tier: 'basic',
     price: null,
+    duration_months: 1,
     expires_at: null,
     remark: '',
     is_active: true,
@@ -213,6 +231,7 @@ function openEdit(record) {
     code: record.code,
     tier: record.tier,
     price: record.price,
+    duration_months: record.duration_months || 1,
     expires_at: record.expires_at ? dayjs(record.expires_at) : null,
     remark: record.remark || '',
     is_active: !!record.is_active,
@@ -229,6 +248,7 @@ async function submitForm() {
   try {
     const payload = {
       price: form.value.price,
+      duration_months: form.value.duration_months,
       expires_at: form.value.expires_at ? form.value.expires_at.toISOString() : null,
       remark: form.value.remark || null,
       is_active: form.value.is_active,
