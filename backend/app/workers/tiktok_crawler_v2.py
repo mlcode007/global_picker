@@ -41,6 +41,7 @@ from app.database import SessionLocal
 from app.models.product import Product
 from app.models.user_crawl_config import UserCrawlConfig
 from app.models.crawl_task import CrawlTask
+from app.workers.fingerprint import apply_fingerprint, build_fingerprint
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +181,7 @@ class V2Crawler(BaseCrawler):
 
         _update_task_status(task_id, "正在启动浏览器...")
         async with async_playwright() as pw:
+            fp = build_fingerprint(seed="tiktok_test_user")
             headless = settings.TIKTOK_HEADLESS
             launch_opts = {
                 "headless": headless,
@@ -189,15 +191,21 @@ class V2Crawler(BaseCrawler):
             if proxy_cfg:
                 launch_opts["proxy"] = {"server": proxy_cfg}
 
-            browser = await pw.chromium.launch(**launch_opts)
-            context = await browser.new_context(
-                user_agent=_UA_DESKTOP,
-                locale="en-PH",
-                timezone_id="Asia/Manila",
-                viewport={"width": 1280, "height": 900},
-                extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
-            )
+            # browser = await pw.chromium.launch(**launch_opts)
+            # context = await browser.new_context(
+            #     user_agent=_UA_DESKTOP,
+            #     locale="en-PH",
+            #     timezone_id="Asia/Manila",
+            #     viewport={"width": 1280, "height": 900},
+            #     extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
+            # )
 
+            browser = await pw.chromium.launch(
+                headless=False,
+                slow_mo=200,
+                args=fp.launch_args(),
+            )
+            context = await browser.new_context(**fp.context_options())
             if cookies:
                 await context.add_cookies(cookies)
                 logger.info("已注入 %d 条 Cookie", len(cookies))
