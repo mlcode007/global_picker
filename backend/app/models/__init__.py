@@ -14,6 +14,7 @@ from app.models.quota import UserQuota, CollectionHistory
 from app.models.payment import PaymentOrder
 from app.models.cloud_phone_subscription import CloudPhoneSubscription
 from app.models.discount_code import DiscountCode
+from app.models.activation_code import ActivationCode
 
 __all__ = [
     "CrawlTask",
@@ -36,4 +37,5 @@ __all__ = [
     "PaymentOrder",
     "CloudPhoneSubscription",
     "DiscountCode",
+    "ActivationCode",
 ]

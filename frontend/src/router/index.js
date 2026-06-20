@@ -20,6 +20,12 @@ const routes = [
     meta: { title: '注册', guest: true },
   },
   {
+    path: '/activate',
+    name: 'Activation',
+    component: () => import('@/views/Activation.vue'),
+    meta: { title: '兑换激活码', guest: true },
+  },
+  {
     path: '/app',
     component: () => import('@/components/AppLayout.vue'),
     meta: { requiresAuth: true },
