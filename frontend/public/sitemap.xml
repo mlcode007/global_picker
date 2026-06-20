@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 首页 - 最高优先级 -->
+  <url>
+    <loc>https://www.globalpicker.com/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- 登录页 -->
+  <url>
+    <loc>https://www.globalpicker.com/login</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- 注册页 -->
+  <url>
+    <loc>https://www.globalpicker.com/register</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- 数据看板 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/dashboard</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 商品列表 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/products</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 批量导入 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/import</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- 云手机管理 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/cloud-phone</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- 会员中心 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/membership</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- 汇率管理 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/exchange-rate</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- 个人主页 -->
+  <url>
+    <loc>https://www.globalpicker.com/app/profile</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+</urlset>
