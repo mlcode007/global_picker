@@ -2,6 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/',
+    name: 'Landing',
+    component: () => import('@/views/Landing.vue'),
+    meta: { title: 'Global Picker - 跨平台智能选品比价系统', guest: true },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
@@ -14,11 +20,11 @@ const routes = [
     meta: { title: '注册', guest: true },
   },
   {
-    path: '/',
+    path: '/app',
     component: () => import('@/components/AppLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', redirect: '/dashboard' },
+      { path: '', redirect: '/app/dashboard' },
       { path: 'dashboard', name: 'Dashboard', component: () => import('@/views/Dashboard.vue'), meta: { title: '数据看板' } },
       { path: 'products', name: 'ProductList', component: () => import('@/views/ProductList.vue'), meta: { title: '商品列表' } },
       { path: 'products/:id', name: 'ProductDetail', component: () => import('@/views/ProductDetail.vue'), meta: { title: '商品详情' } },
@@ -49,6 +55,7 @@ function getCurrentRole() {
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('gp_token')
 
+  // 需要认证的页面
   if (to.meta.requiresAuth || to.matched.some(r => r.meta.requiresAuth)) {
     if (!token) {
       return next({ path: '/login', query: { redirect: to.fullPath } })
@@ -58,12 +65,18 @@ router.beforeEach((to, from, next) => {
   // 仅管理员可访问的页面
   if (to.matched.some(r => r.meta.requiresAdmin)) {
     if (getCurrentRole() !== 'admin') {
-      return next('/dashboard')
+      return next('/app/dashboard')
     }
   }
 
-  if (to.meta.guest && token) {
-    return next('/')
+  // 已登录用户访问Landing页面时重定向到dashboard
+  if (to.name === 'Landing' && token) {
+    return next('/app/dashboard')
+  }
+
+  // guest页面(登录/注册)已登录时重定向
+  if (to.meta.guest && token && to.name !== 'Landing') {
+    return next('/app/dashboard')
   }
 
   next()

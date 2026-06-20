@@ -355,7 +355,7 @@
             >
               取消同步
             </a-button>
-            <a-button type="primary" @click="router.push('/import')"><ImportOutlined /> 批量导入</a-button>
+            <a-button type="primary" @click="router.push('/app/import')"><ImportOutlined /> 批量导入</a-button>
           </a-space>
         </a-col>
       </a-row>
@@ -702,7 +702,7 @@
           <!-- 操作列 -->
           <template v-else-if="column.key === 'action'">
             <a-space :size="4">
-              <a @click="router.push(`/products/${record.id}`)">详情</a>
+              <a @click="router.push(`/app/products/${record.id}`)">详情</a>
               <a-divider type="vertical" style="margin:0" />
               <a-tooltip title="新标签打开 TikTok 商品页（无 locale 时自动补全为中文）">
                 <a

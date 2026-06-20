@@ -148,7 +148,7 @@ async function handleRegister() {
     if (!payload.target_regions?.length) delete payload.target_regions
     await authStore.register(payload)
     message.success('注册成功')
-    router.push('/')
+    router.push('/app/dashboard')
   } catch {
     // error handled by interceptor
   } finally {

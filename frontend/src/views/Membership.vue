@@ -116,7 +116,7 @@
             <a-button type="primary" @click="showCloudPhoneBuy = true">
               购买云手机
             </a-button>
-            <a-button @click="router.push('/cloud-phone')">前往开通</a-button>
+            <a-button @click="router.push('/app/cloud-phone')">前往开通</a-button>
           </a-space>
         </a-col>
       </a-row>

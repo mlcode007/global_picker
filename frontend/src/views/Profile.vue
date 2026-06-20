@@ -81,7 +81,7 @@
         <a-card class="cloud-phone-card" hoverable>
           <a-statistic title="云手机数量" :value="cloudPhoneCount" prefix="手机">
             <template #suffix>
-              <a-button type="link" @click="$router.push('/cloud-phone')">管理</a-button>
+              <a-button type="link" @click="$router.push('/app/cloud-phone')">管理</a-button>
             </template>
           </a-statistic>
           <a-divider />
@@ -97,7 +97,7 @@
           </div>
           <div class="cloud-phone-empty" v-else>
             <p>您还没有绑定云手机</p>
-            <a-button type="primary" @click="$router.push('/cloud-phone')">获取云手机</a-button>
+            <a-button type="primary" @click="$router.push('/app/cloud-phone')">获取云手机</a-button>
           </div>
         </a-card>
       </a-col>

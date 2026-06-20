@@ -195,7 +195,7 @@
             购买订阅
           </a-button>
           <a-button v-else disabled>已达上限</a-button>
-          <a-button type="link" @click="router.push('/membership')">会员中心</a-button>
+          <a-button type="link" @click="router.push('/app/membership')">会员中心</a-button>
         </a-space>
       </template>
 
@@ -344,7 +344,7 @@
         </a-form-item>
       </a-form>
       <div style="margin-top: 8px">
-        <a @click="router.push('/membership')">也可前往会员中心购买</a>
+        <a @click="router.push('/app/membership')">也可前往会员中心购买</a>
       </div>
     </a-modal>
 

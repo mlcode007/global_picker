@@ -107,7 +107,7 @@
           <a-button type="primary" block :loading="exportAllLoading" @click="onExportAllProducts">
             <DownloadOutlined /> 导出全部商品
           </a-button>
-          <a-button block @click="router.push('/products')">
+          <a-button block @click="router.push('/app/products')">
             <FilterOutlined /> 前往列表筛选后导出
           </a-button>
         </a-space>
@@ -151,7 +151,7 @@
           </div>
         </div>
         <div v-if="crawlDone" style="margin-top:12px;text-align:right">
-          <a-button type="primary" @click="router.push('/products')">
+          <a-button type="primary" @click="router.push('/app/products')">
             前往商品列表查看结果
           </a-button>
         </div>

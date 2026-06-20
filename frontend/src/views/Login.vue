@@ -123,7 +123,7 @@ async function handleSmsLogin() {
   try {
     await authStore.smsLogin(smsForm.phone, smsForm.code)
     message.success('登录成功')
-    const redirect = route.query.redirect || '/'
+    const redirect = route.query.redirect || '/app/dashboard'
     router.push(redirect)
   } catch {
     // error handled by interceptor
@@ -137,7 +137,7 @@ async function handlePwdLogin() {
   try {
     await authStore.passwordLogin(pwdForm.username, pwdForm.password)
     message.success('登录成功')
-    const redirect = route.query.redirect || '/'
+    const redirect = route.query.redirect || '/app/dashboard'
     router.push(redirect)
   } catch {
     // error handled by interceptor

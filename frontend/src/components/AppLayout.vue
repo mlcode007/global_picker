@@ -85,6 +85,73 @@
         Global Picker © 2026 — 跨平台选品比价系统
       </a-layout-footer>
     </a-layout>
+
+    <!-- Floating Side Bar -->
+    <div class="side-bar">
+      <div class="side-bar-item" @mouseenter="showDocPopup = true" @mouseleave="showDocPopup = false">
+        <a href="https://notion.so" target="_blank" rel="noopener" class="side-bar-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </a>
+        <div class="side-popup" v-show="showDocPopup">
+          <div class="side-popup-arrow"></div>
+          <div class="side-popup-content">
+            <div class="qr-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 3v18"/>
+              </svg>
+              <p>Notion 文档页面</p>
+              <p class="qr-hint">替换为实际文档链接</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-bar-item" @mouseenter="showWechatPopup = true" @mouseleave="showWechatPopup = false">
+        <a href="javascript:void(0)" class="side-bar-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </a>
+        <div class="side-popup" v-show="showWechatPopup">
+          <div class="side-popup-arrow"></div>
+          <div class="side-popup-content">
+            <div class="qr-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 3v18"/>
+              </svg>
+              <p>Global Picker 服务号</p>
+              <p class="qr-hint">替换为实际二维码图片</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-bar-item" @mouseenter="showContactPopup = true" @mouseleave="showContactPopup = false">
+        <a href="javascript:void(0)" class="side-bar-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </a>
+        <div class="side-popup" v-show="showContactPopup">
+          <div class="side-popup-arrow"></div>
+          <div class="side-popup-content">
+            <div class="qr-placeholder">
+              <img src="/wechat-qrcode.png" alt="企业微信二维码" class="qr-image"/>
+              <p>企业微信二维码</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </a-layout>
 </template>
 
@@ -109,6 +176,10 @@ const collapsed = ref(false)
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+
+const showDocPopup = ref(false)
+const showWechatPopup = ref(false)
+const showContactPopup = ref(false)
 
 onMounted(() => {
   if (authStore.isLoggedIn) {
@@ -136,13 +207,13 @@ const selectedKey = computed(() => {
 function handleMenuClick({ key }) {
   console.log('Menu clicked:', key)
   if (key === 'CloudPhone') {
-    router.push('/cloud-phone')
+    router.push('/app/cloud-phone')
   } else if (key === 'Membership') {
-    router.push('/membership')
+    router.push('/app/membership')
   } else if (key === 'ExchangeRate') {
-    router.push('/exchange-rate')
+    router.push('/app/exchange-rate')
   } else if (key === 'Profile') {
-    router.push('/profile')
+    router.push('/app/profile')
   } else {
     router.push({ name: key })
   }
@@ -214,5 +285,108 @@ watch(route, () => {
   padding: 24px;
   color: #999;
   font-size: 14px;
+}
+
+/* ===== Floating Side Bar ===== */
+.side-bar {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.side-bar-item {
+  position: relative;
+}
+
+.side-bar-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: #fff;
+  border-radius: 12px;
+  color: #1a1a1a;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.side-bar-link:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  color: #6366f1;
+}
+
+.side-bar-link svg {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.side-bar-link:hover svg {
+  opacity: 1;
+}
+
+/* Side Popup */
+.side-popup {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+
+.side-popup-arrow {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: rotate(45deg);
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  margin-top: -6px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-popup-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+}
+
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.qr-image {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.qr-placeholder p {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+}
+
+.qr-hint {
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
 }
 </style>

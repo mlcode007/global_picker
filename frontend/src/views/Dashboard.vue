@@ -243,7 +243,7 @@
         <a-col :xs="24" :lg="16">
           <a-card title="最近添加的商品" class="chart-card">
             <template #extra>
-              <a-button type="link" size="small" @click="$router.push('/products')">查看全部</a-button>
+              <a-button type="link" size="small" @click="$router.push('/app/products')">查看全部</a-button>
             </template>
             <a-table
               :data-source="stats.recent_products || []"
@@ -264,7 +264,7 @@
                       :preview="false"
                     />
                     <div class="recent-product__info">
-                      <a class="recent-product__title" @click="$router.push(`/products/${record.id}`)">
+                      <a class="recent-product__title" @click="$router.push(`/app/products/${record.id}`)">
                         {{ record.title || '未知商品' }}
                       </a>
                     </div>
