@@ -596,8 +596,18 @@
   function findCompareButton() {
     const allSpans = document.querySelectorAll('span');
     for (const span of allSpans) {
-      if (span.textContent.trim() === '同款比价') return span;
+      if (span.textContent.trim().includes('同款比价') || span.textContent.trim().includes('同款')
+          || span.textContent.trim().includes('帮你找')
+      ) {
+        return span;
+      }
     }
+    // 找最后一个img标签
+    const lastImg = document.querySelector('img:last-child');
+    if (lastImg) {
+      return lastImg;
+    }
+
     return null;
   }
 
